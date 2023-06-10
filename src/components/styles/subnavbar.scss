@@ -1,0 +1,23 @@
+.subnavbar {
+  background: linear-gradient(93.58deg, #231c26 -2%, #008b8b 117.56%);
+  box-shadow: inset 8.74047px 9.71163px 18.4521px rgba(61, 73, 100, 0.3);
+  display: flex;
+  color: white;
+  margin: 1rem;
+  border-radius: 1rem;
+  padding: 0.6rem;
+
+  & img {
+    width: 40px;
+    margin-left: 0.5rem;
+  }
+
+  &__text {
+    margin-left: 1rem;
+
+    & p:last-child {
+      font-weight: 300;
+      font-size: 14px;
+    }
+  }
+}

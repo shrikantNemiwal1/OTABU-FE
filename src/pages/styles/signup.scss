@@ -1,0 +1,24 @@
+.signup {
+  &__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+
+    & a {
+      font-size: 1.2rem;
+      background: #029664;
+      width: 300px;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      color: white;
+      text-align: center;
+
+      &:hover {
+        background: #087752;
+      }
+    }
+  }
+}

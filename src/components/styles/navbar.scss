@@ -1,0 +1,93 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  margin: 1rem;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  box-shadow: 0px 8px 16px rgba(3, 29, 53, 0.18);
+
+  &__items-left,
+  &__items-right {
+    display: flex;
+    align-items: center;
+  }
+
+  &__search {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.8rem;
+    margin-left: 1rem;
+  }
+
+  &__items-left {
+    & input {
+      width: 0px;
+      outline: none;
+      border: 0;
+      transition: width 0.2s;
+    }
+
+    input:not(:placeholder-shown) {
+      width: 150px;
+    }
+
+    & input:focus {
+      width: 150px;
+    }
+
+    & label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    & img {
+      width: 18px;
+      background-color: white;
+    }
+
+    margin-left: 1rem;
+  }
+
+  &__items-right {
+    & ul {
+      list-style-type: none;
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    & img {
+      width: 30px;
+      height: 30px;
+      background-color: white;
+      padding: 0.4rem;
+      border-radius: 40%;
+    }
+  }
+
+  &__avatar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 0.8rem;
+    margin-right: 1rem;
+
+    & img {
+      padding: 1.4rem;
+      border-radius: 50%;
+    }
+  }
+}
+
+.table__container {
+  margin: 0 1rem;
+  margin-bottom: 1rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0px 8px 16px rgba(3, 29, 53, 0.18);
+}
