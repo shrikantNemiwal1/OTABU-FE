@@ -5,16 +5,17 @@ import SubNavbar from "../components/SubNavbar";
 import Table from "../components/Table";
 import "./styles/clients.scss";
 
-const Dashboard = () => {
+const Clients = () => {
   return (
-    <div className="dashboard-container clients-container">
+    <div className="clients-container">
       <Sidebar />
       <main>
         <Navbar />
         <SubNavbar />
+        <Table />
       </main>
     </div>
   );
 };
 
-export default Dashboard;
+export default Clients;

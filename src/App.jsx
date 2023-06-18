@@ -5,6 +5,7 @@ import SignUp from "./pages/SignUp";
 import ClientRegistration from "./pages/ClientRegistration.jsx";
 import AuditorRegistration from "./pages/AuditorRegistration.jsx";
 import Dashboard from "./pages/Dashboard";
+import Clients from "./pages/Clients";
 import NotFound from "./pages/NotFound";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           />
           {/* <Route exact path="/forgot-password" element={<ForgotPassword />} /> */}
           <Route exact path="/dashboard" element={<Dashboard />} />
+          <Route exact path="/clients" element={<Clients />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -96,7 +96,7 @@ const AuditorRegistration = () => {
             />
             <div className="input__error-container">
               {errors.phoneNumber && touched.phoneNumber ? (
-                <p className="input__error">{errors.phoneNumber}</p>
+                <p className="input__error"> {errors.phoneNumber}</p>
               ) : null}
             </div>
           </div>

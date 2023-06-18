@@ -1,9 +1,9 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import search from "../assets/icons/search.svg";
-import tasks from "../assets/icons/tasks.svg";
-import mail from "../assets/icons/mail2.svg";
 import bell from "../assets/icons/bell.svg";
+import setting from "../assets/icons/setting.svg";
+import logout from "../assets/icons/logout.svg";
 import "./styles/navbar.scss";
 
 const Navbar = () => {
@@ -22,24 +22,26 @@ const Navbar = () => {
         <ul>
           <li>
             <NavLink>
-              <img src={tasks} alt="" />
-            </NavLink>
-          </li>
-          <li>
-            <NavLink>
-              <img src={mail} alt="" />
-            </NavLink>
-          </li>
-          <li>
-            <NavLink>
-              <img src={bell} alt="" />
+              <img src={bell} alt="bell" />
             </NavLink>
           </li>
         </ul>
         <div className="navbar__avatar">
-          <img src="" alt="" />
+          <img src="" alt="avatar" />
           <p>User name</p>
         </div>
+        <ul>
+          <li>
+            <NavLink>
+              <img src={setting} alt="setting" />
+            </NavLink>
+          </li>
+          <li>
+            <NavLink>
+              <img src={logout} alt="logout" />
+            </NavLink>
+          </li>
+        </ul>
       </div>
     </nav>
   );

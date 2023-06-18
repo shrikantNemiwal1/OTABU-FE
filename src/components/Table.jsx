@@ -95,22 +95,22 @@ const Example = () => {
         enableSorting: false,
         size: 80,
       },
-      {
-        accessorKey: "firstName",
-        header: "First Name",
-        size: 140,
-        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-          ...getCommonEditTextFieldProps(cell),
-        }),
-      },
-      {
-        accessorKey: "lastName",
-        header: "Last Name",
-        size: 140,
-        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-          ...getCommonEditTextFieldProps(cell),
-        }),
-      },
+      // {
+      //   accessorKey: "firstName",
+      //   header: "First Name",
+      //   size: 50,
+      //   muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+      //     ...getCommonEditTextFieldProps(cell),
+      //   }),
+      // },
+      // {
+      //   accessorKey: "lastName",
+      //   header: "Last Name",
+      //   size: 50,
+      //   muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+      //     ...getCommonEditTextFieldProps(cell),
+      //   }),
+      // },
       {
         accessorKey: "email",
         header: "Email",
