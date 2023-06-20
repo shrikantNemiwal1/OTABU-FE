@@ -1,442 +1,228 @@
-import React, { useContext, useState } from "react";
-import { auditorRegistrationSchema } from "../validation/formSchema";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
+import "./styles/login.scss";
+import { clientRegistrationSchema } from "../validation/formSchema";
+import lock from "../assets/icons/lock.svg";
+import mail from "../assets/icons/mail.svg";
+import eyeOff from "../assets/icons/eye-off.svg";
+import logoLarge from "../assets/images/logo-large.png";
 import logoColoured from "../assets/images/logo-coloured.png";
-import "./styles/registration.scss";
+// import Snackbar from "@mui/material/Snackbar";
+// import Alert from "@mui/material/Alert";
+import { useContext } from "react";
+import OtpForm from "../components/OtpForm";
+//import { AuthContext } from "../context/AuthContext";
 
 const initialValues = {
-  organisationName: "",
-  scope: "",
-  address: "",
-  additionalSites: "",
-  tempSites: "",
-  ownerName: "",
-  signature: "",
-  position: "",
-  standard: "",
-  phoneNumber: "",
+  organization_name: "",
+  director_name: "",
+  mobile: null,
   email: "",
-  website: "",
-  state: "",
-  country: "",
-  industryType: "",
-  exclusion: "",
-  noOfSites: "",
-  noOfEmployee: "",
-  topManagement: "",
-  manufacturingServiceAreaEmployee: "",
+  password: "",
+  confirm_password: "",
 };
 
-const ClientRegistration = () => {
+const Login = () => {
+  const [open, setOpen] = useState(false);
+  const [openMsg, setOpenMsg] = useState("");
+  const [passwordHidden, setPasswordHidden] = useState(true);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isLoading, setIsLoading] = useState(false);
-  const [membersData, setMembersData] = useState(null);
-
-  const {
-    values,
-    errors,
-    touched,
-    handleBlur,
-    handleChange,
-    handleSubmit,
-    resetForm,
-  } = useFormik({
-    initialValues,
-    validationSchema: auditorRegistrationSchema,
-    onSubmit: async (values) => {
-      setIsLoading(true);
-      //POST REQUEST
-      try {
-        const res = await submitEventData(values);
-        resetForm();
-        setIsLoading(false);
-      } catch (error) {
-        setIsLoading(false);
-      }
-    },
-  });
+  const navigate = useNavigate();
+  //const { state, login } = useContext(AuthContext);
+  const handleCloseAlert = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
+    useFormik({
+      initialValues,
+      validationSchema: clientRegistrationSchema,
+      onSubmit: async (values) => {
+        console.log(values);
+        setFormSubmitted(true);
+      },
+    });
 
   return (
-    <div className="registration">
-      <div className="registration__head">
-        <img src={logoColoured} alt="" />
-      </div>
-      <form onSubmit={handleSubmit}>
-        <div className="registration__form">
-          <div className="input__container">
-            <label htmlFor="organisationName">Organisation Name :</label>
-            <input
-              type="text"
-              name="organisationName"
-              id="organisationName"
-              value={values.organisationName}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Organisation Name"
-            />
-            <div className="input__error-container">
-              {errors.organisationName && touched.organisationName ? (
-                <p className="input__error">{errors.organisationName}</p>
-              ) : null}
-            </div>
+    <>
+      {/* <Snackbar open={open} autoHideDuration={3000} onClose={handleCloseAlert}>
+        <Alert
+          variant="filled"
+          onClose={() => setOpen(false)}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          {openMsg && openMsg}
+        </Alert>
+      </Snackbar> */}
+      <div className="wrapper">
+        <div className="login__container">
+          <img className="login__logo" src={logoColoured} alt="" />
+          <div className="login__head">
+            <h2>Welcome to Otabu Certification</h2>
+            <h2>Otabu Certification Pvt.Ltd.</h2>
           </div>
-          <div className="input__container">
-            <label htmlFor="scope">Scope :</label>
-            <input
-              type="text"
-              name="scope"
-              id="scope"
-              value={values.scope}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Scope"
-            />
-            <div className="input__error-container">
-              {errors.scope && touched.scope ? (
-                <p className="input__error">{errors.scope}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="address">Address :</label>
-            <input
-              type="text"
-              name="address"
-              id="address"
-              value={values.address}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Address"
-            />
-            <div className="input__error-container">
-              {errors.address && touched.address ? (
-                <p className="input__error">{errors.address}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="additionalSites">Additional Sites :</label>
-            <input
-              type="text"
-              name="additionalSites"
-              id="additionalSites"
-              value={values.additionalSites}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Additional Sites"
-            />
-            <div className="input__error-container">
-              {errors.additionalSites && touched.additionalSites ? (
-                <p className="input__error">{errors.additionalSites}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="tempSites">Temp Sites :</label>
-            <input
-              type="text"
-              name="tempSites"
-              id="tempSites"
-              value={values.tempSites}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Temp Sites"
-            />
-            <div className="input__error-container">
-              {errors.tempSites && touched.tempSites ? (
-                <p className="input__error">{errors.tempSites}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="ownerName">Owner Name :</label>
-            <input
-              type="text"
-              name="ownerName"
-              id="ownerName"
-              value={values.ownerName}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Owner Name"
-            />
-            <div className="input__error-container">
-              {errors.ownerName && touched.ownerName ? (
-                <p className="input__error">{errors.ownerName}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="signature">Signature :</label>
-            <input
-              type="file"
-              name="signature"
-              id="signature"
-              value={values.signature}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            <div className="input__error-container">
-              {errors.signature && touched.signature ? (
-                <p className="input__error">{errors.signature}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="position">Position :</label>
-            <input
-              type="text"
-              name="position"
-              id="position"
-              value={values.position}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Position"
-            />
-            <div className="input__error-container">
-              {errors.position && touched.position ? (
-                <p className="input__error">{errors.position}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="standard">Position :</label>
-            <div
-              className="custom-select"
-              id="standard"
-              style={{ width: "200px" }}
-            >
-              <select>
-                <option value="0">Select car:</option>
-                <option value="1">Audi</option>
-                <option value="2">BMW</option>
-                <option value="3">Citroen</option>
-                <option value="4">Ford</option>
-                <option value="5">Honda</option>
-                <option value="6">Jaguar</option>
-                <option value="7">Land Rover</option>
-                <option value="8">Mercedes</option>
-                <option value="9">Mini</option>
-                <option value="10">Nissan</option>
-                <option value="11">Toyota</option>
-                <option value="12">Volvo</option>
-              </select>
-            </div>
-            <div className="input__error-container">
-              {errors.position && touched.position ? (
-                <p className="input__error">{errors.position}</p>
-              ) : null}
-            </div>
-          </div>
-
-          <div className="input__container">
-            <label htmlFor="phoneNumber">Phone Number :</label>
-            <input
-              type="tel"
-              id="phoneNumber"
-              name="phoneNumber"
-              value={values.phoneNumber}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Phone Number"
-            />
-            <div className="input__error-container">
-              {errors.phoneNumber && touched.phoneNumber ? (
-                <p className="input__error">{errors.phoneNumber}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="email">Email Address :</label>
-            <input
-              type="text"
-              name="email"
-              id="email"
-              value={values.email}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Email Address"
-            />
-            <div className="input__error-container">
-              {errors.email && touched.email ? (
-                <p className="input__error">{errors.email}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="website">Website URL :</label>
-            <input
-              type="text"
-              name="website"
-              id="website"
-              value={values.website}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Website URL"
-            />
-            <div className="input__error-container">
-              {errors.website && touched.website ? (
-                <p className="input__error">{errors.website}</p>
-              ) : null}
-            </div>
-          </div>
-
-          <div className="input__container">
-            <label htmlFor="state">State :</label>
-            <input
-              type="text"
-              name="state"
-              id="state"
-              value={values.state}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter State"
-            />
-            <div className="input__error-container">
-              {errors.state && touched.state ? (
-                <p className="input__error">{errors.state}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="country">Country :</label>
-            <input
-              type="text"
-              name="country"
-              id="country"
-              value={values.country}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Country"
-            />
-            <div className="input__error-container">
-              {errors.country && touched.country ? (
-                <p className="input__error">{errors.country}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="industryType">Type of Industry :</label>
-            <input
-              type="text"
-              name="industryType"
-              id="industryType"
-              value={values.industryType}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Type of Industry"
-            />
-            <div className="input__error-container">
-              {errors.industryType && touched.industryType ? (
-                <p className="input__error">{errors.industryType}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="education">Education :</label>
-            <input
-              type="text"
-              name="education"
-              id="education"
-              value={values.education}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Education"
-            />
-            <div className="input__error-container">
-              {errors.education && touched.education ? (
-                <p className="input__error">{errors.education}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="noOfSites">No. of Sites :</label>
-            <input
-              type="text"
-              name="noOfSites"
-              id="noOfSites"
-              value={values.noOfSites}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter No. of Sites"
-            />
-            <div className="input__error-container">
-              {errors.noOfSites && touched.noOfSites ? (
-                <p className="input__error">{errors.noOfSites}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="noOfEmployee">No. of Employee :</label>
-            <input
-              type="text"
-              name="noOfEmployee"
-              id="noOfEmployee"
-              value={values.noOfEmployee}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter No. of Employee"
-            />
-            <div className="input__error-container">
-              {errors.noOfEmployee && touched.noOfEmployee ? (
-                <p className="input__error">{errors.noOfEmployee}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="topManagement">Top Management :</label>
-            <input
-              type="text"
-              name="topManagement"
-              id="topManagement"
-              value={values.topManagement}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Top Management"
-            />
-            <div className="input__error-container">
-              {errors.topManagement && touched.topManagement ? (
-                <p className="input__error">{errors.topManagement}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="manufacturingServiceAreaEmployee">
-              Manufacturing Service Area Employee :
-            </label>
-            <input
-              type="text"
-              name="manufacturingServiceAreaEmployee"
-              id="manufacturingServiceAreaEmployee"
-              value={values.manufacturingServiceAreaEmployee}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Manufacturing Service Area Employee"
-            />
-            <div className="input__error-container">
-              {errors.manufacturingServiceAreaEmployee &&
-              touched.manufacturingServiceAreaEmployee ? (
-                <p className="input__error">
-                  {errors.manufacturingServiceAreaEmployee}
+          {!formSubmitted ? (
+            <form onSubmit={handleSubmit}>
+              <div className="input-block">
+                <label htmlFor="organization_name">Organization Name</label>
+                <div className="input-block__input">
+                  <input
+                    type="tel"
+                    id="organization_name"
+                    name="organization_name"
+                    value={values.organization_name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Organization Name"
+                  />
+                </div>
+                <p className="input-block__error">
+                  {errors.organization_name && touched.organization_name
+                    ? errors.organization_name
+                    : null}
                 </p>
-              ) : null}
-            </div>
-            {isLoading ? (
-              <button className="registration__submit" type="button" disabled>
-                Submitting...
-              </button>
-            ) : (
-              <button
-                className="registration__submit"
-                type="submit"
-                onClick={() => handleSubmit()}
-              >
-                Submit
-              </button>
-            )}
-          </div>
+              </div>
+              <div className="input-block">
+                <label htmlFor="director_name">Director Name</label>
+                <div className="input-block__input">
+                  <input
+                    type="text"
+                    id="director_name"
+                    name="director_name"
+                    value={values.director_name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Director Name"
+                  />
+                </div>
+
+                <p className="input-block__error">
+                  {errors.director_name && touched.director_name
+                    ? errors.director_name
+                    : null}
+                </p>
+              </div>
+              <div className="input-block">
+                <label htmlFor="mobile">Mobile Number</label>
+                <div className="input-block__input">
+                  <div className="country-code">+91</div>
+                  <input
+                    type="text"
+                    id="mobile"
+                    name="mobile"
+                    value={values.mobile}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="10 digit Mobile Number"
+                  />
+                </div>
+                <p className="input-block__error">
+                  {errors.mobile && touched.mobile ? errors.mobile : null}
+                </p>
+              </div>
+              <div className="input-block">
+                <label htmlFor="email">Email</label>
+                <div className="input-block__input">
+                  <input
+                    type="text"
+                    id="email"
+                    name="email"
+                    value={values.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Email"
+                  />
+                </div>
+
+                <p className="input-block__error">
+                  {errors.email && touched.email ? errors.email : null}
+                </p>
+              </div>
+
+              <div className="input-block">
+                <label htmlFor="password">Password</label>
+                <div className="input-block__input">
+                  <input
+                    type={passwordHidden ? "password" : "text"}
+                    id="password"
+                    name="password"
+                    value={values.password}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Password"
+                  />
+                  <span
+                    className="hide-password"
+                    onClick={() => setPasswordHidden(!passwordHidden)}
+                  >
+                    <img src={eyeOff} alt="eye" />
+                  </span>
+                </div>
+
+                <p className="input-block__error">
+                  {errors.password && touched.password ? errors.password : null}
+                </p>
+              </div>
+
+              <div className="input-block">
+                <label htmlFor="confirm_password">Confirm Password</label>
+                <div className="input-block__input">
+                  <input
+                    type={passwordHidden ? "password" : "text"}
+                    id="confirm_password"
+                    name="confirm_password"
+                    value={values.confirm_password}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Password"
+                  />
+                  <span
+                    className="hide-password"
+                    onClick={() => setPasswordHidden(!passwordHidden)}
+                  >
+                    <img src={eyeOff} alt="eye" />
+                  </span>
+                </div>
+
+                <p className="input-block__error">
+                  {errors.confirm_password && touched.confirm_password
+                    ? errors.confirm_password
+                    : null}
+                </p>
+              </div>
+
+              <div className="input-block input-actions">
+                <button
+                  disabled={isLoading}
+                  className="submit-btn"
+                  type="submit"
+                >
+                  {isLoading ? (
+                    <div className="flex justify-center items-center">
+                      <div className="animate-spin rounded-full h-6 w-6 border-t-4 border-b-4 border-blue-500"></div>
+                    </div>
+                  ) : (
+                    "Next"
+                  )}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <OtpForm otp={otp} setOtp={setOtp} />
+          )}
         </div>
-      </form>
-    </div>
+        <div className="banner">
+          <img className="banner__logo" src={logoLarge} alt="hero" />
+        </div>
+      </div>
+    </>
   );
 };
 
-export default ClientRegistration;
+export default Login;

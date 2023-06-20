@@ -9,6 +9,7 @@
 .wrapper {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  
   @media screen and (max-width: 700px) {
     display: block;
   }
@@ -33,18 +34,6 @@
   }
 }
 
-.signup-link {
-  display: flex;
-  justify-content: end;
-  font-family: "Adamina";
-
-  & p {
-    color: #bdbdbd;
-    margin: 0;
-    margin-right: 5px;
-  }
-}
-
 .login {
   &__container {
     padding: 0rem 15%;
@@ -66,7 +55,7 @@
 
   &__logo {
     width: 250px;
-    margin-bottom: 1rem;
+    min-height: 80px;
   }
 
   &__head {
@@ -102,7 +91,7 @@
 }
 
 .input-block {
-  margin: 1rem 0rem;
+  margin: .5rem 0rem;
 
   & select {
     display: block;
@@ -134,7 +123,7 @@
     border: none;
     outline: none;
     flex: 1;
-    font-family: "open sans";
+    font-family: "Rubik";
   }
   &--grid {
     display: grid;
@@ -179,6 +168,7 @@
     font-size: 12px;
     font-weight: 600;
     color: red;
+    height: .5rem;
     margin-top: 2px;
   }
 }
@@ -204,6 +194,7 @@
   border: none;
   width: 100%;
   padding: 10px 28px;
+  margin-top: .5rem;
   border-radius: 6px;
   &:hover {
     background: #166349;
@@ -224,32 +215,8 @@
   }
 }
 
-.other-login-options {
-  text-align: center;
-  margin-top: 2rem;
-
-  & p {
-    font-weight: 600;
-    color: #747980;
-  }
-
-  &__list {
-    padding-left: 0;
-    list-style-type: none;
-    display: flex;
-    justify-content: space-around;
-    max-width: 20rem;
-    margin: auto;
-  }
-
-  &__item {
-    padding: 16px 18px;
-    border: 1px solid #ebe9f1;
-    border-radius: 6px;
-    margin: 0rem;
-    margin-top: 1rem;
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.03);
-    }
-  }
+.country-code{
+  font-size: 14px;
+  line-height:1.6rem;
 }
+

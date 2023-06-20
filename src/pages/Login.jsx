@@ -3,8 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import "./styles/login.scss";
 import { loginSchema } from "../validation/formSchema";
-import lock from "../assets/icons/lock.svg";
-import mail from "../assets/icons/mail.svg";
 import eyeOff from "../assets/icons/eye-off.svg";
 import logoLarge from "../assets/images/logo-large.png";
 import logoColoured from "../assets/images/logo-coloured.png";
@@ -32,43 +30,15 @@ const Login = () => {
     }
     setOpen(false);
   };
-  const {
-    values,
-    errors,
-    touched,
-    handleBlur,
-    handleChange,
-    handleSubmit,
-  } = useFormik({
-    initialValues,
-    validationSchema: loginSchema,
-    onSubmit: async (values) => {
-      setIsLoading(true);
-      try {
-        const res = await login(values);
-        if (res?.data?.status === 200) {
-          setOpenMsg(res?.data?.message);
-          setOpen(true);
-          navigate("/Admin");
-          setIsLoading(false);
-        }
-        if (res?.response?.data?.status === 400) {
-          setOpenMsg(res?.response?.data?.message);
-          setOpen(true);
-          setIsLoading(false);
-        }
-        if (res?.response?.data?.status === 404) {
-          setOpenMsg(res?.response?.data?.message);
-          setOpen(true);
-          setIsLoading(false);
-        }
-      } catch (error) {
-        setOpenMsg(error?.message);
-        setOpen(true);
-        setIsLoading(false);
-      }
-    },
-  });
+  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
+    useFormik({
+      initialValues,
+      validationSchema: loginSchema,
+      onSubmit: async (values) => {
+        console.log(values);
+        navigate("/dashboard");
+      },
+    });
 
   // useEffect(() => {
   //   setIsLoading(false);
@@ -103,9 +73,6 @@ const Login = () => {
             <div className="input-block">
               <label htmlFor="email">Email</label>
               <div className="input-block__input">
-                <span>
-                  <img src={mail} alt="mail" />
-                </span>
                 <input
                   type="text"
                   id="email"
@@ -123,9 +90,6 @@ const Login = () => {
             <div className="input-block">
               <label htmlFor="password">Password</label>
               <div className="input-block__input">
-                <span>
-                  <img src={lock} alt="lock" />
-                </span>
                 <input
                   type={passwordHidden ? "password" : "text"}
                   id="password"

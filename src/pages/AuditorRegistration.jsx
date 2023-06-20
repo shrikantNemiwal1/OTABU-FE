@@ -1,172 +1,181 @@
-import React, { useContext, useState } from "react";
-import { auditorRegistrationSchema } from "../validation/formSchema";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
+import "./styles/login.scss";
+import { auditorRegistrationSchema } from "../validation/formSchema";
+import eyeOff from "../assets/icons/eye-off.svg";
+import logoLarge from "../assets/images/logo-large.png";
 import logoColoured from "../assets/images/logo-coloured.png";
-import "./styles/registration.scss";
+import OtpForm from "../components/OtpForm";
+// import Snackbar from "@mui/material/Snackbar";
+// import Alert from "@mui/material/Alert";
+import { useContext } from "react";
+//import { AuthContext } from "../context/AuthContext";
 
 const initialValues = {
   name: "",
   email: "",
-  phoneNumber: "",
-  signature: "",
-  experience: "",
-  auditCertifications: "",
+  password: "",
+  confirm_password: "",
 };
 
-const AuditorRegistration = () => {
+const Login = () => {
+  const [open, setOpen] = useState(false);
+  const [openMsg, setOpenMsg] = useState("");
+  const [passwordHidden, setPasswordHidden] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [membersData, setMembersData] = useState(null);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
 
-  const {
-    values,
-    errors,
-    touched,
-    handleBlur,
-    handleChange,
-    handleSubmit,
-    resetForm,
-  } = useFormik({
-    initialValues,
-    validationSchema: auditorRegistrationSchema,
-    onSubmit: async (values) => {
-      console.log(values);
-      setIsLoading(true);
-      //POST REQUEST
-      //   try {
-      //     const res = await submitEventData(values);
-      //     resetForm();
-      //     setIsLoading(false);
-      //   } catch (error) {
-      //     setIsLoading(false);
-      //   }
-    },
-  });
+  const navigate = useNavigate();
+  //const { state, login } = useContext(AuthContext);
+
+  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
+    useFormik({
+      initialValues,
+      validationSchema: auditorRegistrationSchema,
+      onSubmit: async (values) => {
+        console.log(values);
+        setFormSubmitted(true);
+      },
+    });
 
   return (
-    <div className="registration">
-      <div className="registration__head">
-        <img src={logoColoured} alt="" />
-      </div>
-      <form onSubmit={handleSubmit}>
-        <div className="registration__form">
-          <div className="input__container">
-            <label htmlFor="name">Name :</label>
-            <input
-              type="text"
-              name="name"
-              id="name"
-              placeholder="Enter Name"
-              value={values.name}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            <div className="input__error-container">
-              {errors.name && touched.name ? (
-                <p className="input__error">{errors.name}</p>
-              ) : null}
-            </div>
+    <>
+      {/* <Snackbar open={open} autoHideDuration={3000} onClose={handleCloseAlert}>
+        <Alert
+          variant="filled"
+          onClose={() => setOpen(false)}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          {openMsg && openMsg}
+        </Alert>
+      </Snackbar> */}
+      <div className="wrapper">
+        <div className="login__container">
+          <img className="login__logo" src={logoColoured} alt="" />
+          <div className="login__head">
+            <h2>Welcome to Otabu Certification</h2>
+            <h2>Otabu Certification Pvt.Ltd.</h2>
           </div>
-          <div className="input__container">
-            <label htmlFor="email">Email Address :</label>
-            <input
-              type="text"
-              name="email"
-              id="email"
-              value={values.email}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Email Address"
-            />
-            <div className="input__error-container">
-              {errors.email && touched.email ? (
-                <p className="input__error">{errors.email}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="phoneNumber">Phone Number :</label>
-            <input
-              type="tel"
-              id="phoneNumber"
-              name="phoneNumber"
-              value={values.phoneNumber}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Phone Number"
-            />
-            <div className="input__error-container">
-              {errors.phoneNumber && touched.phoneNumber ? (
-                <p className="input__error"> {errors.phoneNumber}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="signature">Signature :</label>
-            <input
-              type="file"
-              name="signature"
-              id="signature"
-              value={values.signature}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            <div className="input__error-container">
-              {errors.signature && touched.signature ? (
-                <p className="input__error">{errors.signature}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="experience">Experience :</label>
-            <input
-              type="text"
-              name="experience"
-              id="experience"
-              value={values.experience}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Experience"
-            />
-            <div className="input__error-container">
-              {errors.experience && touched.experience ? (
-                <p className="input__error">{errors.experience}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="input__container">
-            <label htmlFor="auditCertifications">Audit Certifications :</label>
-            <input
-              type="text"
-              name="auditCertifications"
-              id="auditCertifications"
-              value={values.auditCertifications}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter Audit Certifications"
-            />
-            <div className="input__error-container">
-              {errors.auditCertifications && touched.auditCertifications ? (
-                <p className="input__error">{errors.auditCertifications}</p>
-              ) : null}
-            </div>
-            {isLoading ? (
-              <button className="registration__submit" type="button" disabled>
-                Submitting...
-              </button>
-            ) : (
-              <button
-                className="registration__submit"
-                type="submit"
-                onClick={() => handleSubmit()}
-              >
-                Submit
-              </button>
-            )}
-          </div>
+          {!formSubmitted ? (
+            <form onSubmit={handleSubmit}>
+              <div className="input-block">
+                <label htmlFor="name">Name</label>
+                <div className="input-block__input">
+                  <input
+                    type="tel"
+                    id="name"
+                    name="name"
+                    value={values.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Name"
+                  />
+                </div>
+                <p className="input-block__error">
+                  {errors.name && touched.name ? errors.name : null}
+                </p>
+              </div>
+
+              <div className="input-block">
+                <label htmlFor="email">Email</label>
+                <div className="input-block__input">
+                  <input
+                    type="text"
+                    id="email"
+                    name="email"
+                    value={values.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Email"
+                  />
+                </div>
+
+                <p className="input-block__error">
+                  {errors.email && touched.email ? errors.email : null}
+                </p>
+              </div>
+
+              <div className="input-block">
+                <label htmlFor="password">Password</label>
+                <div className="input-block__input">
+                  <input
+                    type={passwordHidden ? "password" : "text"}
+                    id="password"
+                    name="password"
+                    value={values.password}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Password"
+                  />
+                  <span
+                    className="hide-password"
+                    onClick={() => setPasswordHidden(!passwordHidden)}
+                  >
+                    <img src={eyeOff} alt="eye" />
+                  </span>
+                </div>
+
+                <p className="input-block__error">
+                  {errors.password && touched.password ? errors.password : null}
+                </p>
+              </div>
+
+              <div className="input-block">
+                <label htmlFor="confirm_password">Confirm Password</label>
+                <div className="input-block__input">
+                  <input
+                    type={passwordHidden ? "password" : "text"}
+                    id="confirm_password"
+                    name="confirm_password"
+                    value={values.confirm_password}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Password"
+                  />
+                  <span
+                    className="hide-password"
+                    onClick={() => setPasswordHidden(!passwordHidden)}
+                  >
+                    <img src={eyeOff} alt="eye" />
+                  </span>
+                </div>
+
+                <p className="input-block__error">
+                  {errors.confirm_password && touched.confirm_password
+                    ? errors.confirm_password
+                    : null}
+                </p>
+              </div>
+
+              <div className="input-block input-actions">
+                <button
+                  disabled={isLoading}
+                  className="submit-btn"
+                  type="submit"
+                >
+                  {isLoading ? (
+                    <div className="flex justify-center items-center">
+                      <div className="animate-spin rounded-full h-6 w-6 border-t-4 border-b-4 border-blue-500"></div>
+                    </div>
+                  ) : (
+                    "Next"
+                  )}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <OtpForm otp={otp} setOtp={setOtp} />
+          )}
         </div>
-      </form>
-    </div>
+        <div className="banner">
+          <img className="banner__logo" src={logoLarge} alt="hero" />
+        </div>
+      </div>
+    </>
   );
 };
 
-export default AuditorRegistration;
+export default Login;
