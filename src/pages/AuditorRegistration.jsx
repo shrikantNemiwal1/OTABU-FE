@@ -40,6 +40,12 @@ const Login = () => {
       },
     });
 
+  const handleOtpSubmit = (event) => {
+    event.preventDefault();
+    console.log(otp.join(""));
+    navigate("/login");
+  };
+
   return (
     <>
       {/* <Snackbar open={open} autoHideDuration={3000} onClose={handleCloseAlert}>
@@ -167,7 +173,7 @@ const Login = () => {
               </div>
             </form>
           ) : (
-            <OtpForm otp={otp} setOtp={setOtp} />
+            <OtpForm otp={otp} setOtp={setOtp} handleSubmit={handleOtpSubmit} />
           )}
         </div>
         <div className="banner">

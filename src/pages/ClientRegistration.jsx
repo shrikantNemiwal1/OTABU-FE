@@ -17,7 +17,7 @@ import OtpForm from "../components/OtpForm";
 const initialValues = {
   organization_name: "",
   director_name: "",
-  mobile: null,
+  mobile: "",
   email: "",
   password: "",
   confirm_password: "",
@@ -48,6 +48,12 @@ const Login = () => {
       },
     });
 
+  const handleOtpSubmit = (event) => {
+    event.preventDefault();
+    console.log(otp.join(""));
+    navigate("/login");
+  };
+
   return (
     <>
       {/* <Snackbar open={open} autoHideDuration={3000} onClose={handleCloseAlert}>
@@ -73,7 +79,7 @@ const Login = () => {
                 <label htmlFor="organization_name">Organization Name</label>
                 <div className="input-block__input">
                   <input
-                    type="tel"
+                    type="text"
                     id="organization_name"
                     name="organization_name"
                     value={values.organization_name}
@@ -113,7 +119,7 @@ const Login = () => {
                 <div className="input-block__input">
                   <div className="country-code">+91</div>
                   <input
-                    type="text"
+                    type="tel"
                     id="mobile"
                     name="mobile"
                     value={values.mobile}
@@ -214,7 +220,7 @@ const Login = () => {
               </div>
             </form>
           ) : (
-            <OtpForm otp={otp} setOtp={setOtp} />
+            <OtpForm otp={otp} setOtp={setOtp} handleSubmit={handleOtpSubmit} />
           )}
         </div>
         <div className="banner">

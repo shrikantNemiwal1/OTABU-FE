@@ -35,7 +35,10 @@ export const auditorRegistrationSchema = Yup.object({
 
 export const clientRegistrationSchema = Yup.object({
   email: Yup.string().email().required("Please enter your email"),
-  mobile: Yup.number("Only numbers allowed").min(1000000000,"Please enter a valid 10 digit number").max(9999999999,"Please enter a valid 10 digit number").required("Please enter your mobile number"),
+  mobile: Yup.string().matches(/^[0-9]\d{9}$/, {
+    message: 'Please enter a valid 10 digit number.',
+    excludeEmptyString: false,
+  }).required("Please enter your mobile number"),
   organization_name: Yup.string().required("Please enter your organization name"),
   director_name: Yup.string().required("Please enter director name"),
   password: Yup.string()

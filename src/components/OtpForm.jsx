@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const OtpForm = ({ otp, setOtp }) => {
+const OtpForm = ({ otp, setOtp, handleSubmit }) => {
   const handleChange = (value, event) => {
     let otpCopy = otp;
     otpCopy[value - 1] = event.target.value;
@@ -21,13 +21,6 @@ const OtpForm = ({ otp, setOtp }) => {
     }
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(otp.join(""));
-    //const body = { email: email.email, otp: otp.join(''), isForgotPassword: false }
-    // navigate('/login')
-  };
-
   return (
     <>
       <div className="otp-text">
@@ -38,7 +31,7 @@ const OtpForm = ({ otp, setOtp }) => {
         <div className="otpContainer">
           <input
             name="otp1"
-            type="text"
+            type="tel"
             autoComplete="off"
             className="otpInput"
             value={otp.otp1}
@@ -49,7 +42,7 @@ const OtpForm = ({ otp, setOtp }) => {
           />
           <input
             name="otp2"
-            type="text"
+            type="tel"
             autoComplete="off"
             className="otpInput"
             value={otp.otp2}
@@ -60,7 +53,7 @@ const OtpForm = ({ otp, setOtp }) => {
           />
           <input
             name="otp3"
-            type="text"
+            type="tel"
             autoComplete="off"
             className="otpInput"
             value={otp.otp3}
@@ -71,7 +64,7 @@ const OtpForm = ({ otp, setOtp }) => {
           />
           <input
             name="otp4"
-            type="text"
+            type="tel"
             autoComplete="off"
             className="otpInput"
             value={otp.otp4}
@@ -83,7 +76,7 @@ const OtpForm = ({ otp, setOtp }) => {
 
           <input
             name="otp5"
-            type="text"
+            type="tel"
             autoComplete="off"
             className="otpInput"
             value={otp.otp5}
@@ -94,7 +87,7 @@ const OtpForm = ({ otp, setOtp }) => {
           />
           <input
             name="otp6"
-            type="text"
+            type="tel"
             autoComplete="off"
             className="otpInput"
             value={otp.otp6}
