@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./styles/notfound.scss";
 
 const NotFound = () => {
   const navigate = useNavigate();
@@ -21,12 +22,12 @@ const NotFound = () => {
   }, [navigate]);
 
   return (
-    <div className="h-screen w-full flex-col flex justify-center items-center p-5">
-      <h1 className="text-7xl font-black text-green-300 py-2">404 Not Found</h1>
-      <p className="text-3xl py-2">
+    <div className="notfound">
+      <h1 className="notfound__head">404 Not Found</h1>
+      <p className="notfound__text">
         The page you're looking for does not exist.
       </p>
-      <p className="text-base py-2">
+      <p className="notfound__text">
         Redirecting to the homepage in {seconds} seconds...
       </p>
     </div>

@@ -13,12 +13,30 @@ import {
   TextField,
   Tooltip,
   Typography,
+  Modal,
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import { data, states } from "./makeData";
+import addIcon from "../assets/icons/add-sign.svg";
+import AddAuditorForm from "./AddAuditorForm";
 
-const Example = () => {
-  const [createModalOpen, setCreateModalOpen] = useState(false);
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "calc(50vw + 4rem)",
+  minWidth: "400px",
+  bgcolor: "background.paper",
+  border: "none",
+  borderRadius: "1rem",
+  boxShadow: 24,
+  outline: "none",
+  p: 4,
+};
+
+const Table = () => {
+  const [modalOpen, setModalOpen] = useState(false);
   const [tableData, setTableData] = useState(() => data);
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -185,88 +203,37 @@ const Example = () => {
           )}
           renderTopToolbarCustomActions={() => (
             <>
-              <Typography variant="h4">
+              <h2 className="table-title">
                 Table Title
-                <Button
-                  color="secondary"
-                  onClick={() => setCreateModalOpen(true)}
-                  variant="contained"
-                >
-                  Create New Account
-                </Button>
-              </Typography>
+                <button className="add-btn" onClick={() => setModalOpen(true)}>
+                  <img src={addIcon} alt="plus" />
+                  Add Auditor
+                </button>
+              </h2>
             </>
           )}
         />
-        <CreateNewAccountModal
-          columns={columns}
-          open={createModalOpen}
-          onClose={() => setCreateModalOpen(false)}
-          onSubmit={handleCreateNewRow}
-        />
+        <Modal
+          open={modalOpen}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <div className="modal">
+              <button
+                className="modal__close-btn"
+                onClick={() => setModalOpen(false)}
+              >
+                &#9587;
+              </button>
+              <div className="modal__title">Title</div>
+              <AddAuditorForm />
+            </div>
+          </Box>
+        </Modal>
       </div>
     </>
   );
 };
 
-//example of creating a mui dialog modal for creating new rows
-export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
-  const [values, setValues] = useState(() =>
-    columns.reduce((acc, column) => {
-      acc[column.accessorKey ?? ""] = "";
-      return acc;
-    }, {})
-  );
-
-  const handleSubmit = () => {
-    //put your validation logic here
-    onSubmit(values);
-    onClose();
-  };
-
-  return (
-    <Dialog open={open}>
-      <DialogTitle textAlign="center">Create New Account</DialogTitle>
-      <DialogContent>
-        <form onSubmit={(e) => e.preventDefault()}>
-          <Stack
-            sx={{
-              width: "100%",
-              minWidth: { xs: "300px", sm: "360px", md: "400px" },
-              gap: "1.5rem",
-            }}
-          >
-            {columns.map((column) => (
-              <TextField
-                key={column.accessorKey}
-                label={column.header}
-                name={column.accessorKey}
-                onChange={(e) =>
-                  setValues({ ...values, [e.target.name]: e.target.value })
-                }
-              />
-            ))}
-          </Stack>
-        </form>
-      </DialogContent>
-      <DialogActions sx={{ p: "1.25rem" }}>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button color="secondary" onClick={handleSubmit} variant="contained">
-          Create New Account
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
-
-const validateRequired = (value) => !!value.length;
-const validateEmail = (email) =>
-  !!email.length &&
-  email
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
-const validateAge = (age) => age >= 18 && age <= 50;
-
-export default Example;
+export default Table;

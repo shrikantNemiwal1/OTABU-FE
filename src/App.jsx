@@ -14,17 +14,24 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route exact path="/" element={<Login />} />
-          <Route exact path="/login" element={<Login />} />
-          <Route exact path="/signup" element={<SignUp />} />
-          <Route exact path="/signup/client" element={<ClientRegistration />} />
+          <Route exact path="login" element={<Login />} />
+          <Route exact path="signup" element={<SignUp />} />
+          <Route exact path="signup/client" element={<ClientRegistration />} />
           <Route
             exact
-            path="/signup/auditor"
+            path="signup/auditor"
             element={<AuditorRegistration />}
           />
-          {/* <Route exact path="/forgot-password" element={<ForgotPassword />} /> */}
-          <Route exact path="/dashboard" element={<Dashboard />} />
-          <Route exact path="/clients" element={<Clients />} />
+          <Route exact path="dashboard" element={<Dashboard />}>
+            <Route path="active-admins" element={<p>active admins</p>} />
+            <Route path="active-auditors" element={<p>active auditors</p>} />
+            <Route path="active-clients" element={<p>active clients</p>} />
+            <Route
+              path="completed-clients"
+              element={<p>completed clients</p>}
+            />
+          </Route>
+          <Route exact path="clients/:id" element={<Clients />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -1,9 +1,11 @@
 import React from "react";
+import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import SubNavbar from "../components/SubNavbar";
+import DashboardNav from "./../components/DashboardNav";
 import Table from "../components/Table";
-import "./styles/clients.scss";
+import "./styles/dashboard.scss";
 
 const Dashboard = () => {
   return (
@@ -12,6 +14,8 @@ const Dashboard = () => {
       <main>
         <Navbar />
         <SubNavbar />
+        <DashboardNav />
+        <Outlet />
       </main>
     </div>
   );

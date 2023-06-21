@@ -29,12 +29,15 @@
     width: 100%;
     padding: 1rem 0.7rem;
     border-radius: 0.8rem;
-    background: linear-gradient(
-      269.74deg,
-      rgba(255, 255, 255, 0.21) -254.09%,
-      rgba(255, 255, 255, 0) 99.84%
-    );
     text-decoration: none;
+
+    &--active{
+      background: linear-gradient(
+        269.74deg,
+        rgba(255, 255, 255, 0.21) -254.09%,
+        rgba(255, 255, 255, 0) 99.84%
+      );
+    }
 
     & div {
       font-size: 0.8rem;
