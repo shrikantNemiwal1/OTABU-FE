@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import ClientRegistration from "./pages/ClientRegistration.jsx";
@@ -13,9 +13,20 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route exact path="/" element={<Login />} />
-          <Route exact path="login" element={<Login />} />
-          <Route exact path="signup" element={<SignUp />} />
+          <Route
+            path="/"
+            element={<Navigate to="login/client" replace={true} />}
+          />
+          <Route
+            path="/login"
+            element={<Navigate to="/login/client" replace={true} />}
+          />
+          <Route exact path="login/client" element={<Login />} />
+          <Route exact path="login/auditor" element={<Login />} />
+          <Route
+            path="/signup"
+            element={<Navigate to="/signup/client" replace={true} />}
+          />
           <Route exact path="signup/client" element={<ClientRegistration />} />
           <Route
             exact

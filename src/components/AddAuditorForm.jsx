@@ -3,6 +3,7 @@ import { auditorRegistrationSchema } from "../validation/formSchema";
 import { useFormik } from "formik";
 import logoColoured from "../assets/images/logo-coloured.png";
 import "../pages/styles/registration.scss";
+import chevron from "../assets/icons/chevron.svg";
 
 const initialValues = {
   name: "",
@@ -130,6 +131,33 @@ const AddAuditorForm = () => {
               ) : null}
             </div>
           </div> */}
+          <div className="input__container">
+            <label htmlFor="standard">Position :</label>
+            <div
+              className="select-container"
+              id="standard"
+              style={{ width: "200px" }}
+            >
+              <select className="select-box">
+                <option value="" hidden>
+                  Select car:
+                </option>
+                <option value="1">Audi</option>
+                <option value="2">BMW</option>
+                <option value="3">Citroen</option>
+                <option value="4">Ford</option>
+                <option value="5">Honda</option>
+              </select>
+              <div className="select-arrow">
+                <img src={chevron} alt="chevron" />
+              </div>
+            </div>
+            <div className="input__error-container">
+              {errors.position && touched.position ? (
+                <p className="input__error">{errors.position}</p>
+              ) : null}
+            </div>
+          </div>
           <div className="input__container">
             <label htmlFor="auditCertifications">Audit Certifications :</label>
             <input

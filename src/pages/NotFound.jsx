@@ -8,7 +8,7 @@ const NotFound = () => {
 
   useEffect(() => {
     const redirectTimer = setTimeout(() => {
-      navigate("/login");
+      navigate("/");
     }, 3000); // 5 seconds
 
     const countdownTimer = setInterval(() => {

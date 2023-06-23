@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useFormik } from "formik";
 import "./styles/login.scss";
 import { loginSchema } from "../validation/formSchema";
@@ -22,6 +22,7 @@ const Login = () => {
   const [openMsg, setOpenMsg] = useState("");
   const [passwordHidden, setPasswordHidden] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   //const { state, login } = useContext(AuthContext);
   const handleCloseAlert = (event, reason) => {
@@ -143,7 +144,14 @@ const Login = () => {
                   "Login"
                 )}
               </button>
-              <Link className="submit-btn signup-link" to="/signup">
+              <Link
+                className="submit-btn signup-link"
+                to={
+                  pathname === "/login/client"
+                    ? "/signup/client"
+                    : "/signup/auditor"
+                }
+              >
                 Sign Up
               </Link>
             </div>
