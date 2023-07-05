@@ -27,7 +27,7 @@ const Login = () => {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [passwordHidden, setPasswordHidden] = useState(true);
-  const [formSubmitted, setFormSubmitted] = useState(true);
+  const [formSubmitted, setFormSubmitted] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
