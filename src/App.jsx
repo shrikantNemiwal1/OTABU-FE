@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
-import SignUp from "./pages/SignUp";
+import ForgotPassword from "./pages/ForgotPassword";
 import ClientRegistration from "./pages/ClientRegistration.jsx";
 import AuditorRegistration from "./pages/AuditorRegistration.jsx";
 import Dashboard from "./pages/Dashboard";
@@ -33,6 +33,7 @@ function App() {
             path="signup/auditor"
             element={<AuditorRegistration />}
           />
+          <Route exact path="forgot-password" element={<ForgotPassword />} />
           <Route exact path="dashboard" element={<Dashboard />}>
             <Route path="active-admins" element={<p>active admins</p>} />
             <Route path="active-auditors" element={<p>active auditors</p>} />

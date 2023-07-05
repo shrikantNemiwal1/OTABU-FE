@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useFormik } from "formik";
+import axios from "axios";
+import { Snackbar, Alert } from "@mui/material";
 import "./styles/login.scss";
 import { loginSchema } from "../validation/formSchema";
 import eyeOff from "../assets/icons/eye-off.svg";
+import loading from "../assets/icons/loading.svg";
 import logoLarge from "../assets/images/logo-large.png";
 import logoColoured from "../assets/images/logo-coloured.png";
-// import Snackbar from "@mui/material/Snackbar";
-// import Alert from "@mui/material/Alert";
-import { useContext } from "react";
-//import { AuthContext } from "../context/AuthContext";
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
+import { AuthContext } from "../context/AuthContext";
 
 const initialValues = {
   email: "",
@@ -19,49 +20,73 @@ const initialValues = {
 
 const Login = () => {
   const [open, setOpen] = useState(false);
-  const [openMsg, setOpenMsg] = useState("");
   const [passwordHidden, setPasswordHidden] = useState(true);
+  const [errMsg, setErrMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  //const { state, login } = useContext(AuthContext);
-  const handleCloseAlert = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
-  };
+  const { state, login } = useContext(AuthContext);
+
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik({
       initialValues,
       validationSchema: loginSchema,
       onSubmit: async (values) => {
         console.log(values);
-        navigate("/dashboard");
+        try {
+          setIsLoading(true);
+          const res = await login(values);
+          console.log(res);
+          if (res?.status === 200) {
+            navigate("/dashboard");
+          }
+          if (res?.response?.status === 400) {
+            setErrMsg(res?.response?.data?.msg);
+            setOpen(true);
+          }
+          if (res?.response?.status === 404) {
+            setErrMsg(res?.response?.data?.msg);
+            setOpen(true);
+          }
+        } catch (error) {
+          console.log("error", error?.response?.data?.msg);
+          setErrMsg(error);
+          setOpen(true);
+        }
+        setIsLoading(false);
+        // axios
+        //   .post(BASE_URL + "/api/user/login", {
+        //     email: values.email,
+        //     password: values.password,
+        //   })
+        //   .then((response) => {
+        //     console.log(response);
+        //     navigate("/dashboard");
+        //   })
+        //   .catch((error) => {
+        //     setOpen(true);
+        //     console.log(error);
+        //   });
       },
     });
 
-  // useEffect(() => {
-  //   setIsLoading(false);
-  //   if (state?.isAuthenticated === false) {
-  //     return navigate("/login");
-  //   }
-  //   if (state?.isAuthenticated === true) {
-  //     return navigate("/Admin");
-  //   }
-  // }, [state]);
+  const handleCloseAlert = (event, reason) => {
+    if (reason === "clickaway") return;
+    setOpen(false);
+  };
+
   return (
     <>
-      {/* <Snackbar open={open} autoHideDuration={3000} onClose={handleCloseAlert}>
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleCloseAlert}>
         <Alert
           variant="filled"
           onClose={() => setOpen(false)}
-          severity="success"
+          severity="error"
           sx={{ width: "100%" }}
         >
-          {openMsg && openMsg}
+          {errMsg}
         </Alert>
-      </Snackbar> */}
+      </Snackbar>
       <div className="wrapper">
         <div className="login__container">
           <img className="login__logo" src={logoColoured} alt="" />
@@ -124,25 +149,13 @@ const Login = () => {
                   Remember Me
                 </label>
               </div>
-              <Link className="forgot-password" to="/forgot-password/1">
+              <Link className="forgot-password" to="/forgot-password">
                 Forgot Password?
               </Link>
             </div>
-            <div className="w-full flex justify-center items-center">
-              <span className="text-xl text-red-500  mx-auto text-center px-2 py-1">
-                {" "}
-                {openMsg && openMsg}
-              </span>
-            </div>
             <div className="input-block input-actions">
               <button disabled={isLoading} className="submit-btn" type="submit">
-                {isLoading ? (
-                  <div className="flex justify-center items-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-t-4 border-b-4 border-blue-500"></div>
-                  </div>
-                ) : (
-                  "Login"
-                )}
+                {isLoading ? "Logging..." : "Login"}
               </button>
               <Link
                 className="submit-btn signup-link"

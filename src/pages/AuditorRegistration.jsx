@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
+import axios from "axios";
 import "./styles/login.scss";
 import { auditorRegistrationSchema } from "../validation/formSchema";
 import eyeOff from "../assets/icons/eye-off.svg";
 import logoLarge from "../assets/images/logo-large.png";
 import logoColoured from "../assets/images/logo-coloured.png";
 import OtpForm from "../components/OtpForm";
-// import Snackbar from "@mui/material/Snackbar";
-// import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 import { useContext } from "react";
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 //import { AuthContext } from "../context/AuthContext";
 
 const initialValues = {
@@ -21,12 +23,11 @@ const initialValues = {
 
 const Login = () => {
   const [open, setOpen] = useState(false);
-  const [openMsg, setOpenMsg] = useState("");
+  const [email, setEmail] = useState("");
   const [passwordHidden, setPasswordHidden] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-
   const navigate = useNavigate();
   //const { state, login } = useContext(AuthContext);
 
@@ -36,28 +37,64 @@ const Login = () => {
       validationSchema: auditorRegistrationSchema,
       onSubmit: async (values) => {
         console.log(values);
-        setFormSubmitted(true);
+        axios
+          .post(BASE_URL + "/api/user/register/auditor", values)
+          .then((response) => {
+            console.log(response);
+            setFormSubmitted(true);
+            setEmail(values.email);
+          })
+          .catch((error) => {
+            setOpen(true);
+            if (
+              error?.response?.data?.msg ===
+              "Email Registered. Verification Pending"
+            ) {
+              setEmail(values.email);
+              setFormSubmitted(true);
+            }
+            console.log(error?.response?.data?.msg);
+          });
       },
     });
 
   const handleOtpSubmit = (event) => {
     event.preventDefault();
-    console.log(otp.join(""));
-    navigate("/login");
+    console.log(Number(otp.join("")));
+    axios
+      .post(BASE_URL + "/api/user/verify_otp_registration", {
+        email: email,
+        otp: Number(otp.join("")),
+      })
+      .then((response) => {
+        console.log(response);
+        navigate("/login/auditor");
+      })
+      .catch((error) => {
+        setOpen(true);
+        console.log(error?.response?.data?.msg);
+      });
+  };
+
+  const handleCloseAlert = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
   };
 
   return (
     <>
-      {/* <Snackbar open={open} autoHideDuration={3000} onClose={handleCloseAlert}>
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleCloseAlert}>
         <Alert
           variant="filled"
           onClose={() => setOpen(false)}
-          severity="success"
+          severity="error"
           sx={{ width: "100%" }}
         >
-          {openMsg && openMsg}
+          Error
         </Alert>
-      </Snackbar> */}
+      </Snackbar>
       <div className="wrapper">
         <div className="login__container">
           <img className="login__logo" src={logoColoured} alt="" />

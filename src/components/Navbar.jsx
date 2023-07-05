@@ -1,12 +1,35 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useContext } from "react";
+import axios from "axios";
+import { NavLink, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 import search from "../assets/icons/search.svg";
 import bell from "../assets/icons/bell.svg";
 import setting from "../assets/icons/setting.svg";
 import logout from "../assets/icons/logout.svg";
 import "./styles/navbar.scss";
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 const Navbar = () => {
+  const { state } = useContext(AuthContext);
+  const navigate = useNavigate();
+  console.log(state);
+  const handleLogout = () => {
+    console.log("logout");
+    axios
+      .post(BASE_URL + "/api/user/logout", {
+        refresh_token: state.refreshToken,
+      })
+      .then((response) => {
+        console.log(response);
+        state.role === "Client"
+          ? navigate("/login/client")
+          : navigate("/login/auditor");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar__items-left">
@@ -37,9 +60,9 @@ const Navbar = () => {
             </NavLink>
           </li>
           <li>
-            <NavLink>
+            <button onClick={handleLogout} className="logout-btn">
               <img src={logout} alt="logout" />
-            </NavLink>
+            </button>
           </li>
         </ul>
       </div>
