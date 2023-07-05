@@ -12,7 +12,7 @@ const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 const Navbar = () => {
   const { state } = useContext(AuthContext);
   const navigate = useNavigate();
-  console.log(state);
+  console.log(state.token);
   const handleLogout = () => {
     console.log("logout");
     axios

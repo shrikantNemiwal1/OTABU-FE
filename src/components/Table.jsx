@@ -19,6 +19,7 @@ import { Delete, Edit } from "@mui/icons-material";
 import { data, states } from "./makeData";
 import addIcon from "../assets/icons/add-sign.svg";
 import AddAuditorForm from "./AddAuditorForm";
+import "./styles/table.scss";
 
 const style = {
   position: "absolute",
@@ -35,7 +36,7 @@ const style = {
   p: 4,
 };
 
-const Table = () => {
+const Table = ({ columns, height, title }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [tableData, setTableData] = useState(() => data);
   const [validationErrors, setValidationErrors] = useState({});
@@ -103,65 +104,6 @@ const Table = () => {
     [validationErrors]
   );
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: "id",
-        header: "ID",
-        enableColumnOrdering: false,
-        enableEditing: false, //disable editing on this column
-        enableSorting: false,
-        size: 80,
-      },
-      // {
-      //   accessorKey: "firstName",
-      //   header: "First Name",
-      //   size: 50,
-      //   muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-      //     ...getCommonEditTextFieldProps(cell),
-      //   }),
-      // },
-      // {
-      //   accessorKey: "lastName",
-      //   header: "Last Name",
-      //   size: 50,
-      //   muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-      //     ...getCommonEditTextFieldProps(cell),
-      //   }),
-      // },
-      {
-        accessorKey: "email",
-        header: "Email",
-        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-          ...getCommonEditTextFieldProps(cell),
-          type: "email",
-        }),
-      },
-      {
-        accessorKey: "age",
-        header: "Age",
-        size: 80,
-        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-          ...getCommonEditTextFieldProps(cell),
-          type: "number",
-        }),
-      },
-      {
-        accessorKey: "state",
-        header: "State",
-        muiTableBodyCellEditTextFieldProps: {
-          select: true, //change to select for a dropdown
-          children: states.map((state) => (
-            <MenuItem key={state} value={state}>
-              {state}
-            </MenuItem>
-          )),
-        },
-      },
-    ],
-    [getCommonEditTextFieldProps]
-  );
-
   return (
     <>
       <div className="table__container">
@@ -178,37 +120,46 @@ const Table = () => {
           data={tableData}
           muiTableContainerProps={{
             sx: {
-              height: "calc(100vh - 280px - 1rem)",
+              height: `calc(${height})`,
             },
           }}
-          editingMode="modal" //default
+          //editingMode="modal" //default
           enableColumnOrdering
-          enableEditing
+          //enableEditing
           enableStickyHeader
-          onEditingRowSave={handleSaveRowEdits}
-          onEditingRowCancel={handleCancelRowEdits}
+          // onEditingRowSave={handleSaveRowEdits}
+          // onEditingRowCancel={handleCancelRowEdits}
+          enableRowActions
           renderRowActions={({ row, table }) => (
-            <Box sx={{ display: "flex", gap: "1rem" }}>
-              <Tooltip arrow placement="left" title="Edit">
-                <IconButton onClick={() => table.setEditingRow(row)}>
-                  <Edit />
-                </IconButton>
-              </Tooltip>
-              <Tooltip arrow placement="right" title="Delete">
-                <IconButton color="error" onClick={() => handleDeleteRow(row)}>
-                  <Delete />
-                </IconButton>
-              </Tooltip>
-            </Box>
+            // <Box sx={{ display: "flex", gap: "1rem" }}>
+            //   <Tooltip arrow placement="left" title="Edit">
+            //     <IconButton onClick={() => table.setEditingRow(row)}>
+            //       <Edit />
+            //     </IconButton>
+            //   </Tooltip>
+            //   <Tooltip arrow placement="right" title="Delete">
+            //     <IconButton color="error" onClick={() => handleDeleteRow(row)}>
+            //       <Delete />
+            //     </IconButton>
+            //   </Tooltip>
+            // </Box>
+            <>
+              <button className="application-action application-action--accept">
+                Accept
+              </button>
+              <button className="application-action application-action--reject">
+                Reject
+              </button>
+            </>
           )}
           renderTopToolbarCustomActions={() => (
             <>
               <h2 className="table-title">
-                Table Title
-                <button className="add-btn" onClick={() => setModalOpen(true)}>
+                {title}
+                {/* <button className="add-btn" onClick={() => setModalOpen(true)}>
                   <img src={addIcon} alt="plus" />
                   Add Auditor
-                </button>
+                </button> */}
               </h2>
             </>
           )}

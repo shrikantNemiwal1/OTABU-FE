@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "./styles/notfound.scss";
+import { AuthContext } from "../context/AuthContext";
 
 const NotFound = () => {
   const navigate = useNavigate();
   const [seconds, setSeconds] = useState(3);
+  const { state } = useContext(AuthContext);
 
   useEffect(() => {
     const redirectTimer = setTimeout(() => {
-      navigate("/");
+      state.isAuthenticated ? navigate("/dashboard") : navigate("/login");
     }, 3000); // 5 seconds
 
     const countdownTimer = setInterval(() => {
