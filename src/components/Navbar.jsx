@@ -9,7 +9,7 @@ import logout from "../assets/icons/logout.svg";
 import "./styles/navbar.scss";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
-const Navbar = () => {
+const Navbar = ({ title }) => {
   const { state } = useContext(AuthContext);
   const navigate = useNavigate();
   console.log(state.token);
@@ -33,7 +33,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar__items-left">
-        <p>Dashboard</p>
+        <p>{title ? title : "Dashboard"}</p>
         <div className="navbar__search">
           <input id="search" type="text" placeholder="search" />
           <label htmlFor="search">
@@ -44,7 +44,7 @@ const Navbar = () => {
       <div className="navbar__items-right">
         <ul>
           <li>
-            <NavLink>
+            <NavLink to="/notifications">
               <img src={bell} alt="bell" />
             </NavLink>
           </li>

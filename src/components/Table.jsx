@@ -217,6 +217,9 @@ const Table = ({ columns, height, title, data, isLoading, refetchData }) => {
             <>
               <h2 className="table-title">
                 {title}
+                <button className="add-btn" onClick={refetchData}>
+                  Refresh
+                </button>
                 {/* <button className="add-btn" onClick={() => setModalOpen(true)}>
                   <img src={addIcon} alt="plus" />
                   Add Auditor

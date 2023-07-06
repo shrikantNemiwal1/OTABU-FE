@@ -11,6 +11,7 @@ import DashboardClient from "./components/DashboardClient";
 import { AuthContext } from "./context/AuthContext";
 import DashboardAdmin from "./components/DashboardAdmin";
 import DashboardAuditor from "./components/DashboardAuditor";
+import Notifications from "./pages/Notifications";
 
 function App() {
   const { state } = useContext(AuthContext);
@@ -38,6 +39,7 @@ function App() {
             path="signup/auditor"
             element={<AuditorRegistration />}
           />
+          <Route exact path="notifications" element={<Notifications />} />
           <Route exact path="forgot-password" element={<ForgotPassword />} />
           <Route exact path="dashboard" element={<Dashboard />}>
             <Route

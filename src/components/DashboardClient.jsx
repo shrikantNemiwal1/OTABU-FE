@@ -13,7 +13,7 @@ const DashboardClient = () => {
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("success");
   const { state } = useContext(AuthContext);
-  const [applicationStatus, setApplicationStatus] = useState("Loading...");
+  const [applicationStatus, setApplicationStatus] = useState("none");
 
   const requestNewCertification = async () => {
     try {
@@ -21,6 +21,14 @@ const DashboardClient = () => {
         headers: { Authorization: `Bearer ${state.token}` },
       };
       //console.log(state.token);
+      const noti = await axios.post(
+        BASE_URL + "/api/notifications/send_notification",
+        {
+          message: "New application request received",
+          receiver_email: "kaanha641@gmail.com",
+        },
+        config
+      );
       const res = await axios.get(
         BASE_URL + "/api/approvals/request_applicationform",
         config
@@ -81,7 +89,9 @@ const DashboardClient = () => {
         <img src={plus} alt="plus" />
         <p>Request New Certification</p>
       </button>
-      <div>Application Status : {applicationStatus}</div>
+      {applicationStatus === "none" ? null : (
+        <div>Application Status : {applicationStatus}</div>
+      )}
     </div>
   );
 };

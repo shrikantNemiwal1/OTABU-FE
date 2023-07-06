@@ -1,13 +1,17 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import Table from "./Table";
+import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
+import SubNavbar from "../components/SubNavbar";
+import Table from "../components/Table";
+import "./styles/clients.scss";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
-const DashboardAdmin = () => {
+const Clients = () => {
   const { state } = useContext(AuthContext);
   const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const columns = useMemo(() => [
     {
@@ -67,7 +71,7 @@ const DashboardAdmin = () => {
       };
       //console.log(state.token);
       const res = await axios.get(
-        BASE_URL + "/api/approvals/get_pending_approvals",
+        BASE_URL + "/api/notifications/get_sent_notifications",
         config
       );
       console.log(res);
@@ -83,15 +87,22 @@ const DashboardAdmin = () => {
   }, []);
 
   return (
-    <Table
-      data={data ? data : []}
-      columns={columns}
-      title={"Pending Client list"}
-      height={"100vh - 280px - 8.7rem"}
-      isLoading={isLoading}
-      refetchData={fetchTableData}
-    />
+    <div className="clients-container">
+      <Sidebar />
+      <main>
+        <Navbar title={"Notifications"} />
+        <SubNavbar />
+        <Table
+          data={data}
+          columns={columns}
+          isLoading={isLoading}
+          title={"Notifications"}
+          height={"100vh - 280px - 1rem"}
+          refetchData={fetchTableData}
+        />
+      </main>
+    </div>
   );
 };
 
-export default DashboardAdmin;
+export default Clients;
