@@ -37,7 +37,7 @@ const Clients = () => {
       };
       //console.log(state.token);
       const res = await axios.get(
-        BASE_URL + "/api/notifications/get_sent_notifications",
+        BASE_URL + "/api/notifications/get_received_notifications",
         config
       );
       console.log(res);

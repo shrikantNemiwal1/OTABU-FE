@@ -2,9 +2,13 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import Table from "./Table";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
+import { Snackbar, Alert } from "@mui/material";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 const DashboardAdmin = () => {
+  const [open, setOpen] = useState(false);
+  const [alertMsg, setAlertMsg] = useState("");
+  const [alertType, setAlertType] = useState("success");
   const { state } = useContext(AuthContext);
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -16,13 +20,17 @@ const DashboardAdmin = () => {
       enableColumnOrdering: false,
       enableEditing: false, //disable editing on this column
       enableSorting: false,
-      size: 80,
-      margin: 70,
+      size: 30,
     },
     {
-      accessorKey: "client_name",
+      accessorFn: (row) => `${row.client_details.name}`,
       header: "Client Name",
-      size: 50,
+      size: 30,
+    },
+    {
+      accessorFn: (row) => `${row.client_details.email}`,
+      header: "Client Email",
+      size: 30,
     },
     // {
     //   accessorKey: "lastName",
@@ -35,6 +43,7 @@ const DashboardAdmin = () => {
     {
       accessorKey: "acceptance_status",
       header: "Status",
+      size: 10,
     },
     // {
     //   accessorKey: "age",
@@ -95,7 +104,15 @@ const DashboardAdmin = () => {
       setAlertMsg(res?.data?.message);
       setAlertType("success");
       setOpen(true);
-      refetchData();
+      fetchTableData();
+      const noti = await axios.post(
+        BASE_URL + "/api/notifications/send_notification",
+        {
+          message: `Application ${type === "accept" ? "accepted" : "rejected"}`,
+          receiver_email: row.client_details.email,
+        },
+        config
+      );
     } catch (error) {
       console.log(error?.response?.data?.msg);
       setAlertMsg(error?.response?.data?.msg);
@@ -126,16 +143,32 @@ const DashboardAdmin = () => {
   }, []);
 
   return (
-    <Table
-      data={data ? data : []}
-      columns={columns}
-      title={"Pending Client list"}
-      height={"100vh - 280px - 8.7rem"}
-      isLoading={isLoading}
-      refetchData={fetchTableData}
-      handleAction={handleAction}
-      rowActions={rowActions}
-    />
+    <>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={() => setOpen(false)}
+      >
+        <Alert
+          variant="filled"
+          onClose={() => setOpen(false)}
+          severity={alertType}
+          sx={{ width: "100%" }}
+        >
+          {alertMsg}
+        </Alert>
+      </Snackbar>
+      <Table
+        data={data ? data : []}
+        columns={columns}
+        title={"Pending Client list"}
+        height={"100vh - 280px - 8.7rem"}
+        isLoading={isLoading}
+        refetchData={fetchTableData}
+        handleAction={handleAction}
+        rowActions={rowActions}
+      />
+    </>
   );
 };
 

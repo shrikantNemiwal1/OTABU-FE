@@ -124,20 +124,6 @@ const Table = ({
 
   return (
     <>
-      <Snackbar
-        open={open}
-        autoHideDuration={3000}
-        onClose={() => setOpen(false)}
-      >
-        <Alert
-          variant="filled"
-          onClose={() => setOpen(false)}
-          severity={alertType}
-          sx={{ width: "100%" }}
-        >
-          {alertMsg}
-        </Alert>
-      </Snackbar>
       <div className="table__container">
         <MaterialReactTable
           displayColumnDefOptions={{
