@@ -41,7 +41,16 @@ const style = {
   p: 4,
 };
 
-const Table = ({ columns, height, title, data, isLoading, refetchData }) => {
+const Table = ({
+  columns,
+  height,
+  title,
+  data,
+  isLoading,
+  refetchData,
+  rowActions,
+  handleAction,
+}) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [tableData, setTableData] = useState(() => data);
   const [validationErrors, setValidationErrors] = useState({});
@@ -113,32 +122,6 @@ const Table = ({ columns, height, title, data, isLoading, refetchData }) => {
     [validationErrors]
   );
 
-  const handleAction = async ({ type, row }) => {
-    console.log(type, row);
-    try {
-      const config = {
-        headers: { Authorization: `Bearer ${state.token}` },
-      };
-      //console.log(state.token);
-      const res = await axios.put(
-        BASE_URL +
-          `/api/approvals/update_approval_applicationform/${row.client}`,
-        { acceptance_status: type === "accept" ? "1" : "0" },
-        config
-      );
-      console.log(res);
-      setAlertMsg(res?.data?.message);
-      setAlertType("success");
-      setOpen(true);
-      refetchData();
-    } catch (error) {
-      console.log(error?.response?.data?.msg);
-      setAlertMsg(error?.response?.data?.msg);
-      setAlertType("error");
-      setOpen(true);
-    }
-  };
-
   return (
     <>
       <Snackbar
@@ -181,38 +164,43 @@ const Table = ({ columns, height, title, data, isLoading, refetchData }) => {
           // onEditingRowCancel={handleCancelRowEdits}
           enableRowActions
           positionActionsColumn="last"
-          renderRowActions={({ row, table }) => (
-            // <Box sx={{ display: "flex", gap: "1rem" }}>
-            //   <Tooltip arrow placement="left" title="Edit">
-            //     <IconButton onClick={() => table.setEditingRow(row)}>
-            //       <Edit />
-            //     </IconButton>
-            //   </Tooltip>
-            //   <Tooltip arrow placement="right" title="Delete">
-            //     <IconButton color="error" onClick={() => handleDeleteRow(row)}>
-            //       <Delete />
-            //     </IconButton>
-            //   </Tooltip>
-            // </Box>
-            <>
-              <button
-                onClick={() =>
-                  handleAction({ type: "accept", row: row.original })
-                }
-                className="application-action application-action--accept"
-              >
-                Accept
-              </button>
-              <button
-                onClick={() =>
-                  handleAction({ type: "reject", row: row.original })
-                }
-                className="application-action application-action--reject"
-              >
-                Reject
-              </button>
-            </>
-          )}
+          renderRowActions={({ row, table }) => rowActions({ row, table })}
+          // renderRowActions={({ row, table }) => (
+          //   <>
+          //     <Box sx={{ display: "flex", gap: "1rem" }}>
+          //       <Tooltip arrow placement="left" title="Edit">
+          //         <IconButton onClick={() => table.setEditingRow(row)}>
+          //           <Edit />
+          //         </IconButton>
+          //       </Tooltip>
+          //       <Tooltip arrow placement="right" title="Delete">
+          //         <IconButton
+          //           color="error"
+          //           onClick={() => handleDeleteRow(row)}
+          //         >
+          //           <Delete />
+          //         </IconButton>
+          //       </Tooltip>
+          //     </Box>
+
+          //     <button
+          //       onClick={() =>
+          //         handleAction({ type: "accept", row: row.original })
+          //       }
+          //       className="application-action application-action--accept"
+          //     >
+          //       Accept
+          //     </button>
+          //     <button
+          //       onClick={() =>
+          //         handleAction({ type: "reject", row: row.original })
+          //       }
+          //       className="application-action application-action--reject"
+          //     >
+          //       Reject
+          //     </button>
+          //   </>
+          //)}
           renderTopToolbarCustomActions={() => (
             <>
               <h2 className="table-title">

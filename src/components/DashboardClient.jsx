@@ -21,16 +21,16 @@ const DashboardClient = () => {
         headers: { Authorization: `Bearer ${state.token}` },
       };
       //console.log(state.token);
+      const res = await axios.get(
+        BASE_URL + "/api/approvals/request_applicationform",
+        config
+      );
       const noti = await axios.post(
         BASE_URL + "/api/notifications/send_notification",
         {
           message: "New application request received",
           receiver_email: "kaanha641@gmail.com",
         },
-        config
-      );
-      const res = await axios.get(
-        BASE_URL + "/api/approvals/request_applicationform",
         config
       );
       //console.log(res);

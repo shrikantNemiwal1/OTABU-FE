@@ -15,7 +15,7 @@ const Clients = () => {
 
   const columns = useMemo(() => [
     {
-      accessorKey: "client",
+      accessorKey: "id",
       header: "ID",
       enableColumnOrdering: false,
       enableEditing: false, //disable editing on this column
@@ -24,43 +24,9 @@ const Clients = () => {
       margin: 70,
     },
     {
-      accessorKey: "client_name",
-      header: "Client Name",
-      size: 50,
+      accessorKey: "message",
+      header: "Message",
     },
-    // {
-    //   accessorKey: "lastName",
-    //   header: "Last Name",
-    //   size: 50,
-    //   muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-    //     ...getCommonEditTextFieldProps(cell),
-    //   }),
-    // },
-    {
-      accessorKey: "acceptance_status",
-      header: "Status",
-    },
-    // {
-    //   accessorKey: "age",
-    //   header: "Age",
-    //   size: 80,
-    //   muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-    //     ...getCommonEditTextFieldProps(cell),
-    //     type: "number",
-    //   }),
-    // },
-    // {
-    //   accessorKey: "state",
-    //   header: "State",
-    //   muiTableBodyCellEditTextFieldProps: {
-    //     select: true, //change to select for a dropdown
-    //     children: states.map((state) => (
-    //       <MenuItem key={state} value={state}>
-    //         {state}
-    //       </MenuItem>
-    //     )),
-    //   },
-    // },
   ]);
 
   const fetchTableData = async () => {
@@ -82,6 +48,88 @@ const Clients = () => {
     setIsLoading(false);
   };
 
+  const handleAction = async ({ type, row }) => {
+    console.log(type, row);
+    if (type === "read") {
+      try {
+        const config = {
+          headers: { Authorization: `Bearer ${state.token}` },
+        };
+        //console.log(state.token);
+        const res = await axios.post(
+          BASE_URL +
+            `/api/notifications/${
+              type === "read" ? "mark_read_notification" : "delete_notification"
+            }/${row.id}`,
+          config
+        );
+        console.log(res);
+        fetchTableData();
+      } catch (error) {
+        console.log(error?.response?.data?.msg);
+      }
+    } else {
+      try {
+        const config = {
+          headers: { Authorization: `Bearer ${state.token}` },
+        };
+        //console.log(state.token);
+        const res = await axios.delete(
+          BASE_URL +
+            `/api/notifications/${
+              type === "read" ? "mark_read_notification" : "delete_notification"
+            }/${row.id}`,
+          config
+        );
+        fetchTableData();
+        console.log(res);
+      } catch (error) {
+        console.log(error?.response?.data?.msg);
+      }
+    }
+    // try {
+    //   //console.log(state.token);
+    //   const res = await axios({
+    //     method: type === "read" ? "put" : "delete",
+    //     url:
+    //       BASE_URL +
+    //       `/api/notifications/${
+    //         type === "read" ? "mark_read_notification" : "delete_notification"
+    //       }/${row.id}`,
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   });
+    //   console.log(res);
+    //   //   setAlertMsg(res?.data?.message);
+    //   //   setAlertType("success");
+    //   //   setOpen(true);
+    //   fetchTableData();
+    // } catch (error) {
+    //   console.log(error?.response?.data?.msg);
+    //   //   setAlertMsg(error?.response?.data?.msg);
+    //   //   setAlertType("error");
+    //   //   setOpen(true);
+    // }
+  };
+
+  const rowActions = ({ row, table }) => (
+    <>
+      <button
+        onClick={() => handleAction({ type: "read", row: row.original })}
+        className="application-action application-action--accept"
+      >
+        Mark as read
+      </button>
+      <button
+        onClick={() => handleAction({ type: "delete", row: row.original })}
+        className="application-action application-action--reject"
+      >
+        Delete
+      </button>
+    </>
+  );
+
   useEffect(() => {
     fetchTableData();
   }, []);
@@ -99,6 +147,8 @@ const Clients = () => {
           title={"Notifications"}
           height={"100vh - 280px - 1rem"}
           refetchData={fetchTableData}
+          handleAction={handleAction}
+          rowActions={rowActions}
         />
       </main>
     </div>

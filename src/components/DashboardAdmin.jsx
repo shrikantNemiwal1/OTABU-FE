@@ -78,6 +78,49 @@ const DashboardAdmin = () => {
     setIsLoading(false);
   };
 
+  const handleAction = async ({ type, row }) => {
+    console.log(type, row);
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${state.token}` },
+      };
+      //console.log(state.token);
+      const res = await axios.put(
+        BASE_URL +
+          `/api/approvals/update_approval_applicationform/${row.client}`,
+        { acceptance_status: type === "accept" ? "1" : "0" },
+        config
+      );
+      console.log(res);
+      setAlertMsg(res?.data?.message);
+      setAlertType("success");
+      setOpen(true);
+      refetchData();
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+      setAlertMsg(error?.response?.data?.msg);
+      setAlertType("error");
+      setOpen(true);
+    }
+  };
+
+  const rowActions = ({ row, table }) => (
+    <>
+      <button
+        onClick={() => handleAction({ type: "accept", row: row.original })}
+        className="application-action application-action--accept"
+      >
+        Accept
+      </button>
+      <button
+        onClick={() => handleAction({ type: "reject", row: row.original })}
+        className="application-action application-action--reject"
+      >
+        Reject
+      </button>
+    </>
+  );
+
   useEffect(() => {
     fetchTableData();
   }, []);
@@ -90,6 +133,8 @@ const DashboardAdmin = () => {
       height={"100vh - 280px - 8.7rem"}
       isLoading={isLoading}
       refetchData={fetchTableData}
+      handleAction={handleAction}
+      rowActions={rowActions}
     />
   );
 };
