@@ -23,6 +23,7 @@ const initialValues = {
 
 const Login = () => {
   const [open, setOpen] = useState(false);
+  const [alertMsg, setAlertMsg] = useState("");
   const [email, setEmail] = useState("");
   const [passwordHidden, setPasswordHidden] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,6 +48,7 @@ const Login = () => {
           setEmail(values.email);
           navigate("/login");
         } catch (error) {
+          setAlertMsg(error?.response?.data?.msg);
           setOpen(true);
           console.log(error?.response?.data?.msg);
         }
@@ -67,6 +69,7 @@ const Login = () => {
       console.log(res);
       setFormStage(1);
     } catch (error) {
+      setAlertMsg(error?.response?.data?.msg);
       setOpen(true);
       console.log(error?.response?.data?.msg);
     }
@@ -89,6 +92,7 @@ const Login = () => {
       console.log(res);
       setFormStage(2);
     } catch (error) {
+      setAlertMsg(error?.response?.data?.msg);
       setOpen(true);
       console.log(error?.response?.data?.msg);
     }
@@ -109,7 +113,7 @@ const Login = () => {
           severity="error"
           sx={{ width: "100%" }}
         >
-          Error
+          {alertMsg}
         </Alert>
       </Snackbar>
       <div className="wrapper">
@@ -217,13 +221,18 @@ const Login = () => {
                     className="submit-btn"
                     type="submit"
                   >
-                    {isLoading ? "Loading..." : "Next"}
+                    {isLoading ? "Submitting..." : "Next"}
                   </button>
                 </div>
               </form>
             </>
           ) : (
-            <OtpForm otp={otp} setOtp={setOtp} handleSubmit={handleOtpSubmit} />
+            <OtpForm
+              otp={otp}
+              setOtp={setOtp}
+              handleSubmit={handleOtpSubmit}
+              isLoading={isLoading}
+            />
           )}
         </div>
         <div className="banner">

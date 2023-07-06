@@ -23,6 +23,7 @@ const initialValues = {
 
 const Login = () => {
   const [open, setOpen] = useState(false);
+  const [alertMsg, setAlertMsg] = useState("");
   const [email, setEmail] = useState("");
   const [passwordHidden, setPasswordHidden] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,44 +37,52 @@ const Login = () => {
       initialValues,
       validationSchema: auditorRegistrationSchema,
       onSubmit: async (values) => {
-        console.log(values);
-        axios
-          .post(BASE_URL + "/api/user/register/auditor", values)
-          .then((response) => {
-            console.log(response);
-            setFormSubmitted(true);
+        //console.log(values);
+        setIsLoading(true);
+        try {
+          const response = await axios.post(
+            BASE_URL + "/api/user/register/auditor",
+            values
+          );
+          console.log(response);
+          setFormSubmitted(true);
+          setEmail(values.email);
+        } catch (error) {
+          if (
+            error?.response?.data?.msg ===
+            "Email Registered. Verification Pending"
+          ) {
             setEmail(values.email);
-          })
-          .catch((error) => {
-            setOpen(true);
-            if (
-              error?.response?.data?.msg ===
-              "Email Registered. Verification Pending"
-            ) {
-              setEmail(values.email);
-              setFormSubmitted(true);
-            }
-            console.log(error?.response?.data?.msg);
-          });
+            setFormSubmitted(true);
+          }
+          setAlertMsg(error?.response?.data?.msg);
+          setOpen(true);
+          //console.log(error?.response?.data?.msg);
+        }
+        setIsLoading(false);
       },
     });
 
-  const handleOtpSubmit = (event) => {
+  const handleOtpSubmit = async (event) => {
     event.preventDefault();
     console.log(Number(otp.join("")));
-    axios
-      .post(BASE_URL + "/api/user/verify_otp_registration", {
-        email: email,
-        otp: Number(otp.join("")),
-      })
-      .then((response) => {
-        console.log(response);
-        navigate("/login/auditor");
-      })
-      .catch((error) => {
-        setOpen(true);
-        console.log(error?.response?.data?.msg);
-      });
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        BASE_URL + "/api/user/verify_otp_registration",
+        {
+          email: email,
+          otp: Number(otp.join("")),
+        }
+      );
+      //console.log(response);
+      navigate("/login/auditor");
+    } catch (error) {
+      setAlertMsg(error?.response?.data?.msg);
+      setOpen(true);
+      //console.log(error?.response?.data?.msg);
+    }
+    setIsLoading(false);
   };
 
   const handleCloseAlert = (event, reason) => {
@@ -92,7 +101,7 @@ const Login = () => {
           severity="error"
           sx={{ width: "100%" }}
         >
-          Error
+          {alertMsg}
         </Alert>
       </Snackbar>
       <div className="wrapper">
@@ -199,18 +208,17 @@ const Login = () => {
                   className="submit-btn"
                   type="submit"
                 >
-                  {isLoading ? (
-                    <div className="flex justify-center items-center">
-                      <div className="animate-spin rounded-full h-6 w-6 border-t-4 border-b-4 border-blue-500"></div>
-                    </div>
-                  ) : (
-                    "Next"
-                  )}
+                  {isLoading ? "Submitting..." : "Next"}
                 </button>
               </div>
             </form>
           ) : (
-            <OtpForm otp={otp} setOtp={setOtp} handleSubmit={handleOtpSubmit} />
+            <OtpForm
+              otp={otp}
+              setOtp={setOtp}
+              handleSubmit={handleOtpSubmit}
+              isLoading={isLoading}
+            />
           )}
         </div>
         <div className="banner">

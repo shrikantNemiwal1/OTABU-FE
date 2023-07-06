@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const OtpForm = ({ otp, setOtp, handleSubmit }) => {
+const OtpForm = ({ otp, setOtp, handleSubmit, isLoading }) => {
   const handleChange = (value, event) => {
     let otpCopy = otp;
     otpCopy[value - 1] = event.target.value;
@@ -99,7 +99,7 @@ const OtpForm = ({ otp, setOtp, handleSubmit }) => {
         </div>
         <div className="input-block">
           <button className="submit-btn" type="submit">
-            Verify Email
+            {isLoading ? "Submitting" : "Verify Email"}
           </button>
         </div>
       </form>

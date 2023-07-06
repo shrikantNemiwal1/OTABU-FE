@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
@@ -13,6 +13,7 @@ const DashboardClient = () => {
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("success");
   const { state } = useContext(AuthContext);
+  const [applicationStatus, setApplicationStatus] = useState("Loading...");
 
   const requestNewCertification = async () => {
     try {
@@ -25,16 +26,37 @@ const DashboardClient = () => {
         config
       );
       //console.log(res);
-      setAlertMsg(res?.data?.msg);
       setAlertType("success");
+      setAlertMsg(res?.data?.msg);
       setOpen(true);
     } catch (error) {
-      setAlertMsg(error?.response?.data?.msg);
       setAlertType("error");
+      setAlertMsg(error?.response?.data?.msg);
       setOpen(true);
       //console.log(error?.response?.data?.msg);
     }
   };
+
+  const fetchApplicationStatus = async () => {
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${state.token}` },
+      };
+      //console.log(state.token);
+      const res = await axios.get(
+        BASE_URL + "/api/approvals/get_status_applicationform",
+        config
+      );
+      console.log(res);
+      setApplicationStatus(res?.data?.Status);
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+    }
+  };
+
+  useEffect(() => {
+    fetchApplicationStatus();
+  }, []);
 
   return (
     <div>
@@ -59,6 +81,7 @@ const DashboardClient = () => {
         <img src={plus} alt="plus" />
         <p>Request New Certification</p>
       </button>
+      <div>Application Status : {applicationStatus}</div>
     </div>
   );
 };

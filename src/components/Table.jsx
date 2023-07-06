@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, useContext } from "react";
 import { MaterialReactTable } from "material-react-table";
 import {
   Box,
@@ -14,12 +14,17 @@ import {
   Tooltip,
   Typography,
   Modal,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import { data, states } from "./makeData";
 import addIcon from "../assets/icons/add-sign.svg";
 import AddAuditorForm from "./AddAuditorForm";
 import "./styles/table.scss";
+import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 const style = {
   position: "absolute",
@@ -36,10 +41,14 @@ const style = {
   p: 4,
 };
 
-const Table = ({ columns, height, title }) => {
+const Table = ({ columns, height, title, data, isLoading, refetchData }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [tableData, setTableData] = useState(() => data);
   const [validationErrors, setValidationErrors] = useState({});
+  const [open, setOpen] = useState(false);
+  const [alertMsg, setAlertMsg] = useState("");
+  const [alertType, setAlertType] = useState("success");
+  const { state } = useContext(AuthContext);
 
   const handleCreateNewRow = (values) => {
     tableData.push(values);
@@ -104,8 +113,48 @@ const Table = ({ columns, height, title }) => {
     [validationErrors]
   );
 
+  const handleAction = async ({ type, row }) => {
+    console.log(type, row);
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${state.token}` },
+      };
+      //console.log(state.token);
+      const res = await axios.put(
+        BASE_URL +
+          `/api/approvals/update_approval_applicationform/${row.client}`,
+        { acceptance_status: type === "accept" ? "1" : "0" },
+        config
+      );
+      console.log(res);
+      setAlertMsg(res?.data?.message);
+      setAlertType("success");
+      setOpen(true);
+      refetchData();
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+      setAlertMsg(error?.response?.data?.msg);
+      setAlertType("error");
+      setOpen(true);
+    }
+  };
+
   return (
     <>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={() => setOpen(false)}
+      >
+        <Alert
+          variant="filled"
+          onClose={() => setOpen(false)}
+          severity={alertType}
+          sx={{ width: "100%" }}
+        >
+          {alertMsg}
+        </Alert>
+      </Snackbar>
       <div className="table__container">
         <MaterialReactTable
           displayColumnDefOptions={{
@@ -116,8 +165,9 @@ const Table = ({ columns, height, title }) => {
               size: 120,
             },
           }}
+          state={{ isLoading: isLoading }}
           columns={columns}
-          data={tableData}
+          data={data}
           muiTableContainerProps={{
             sx: {
               height: `calc(${height})`,
@@ -130,6 +180,7 @@ const Table = ({ columns, height, title }) => {
           // onEditingRowSave={handleSaveRowEdits}
           // onEditingRowCancel={handleCancelRowEdits}
           enableRowActions
+          positionActionsColumn="last"
           renderRowActions={({ row, table }) => (
             // <Box sx={{ display: "flex", gap: "1rem" }}>
             //   <Tooltip arrow placement="left" title="Edit">
@@ -144,10 +195,20 @@ const Table = ({ columns, height, title }) => {
             //   </Tooltip>
             // </Box>
             <>
-              <button className="application-action application-action--accept">
+              <button
+                onClick={() =>
+                  handleAction({ type: "accept", row: row.original })
+                }
+                className="application-action application-action--accept"
+              >
                 Accept
               </button>
-              <button className="application-action application-action--reject">
+              <button
+                onClick={() =>
+                  handleAction({ type: "reject", row: row.original })
+                }
+                className="application-action application-action--reject"
+              >
                 Reject
               </button>
             </>
