@@ -52,11 +52,11 @@ const DashboardClient = () => {
       };
       //console.log(state.token);
       const res = await axios.get(
-        BASE_URL + "/api/approvals/get_status_applicationform",
+        BASE_URL + "/api/approvals/get_pending_applicationform",
         config
       );
       console.log(res);
-      setApplicationStatus(res?.data?.Status);
+      setApplicationStatus(res?.data[0]?.acceptance_status);
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }

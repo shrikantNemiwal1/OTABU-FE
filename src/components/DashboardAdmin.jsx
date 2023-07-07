@@ -96,7 +96,7 @@ const DashboardAdmin = () => {
       //console.log(state.token);
       const res = await axios.put(
         BASE_URL +
-          `/api/approvals/update_approval_applicationform/${row.client}`,
+          `/api/approvals/update_approval_applicationform/${row.id}`,
         { acceptance_status: type === "accept" ? "1" : "0" },
         config
       );
