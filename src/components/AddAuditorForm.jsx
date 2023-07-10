@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { auditorRegistrationSchema } from "../validation/formSchema";
 import { useFormik } from "formik";
 import logoColoured from "../assets/images/logo-coloured.png";
-import "../pages/styles/registration.scss";
+import "./styles/registration.scss";
 import chevron from "../assets/icons/chevron.svg";
 
 const initialValues = {

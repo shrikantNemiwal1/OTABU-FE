@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Spinner from "./Spinner";
 
 const OtpForm = ({ otp, setOtp, handleSubmit, isLoading }) => {
   const handleChange = (value, event) => {
@@ -99,7 +100,7 @@ const OtpForm = ({ otp, setOtp, handleSubmit, isLoading }) => {
         </div>
         <div className="input-block">
           <button className="submit-btn" type="submit">
-            {isLoading ? "Submitting" : "Verify Email"}
+            {isLoading ? <Spinner size={20} color="white"/> : "Verify Email"}
           </button>
         </div>
       </form>

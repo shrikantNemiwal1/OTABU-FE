@@ -11,6 +11,7 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { useContext } from "react";
 import OtpForm from "../components/OtpForm";
+import Spinner from "../components/Spinner";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 //import { AuthContext } from "../context/AuthContext";
 
@@ -33,12 +34,6 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   //const { state, login } = useContext(AuthContext);
-  const handleCloseAlert = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
-  };
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik({
       initialValues,
@@ -95,6 +90,12 @@ const Login = () => {
     setIsLoading(false);
   };
 
+  const handleCloseAlert = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
   return (
     <>
       <Snackbar open={open} autoHideDuration={3000} onClose={handleCloseAlert}>
@@ -126,6 +127,7 @@ const Login = () => {
                     value={values.organization_name}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    disabled={isLoading}
                     placeholder="Organization Name"
                   />
                 </div>
@@ -145,6 +147,7 @@ const Login = () => {
                     value={values.director_name}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    disabled={isLoading}
                     placeholder="Director Name"
                   />
                 </div>
@@ -166,6 +169,7 @@ const Login = () => {
                     value={values.mobile}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    disabled={isLoading}
                     placeholder="10 digit Mobile Number"
                   />
                 </div>
@@ -183,6 +187,7 @@ const Login = () => {
                     value={values.email}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    disabled={isLoading}
                     placeholder="Email"
                   />
                 </div>
@@ -202,6 +207,7 @@ const Login = () => {
                     value={values.password}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    disabled={isLoading}
                     placeholder="Password"
                   />
                   <span
@@ -227,6 +233,7 @@ const Login = () => {
                     value={values.confirm_password}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    disabled={isLoading}
                     placeholder="Password"
                   />
                   <span
@@ -250,7 +257,7 @@ const Login = () => {
                   className="submit-btn"
                   type="submit"
                 >
-                  {isLoading ? "Submitting..." : "Next"}
+                  {isLoading ? <Spinner size={20} color="white" /> : "Next"}
                 </button>
               </div>
             </form>

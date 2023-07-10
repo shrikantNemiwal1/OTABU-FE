@@ -5,9 +5,28 @@
   width: calc(50% - 2rem);
   border: none;
   margin: 1.5rem 1rem;
-  padding: .8rem 1.5rem;
+  padding: 0.8rem 1.5rem;
   background-color: rgba(219, 255, 0, 0.19);
   box-shadow: 0px 0px 5px 3px rgba(101, 101, 117, 0.1);
   border-radius: 1rem 0;
   cursor: pointer;
+}
+
+.application_status {
+  margin-left: 2rem;
+}
+
+.application-action {
+  padding: 0.3rem 0.6rem;
+  margin: 0.3rem;
+  border-radius: 0.2rem;
+  border: none;
+  color: white;
+  background: #029664;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+
+  &--reject {
+    background: red;
+  }
 }

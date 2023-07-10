@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, useContext } from "react";
+import React, { useState } from "react";
 import { MaterialReactTable } from "material-react-table";
 import {
   Box,
@@ -18,13 +18,9 @@ import {
   Alert,
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
-import { data, states } from "./makeData";
 import addIcon from "../assets/icons/add-sign.svg";
 import AddAuditorForm from "./AddAuditorForm";
 import "./styles/table.scss";
-import { AuthContext } from "../context/AuthContext";
-import axios from "axios";
-const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 const style = {
   position: "absolute",
@@ -49,105 +45,31 @@ const Table = ({
   isLoading,
   refetchData,
   rowActions,
-  handleAction,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [tableData, setTableData] = useState(() => data);
-  const [validationErrors, setValidationErrors] = useState({});
-  const [open, setOpen] = useState(false);
-  const [alertMsg, setAlertMsg] = useState("");
-  const [alertType, setAlertType] = useState("success");
-  const { state } = useContext(AuthContext);
-
-  const handleCreateNewRow = (values) => {
-    tableData.push(values);
-    setTableData([...tableData]);
-  };
-
-  const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
-    if (!Object.keys(validationErrors).length) {
-      tableData[row.index] = values;
-      //send/receive api updates here, then refetch or update local table data for re-render
-      setTableData([...tableData]);
-      exitEditingMode(); //required to exit editing mode and close modal
-    }
-  };
-
-  const handleCancelRowEdits = () => {
-    setValidationErrors({});
-  };
-
-  const handleDeleteRow = useCallback(
-    (row) => {
-      if (
-        !confirm(`Are you sure you want to delete ${row.getValue("firstName")}`)
-      ) {
-        return;
-      }
-      //send api delete request here, then refetch or update local table data for re-render
-      tableData.splice(row.index, 1);
-      setTableData([...tableData]);
-    },
-    [tableData]
-  );
-
-  const getCommonEditTextFieldProps = useCallback(
-    (cell) => {
-      return {
-        error: !!validationErrors[cell.id],
-        helperText: validationErrors[cell.id],
-        onBlur: (event) => {
-          const isValid =
-            cell.column.id === "email"
-              ? validateEmail(event.target.value)
-              : cell.column.id === "age"
-              ? validateAge(+event.target.value)
-              : validateRequired(event.target.value);
-          if (!isValid) {
-            //set validation error for cell if invalid
-            setValidationErrors({
-              ...validationErrors,
-              [cell.id]: `${cell.column.columnDef.header} is required`,
-            });
-          } else {
-            //remove validation error for cell if valid
-            delete validationErrors[cell.id];
-            setValidationErrors({
-              ...validationErrors,
-            });
-          }
-        },
-      };
-    },
-    [validationErrors]
-  );
 
   return (
     <>
       <div className="table__container">
         <MaterialReactTable
-          displayColumnDefOptions={{
-            "mrt-row-actions": {
-              muiTableHeadCellProps: {
-                align: "center",
-              },
-              size: 120,
-            },
-          }}
+          // displayColumnDefOptions={{
+          //   "mrt-row-actions": {
+          //     muiTableHeadCellProps: {
+          //       align: "center",
+          //     },
+          //     size: 120,
+          //   },
+          // }}
           state={{ isLoading: isLoading }}
           columns={columns}
-          data={data}
+          data={data?.reverse() || []}
           muiTableContainerProps={{
             sx: {
               height: `calc(${height})`,
             },
           }}
-          //editingMode="modal" //default
           enableColumnOrdering
-          //enableEditing
           enableStickyHeader
-          // onEditingRowSave={handleSaveRowEdits}
-          // onEditingRowCancel={handleCancelRowEdits}
           enableRowActions
           positionActionsColumn="last"
           renderRowActions={({ row, table }) => rowActions({ row, table })}

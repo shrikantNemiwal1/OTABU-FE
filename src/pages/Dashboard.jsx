@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import SubNavbar from "../components/SubNavbar";

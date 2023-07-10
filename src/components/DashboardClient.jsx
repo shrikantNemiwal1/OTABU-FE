@@ -7,15 +7,18 @@ import { AuthContext } from "../context/AuthContext";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 import "./styles/dashboardDefault.scss";
 import plus from "../assets/icons/plus.svg";
+import Spinner from "./Spinner";
 
 const DashboardClient = () => {
   const [open, setOpen] = useState(false);
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("success");
+  const [isLoading, setIsLoading] = useState(false);
   const { state } = useContext(AuthContext);
   const [applicationStatus, setApplicationStatus] = useState("none");
 
   const requestNewCertification = async () => {
+    setIsLoading(true);
     try {
       const config = {
         headers: { Authorization: `Bearer ${state.token}` },
@@ -37,12 +40,14 @@ const DashboardClient = () => {
       setAlertType("success");
       setAlertMsg(res?.data?.msg);
       setOpen(true);
+      fetchApplicationStatus();
     } catch (error) {
       setAlertType("error");
       setAlertMsg(error?.response?.data?.msg);
       setOpen(true);
       //console.log(error?.response?.data?.msg);
     }
+    setIsLoading(false);
   };
 
   const fetchApplicationStatus = async () => {
@@ -86,11 +91,14 @@ const DashboardClient = () => {
         className="request-certification-btn"
         onClick={requestNewCertification}
       >
-        <img src={plus} alt="plus" />
+        {isLoading ? <Spinner /> : <img src={plus} alt="plus" />}
+
         <p>Request New Certification</p>
       </button>
       {applicationStatus === "none" ? null : (
-        <div>Application Status : {applicationStatus}</div>
+        <div className="application_status">
+          Application Status : {applicationStatus}
+        </div>
       )}
     </div>
   );

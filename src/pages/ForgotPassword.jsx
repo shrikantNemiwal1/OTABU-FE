@@ -12,6 +12,7 @@ import OtpForm from "../components/OtpForm";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { useContext } from "react";
+import Spinner from "../components/Spinner";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 //import { AuthContext } from "../context/AuthContext";
 
@@ -139,6 +140,7 @@ const Login = () => {
                       value={values.password}
                       onChange={handleChange}
                       onBlur={handleBlur}
+                      disabled={isLoading}
                       placeholder="Password"
                     />
                     <span
@@ -166,6 +168,7 @@ const Login = () => {
                       value={values.confirm_password}
                       onChange={handleChange}
                       onBlur={handleBlur}
+                      disabled={isLoading}
                       placeholder="Password"
                     />
                     <span
@@ -189,7 +192,7 @@ const Login = () => {
                     className="submit-btn"
                     type="submit"
                   >
-                    {isLoading ? "Submitting..." : "Submit"}
+                    {isLoading ? <Spinner size={20} color="white" /> : "Submit"}
                   </button>
                 </div>
               </form>
@@ -210,6 +213,7 @@ const Login = () => {
                       name="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      disabled={isLoading}
                       placeholder="Email"
                     />
                   </div>
@@ -221,7 +225,7 @@ const Login = () => {
                     className="submit-btn"
                     type="submit"
                   >
-                    {isLoading ? "Submitting..." : "Next"}
+                    {isLoading ? <Spinner size={20} color="white" /> : "Next"}
                   </button>
                 </div>
               </form>

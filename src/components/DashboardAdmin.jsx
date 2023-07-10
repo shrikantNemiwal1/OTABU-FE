@@ -3,6 +3,7 @@ import Table from "./Table";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { Snackbar, Alert } from "@mui/material";
+import { GetAllPendingClient } from "../api/api";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 const DashboardAdmin = () => {
@@ -10,8 +11,6 @@ const DashboardAdmin = () => {
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("success");
   const { state } = useContext(AuthContext);
-  const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   const columns = useMemo(() => [
     {
@@ -68,24 +67,26 @@ const DashboardAdmin = () => {
     // },
   ]);
 
-  const fetchTableData = async () => {
-    setIsLoading(true);
-    try {
-      const config = {
-        headers: { Authorization: `Bearer ${state.token}` },
-      };
-      //console.log(state.token);
-      const res = await axios.get(
-        BASE_URL + "/api/approvals/get_pending_approvals",
-        config
-      );
-      console.log(res);
-      setData(res?.data);
-    } catch (error) {
-      console.log(error?.response?.data?.msg);
-    }
-    setIsLoading(false);
-  };
+  const { data, refetch, isFetching } = GetAllPendingClient(state.token);
+
+  // const fetchTableData = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const config = {
+  //       headers: { Authorization: `Bearer ${state.token}` },
+  //     };
+  //     //console.log(state.token);
+  //     const res = await axios.get(
+  //       BASE_URL + "/api/approvals/get_pending_approvals",
+  //       config
+  //     );
+  //     console.log(res);
+  //     setData(res?.data);
+  //   } catch (error) {
+  //     console.log(error?.response?.data?.msg);
+  //   }
+  //   setIsLoading(false);
+  // };
 
   const handleAction = async ({ type, row }) => {
     console.log(type, row);
@@ -95,8 +96,7 @@ const DashboardAdmin = () => {
       };
       //console.log(state.token);
       const res = await axios.put(
-        BASE_URL +
-          `/api/approvals/update_approval_applicationform/${row.id}`,
+        BASE_URL + `/api/approvals/update_approval_applicationform/${row.id}`,
         { acceptance_status: type === "accept" ? "1" : "0" },
         config
       );
@@ -104,7 +104,7 @@ const DashboardAdmin = () => {
       setAlertMsg(res?.data?.message);
       setAlertType("success");
       setOpen(true);
-      fetchTableData();
+      refetch();
       const noti = await axios.post(
         BASE_URL + "/api/notifications/send_notification",
         {
@@ -138,10 +138,6 @@ const DashboardAdmin = () => {
     </>
   );
 
-  useEffect(() => {
-    fetchTableData();
-  }, []);
-
   return (
     <>
       <Snackbar
@@ -159,13 +155,12 @@ const DashboardAdmin = () => {
         </Alert>
       </Snackbar>
       <Table
-        data={data ? data : []}
+        data={data?.data}
         columns={columns}
         title={"Pending Client list"}
         height={"100vh - 280px - 8.7rem"}
-        isLoading={isLoading}
-        refetchData={fetchTableData}
-        handleAction={handleAction}
+        isLoading={isFetching}
+        refetchData={refetch}
         rowActions={rowActions}
       />
     </>

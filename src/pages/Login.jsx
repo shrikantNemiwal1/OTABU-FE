@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useFormik } from "formik";
-import axios from "axios";
 import { Snackbar, Alert } from "@mui/material";
-import "./styles/login.scss";
 import { loginSchema } from "../validation/formSchema";
 import eyeOff from "../assets/icons/eye-off.svg";
-import loading from "../assets/icons/loading.svg";
 import logoLarge from "../assets/images/logo-large.png";
 import logoColoured from "../assets/images/logo-coloured.png";
-const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 import { AuthContext } from "../context/AuthContext";
+import "./styles/login.scss";
+import Spinner from "./../components/Spinner";
 
 const initialValues = {
   email: "",
@@ -106,6 +104,7 @@ const Login = () => {
                   value={values.email}
                   onChange={handleChange}
                   onBlur={handleBlur}
+                  disabled={isLoading}
                   placeholder="Enter your Email"
                 />
               </div>
@@ -123,6 +122,7 @@ const Login = () => {
                   value={values.password}
                   onChange={handleChange}
                   onBlur={handleBlur}
+                  disabled={isLoading}
                   placeholder="Enter your password"
                 />
                 <span
@@ -144,6 +144,7 @@ const Login = () => {
                   name="rememberMe"
                   value={values.rememberMe}
                   onChange={handleChange}
+                  disabled={isLoading}
                 />
                 <label className="login__remember-label" htmlFor="rememberMe">
                   Remember Me
@@ -155,7 +156,7 @@ const Login = () => {
             </div>
             <div className="input-block input-actions">
               <button disabled={isLoading} className="submit-btn" type="submit">
-                {isLoading ? "Logging..." : "Login"}
+                {isLoading ? <Spinner size={20} color="white"/> : "Login"}
               </button>
               <Link
                 className="submit-btn signup-link"

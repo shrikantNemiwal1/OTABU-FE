@@ -1,0 +1,33 @@
+.application__btn {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  align-items: center;
+  color: white;
+  font-size: 1rem;
+  background: rgba(0, 113, 138, 0.9);
+  border: none;
+  border-radius: 1rem 0;
+  padding: 0.7rem;
+  padding-left: 2rem;
+  cursor: pointer;
+
+  &--green {
+    background: #177369;
+  }
+}
+
+.application__info {
+  margin: 1rem;
+}
+
+.application_info-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.link-without-style{
+  text-decoration: none;
+}

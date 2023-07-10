@@ -1,4 +1,7 @@
 .registration {
+  height: 100vh;
+  overflow-y: auto;
+
   &__head {
     width: 100%;
     background: rgba(139, 255, 85, 0.55);
@@ -10,7 +13,6 @@
   }
 
   &__submit {
-    padding: 1rem 3rem;
     margin: 2rem 0;
     background: #029664;
     border: none;
@@ -18,11 +20,21 @@
     box-shadow: 0px 6px 6px rgba(0, 0, 0, 0.25);
     color: white;
     cursor: pointer;
+    height: 45px;
+    width: 150px;
+    font-size: 1.2rem;
 
     &:hover {
       background: #057751;
     }
   }
+}
+
+.form-sub-title {
+  text-align: center;
+  margin: 1.5rem auto;
+  padding: 0rem 1rem;
+  max-width: 60rem;
 }
 
 .input {
@@ -113,4 +125,34 @@ input[type="file"]::file-selector-button {
   right: 0.75rem;
   transform: rotate(180deg);
   transition: all 0.2s;
+}
+
+.table-form {
+  & input {
+    text-align: center;
+    margin: 0.2rem;
+    font-size: 1.2rem;
+  }
+
+  & td {
+    padding-right: 0.2rem;
+  }
+
+  & th {
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.table-row .row-head {
+  max-width: 20rem;
+}
+
+.row-head--bold {
+  font-weight: 700 !important;
+}
+
+.column-head-small {
+  width: 6rem;
 }

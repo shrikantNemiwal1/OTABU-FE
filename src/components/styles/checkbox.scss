@@ -1,0 +1,81 @@
+:root {
+  --form-control-color: rebeccapurple;
+  --form-control-disabled: #959495;
+}
+
+.checkbox-label {
+  width: 6rem;
+  max-width: 14rem;
+  font-size: 1rem;
+  position: relative;
+
+  & p {
+    position: absolute;
+    top: 0.5rem;
+    left: 3rem;
+  }
+}
+
+.checkbox-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  /* Add if not using autoprefixer */
+  -webkit-appearance: none;
+  /* Remove most all native input styles */
+  appearance: none;
+  /* For iOS < 15 */
+  background-color: var(--form-background);
+  /* Not removed via appearance */
+  margin: 0;
+
+  color: currentColor;
+  width: 1em;
+  height: 1em;
+  border: 1px solid #cccccc;
+  border-radius: 0.5rem;
+  transform: translateY(-0.075em);
+
+  display: grid;
+  place-content: center;
+}
+
+input[type="checkbox"]::before,
+input[type="radio"]::before {
+  content: "";
+  width: 1em;
+  height: 1em;
+  background-color: #029664;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  transform: scale(0);
+  transform-origin: bottom left;
+  transition: 120ms transform ease-in-out;
+  box-shadow: 0px 6px 6px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s;
+}
+
+input[type="checkbox"]:checked::before,
+input[type="radio"]:checked::before {
+  transform: scale(1);
+}
+
+input[type="checkbox"]:focus,
+input[type="radio"]:focus {
+  box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s;
+}
+
+.checkbox-label--disabled {
+  color: var(--checkbox-label-disabled);
+  cursor: not-allowed;
+}
+
+input[type="checkbox"]:disabled {
+  --checkbox-label-color: var(--checkbox-label-disabled);
+
+  color: var(--checkbox-label-disabled);
+  cursor: not-allowed;
+}

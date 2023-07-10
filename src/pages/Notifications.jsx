@@ -5,13 +5,12 @@ import SubNavbar from "../components/SubNavbar";
 import Table from "../components/Table";
 import "./styles/clients.scss";
 import { AuthContext } from "../context/AuthContext";
+import { GetAllNotifications } from "../api/api";
 import axios from "axios";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 const Clients = () => {
   const { state } = useContext(AuthContext);
-  const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   const columns = useMemo(() => [
     {
@@ -29,24 +28,7 @@ const Clients = () => {
     },
   ]);
 
-  const fetchTableData = async () => {
-    setIsLoading(true);
-    try {
-      const config = {
-        headers: { Authorization: `Bearer ${state.token}` },
-      };
-      //console.log(state.token);
-      const res = await axios.get(
-        BASE_URL + "/api/notifications/get_received_notifications",
-        config
-      );
-      console.log(res);
-      setData(res?.data);
-    } catch (error) {
-      console.log(error?.response?.data?.msg);
-    }
-    setIsLoading(false);
-  };
+  const { data, refetch, isFetching } = GetAllNotifications(state.token);
 
   const handleAction = async ({ type, row }) => {
     console.log(type, row);
@@ -64,7 +46,7 @@ const Clients = () => {
           config
         );
         console.log(res);
-        fetchTableData();
+        refetch();
       } catch (error) {
         console.log(error?.response?.data?.msg);
       }
@@ -81,7 +63,7 @@ const Clients = () => {
             }/${row.id}`,
           config
         );
-        fetchTableData();
+        refetch();
         console.log(res);
       } catch (error) {
         console.log(error?.response?.data?.msg);
@@ -130,10 +112,6 @@ const Clients = () => {
     </>
   );
 
-  useEffect(() => {
-    fetchTableData();
-  }, []);
-
   return (
     <div className="clients-container">
       <Sidebar />
@@ -141,12 +119,12 @@ const Clients = () => {
         <Navbar title={"Notifications"} />
         <SubNavbar />
         <Table
-          data={data}
+          data={data?.data.reverse()}
           columns={columns}
-          isLoading={isLoading}
+          isLoading={isFetching}
           title={"Notifications"}
           height={"100vh - 280px - 1rem"}
-          refetchData={fetchTableData}
+          refetchData={refetch}
           handleAction={handleAction}
           rowActions={rowActions}
         />

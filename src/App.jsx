@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthContext } from "./context/AuthContext";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import ClientRegistration from "./pages/ClientRegistration.jsx";
@@ -7,11 +8,14 @@ import AuditorRegistration from "./pages/AuditorRegistration.jsx";
 import Dashboard from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import NotFound from "./pages/NotFound";
+import Notifications from "./pages/Notifications";
+import Application from "./pages/Application";
 import DashboardClient from "./components/DashboardClient";
-import { AuthContext } from "./context/AuthContext";
 import DashboardAdmin from "./components/DashboardAdmin";
 import DashboardAuditor from "./components/DashboardAuditor";
-import Notifications from "./pages/Notifications";
+import AppliedCertifications from "./components/AppliedCertifications";
+import ApplicationInfo from "./components/ApplicationInfo";
+import ApplicationForm from "./components/ApplicationForm";
 
 function App() {
   const { state } = useContext(AuthContext);
@@ -40,6 +44,10 @@ function App() {
             element={<AuditorRegistration />}
           />
           <Route exact path="notifications" element={<Notifications />} />
+          <Route exact path="application/:id" element={<Application />}>
+            <Route path="" element={<ApplicationInfo />} />
+            <Route path="application-form" element={<ApplicationForm />} />
+          </Route>
           <Route exact path="forgot-password" element={<ForgotPassword />} />
           <Route exact path="dashboard" element={<Dashboard />}>
             <Route
@@ -63,7 +71,7 @@ function App() {
             />
             <Route
               path="applied-certifications"
-              element={<p>applied certifications</p>}
+              element={<AppliedCertifications />}
             />
             <Route
               path="completed-certifications"

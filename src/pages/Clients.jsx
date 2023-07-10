@@ -12,7 +12,7 @@ const Clients = () => {
       <main>
         <Navbar />
         <SubNavbar />
-        <Table />
+        {/* <Table /> */}
       </main>
     </div>
   );
