@@ -73,6 +73,12 @@ const Login = () => {
     setOpen(false);
   };
 
+  useEffect(() => {
+    if (state?.isAuthenticated === true) {
+      return navigate("/dashboard");
+    }
+  }, [state]);
+
   return (
     <>
       <Snackbar open={open} autoHideDuration={3000} onClose={handleCloseAlert}>
@@ -137,7 +143,7 @@ const Login = () => {
               ) : null}
             </div>
             <div className="input-block login__remember">
-              <div>
+              <div className="remember-container">
                 <input
                   type="checkbox"
                   id="rememberMe"
@@ -147,7 +153,7 @@ const Login = () => {
                   disabled={isLoading}
                 />
                 <label className="login__remember-label" htmlFor="rememberMe">
-                  Remember Me
+                  Remember me
                 </label>
               </div>
               <Link className="forgot-password" to="/forgot-password">
@@ -156,7 +162,7 @@ const Login = () => {
             </div>
             <div className="input-block input-actions">
               <button disabled={isLoading} className="submit-btn" type="submit">
-                {isLoading ? <Spinner size={20} color="white"/> : "Login"}
+                {isLoading ? <Spinner size={20} color="white" /> : "Login"}
               </button>
               <Link
                 className="submit-btn signup-link"

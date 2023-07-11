@@ -60,7 +60,7 @@ const DashboardClient = () => {
         BASE_URL + "/api/approvals/get_pending_applicationform",
         config
       );
-      console.log(res);
+      //console.log(res);
       setApplicationStatus(res?.data[0]?.acceptance_status);
     } catch (error) {
       console.log(error?.response?.data?.msg);

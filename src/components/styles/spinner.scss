@@ -14,6 +14,13 @@ $duration: 1.4s;
   }
 }
 
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
 .path {
   stroke-dasharray: $offset;
   stroke-dashoffset: 0;

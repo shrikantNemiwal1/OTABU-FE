@@ -5,28 +5,30 @@ import { AuthContext } from "../context/AuthContext";
 import search from "../assets/icons/search.svg";
 import bell from "../assets/icons/bell.svg";
 import setting from "../assets/icons/setting.svg";
-import logout from "../assets/icons/logout.svg";
+import logoutIcon from "../assets/icons/logout.svg";
 import "./styles/navbar.scss";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 const Navbar = ({ title }) => {
-  const { state } = useContext(AuthContext);
+  const { state, logout } = useContext(AuthContext);
   const navigate = useNavigate();
-  const handleLogout = () => {
+  const handleLogout = async () => {
     console.log("logout");
-    axios
-      .post(BASE_URL + "/api/user/logout", {
-        refresh_token: state.refreshToken,
-      })
-      .then((response) => {
-        console.log(response);
-        state.role === "Client"
-          ? navigate("/login/client")
-          : navigate("/login/auditor");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    await logout();
+    navigate("/");
+    // axios
+    //   .post(BASE_URL + "/api/user/logout", {
+    //     refresh_token: state.refreshToken,
+    //   })
+    //   .then((response) => {
+    //     console.log(response);
+    //     state.role === "Client"
+    //       ? navigate("/login/client")
+    //       : navigate("/login/auditor");
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   };
 
   return (
@@ -60,7 +62,7 @@ const Navbar = ({ title }) => {
           </li>
           <li>
             <button onClick={handleLogout} className="logout-btn">
-              <img src={logout} alt="logout" />
+              <img src={logoutIcon} alt="logout" />
             </button>
           </li>
         </ul>

@@ -12,7 +12,7 @@ export const formatLegalKey = (key) => {
 export const ApplicationFormInputs = {
   name_of_company: "Name of the Company",
   address: "Address",
-  website: "Website",
+  Website: "Website",
   email: "Email",
   phone_number: "Phone number",
   no_of_sites: "No. of Sites",
@@ -157,7 +157,7 @@ export const initialValues = {
     date_of_app: "",
     name_of_company: "",
     address: "",
-    website: "",
+    Website: "",
     email: "",
     phone_number: "",
     no_of_sites: "",

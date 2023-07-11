@@ -13,6 +13,7 @@ const url = {
   allPendingClient: "/api/approvals/get_pending_approvals",
   allNotifications: "/api/notifications/get_received_notifications",
   allAppliedCertifications: "/api/approvals/get_active_approvals",
+  allActiveClients: "/api/application_form/get_application_details",
 };
 
 export function API(method, endpoint, payload, token) {
@@ -64,6 +65,22 @@ export function GetAllNotifications(token) {
 export function GetAllAppliedCertifications(token) {
   const queryKey = "alAppliedCertifications";
   const queryFn = () => API("get", url.allAppliedCertifications, {}, token);
+  const { refetch, ...queryResult } = useQuery(
+    [queryKey],
+    queryFn,
+    queryConfig
+  );
+  return {
+    refetch: () => {
+      refetch();
+    },
+    ...queryResult,
+  };
+}
+
+export function GetAllActiveClients(token) {
+  const queryKey = "alActiveClients";
+  const queryFn = () => API("get", url.allActiveClients, {}, token);
   const { refetch, ...queryResult } = useQuery(
     [queryKey],
     queryFn,

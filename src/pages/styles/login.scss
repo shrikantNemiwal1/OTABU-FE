@@ -220,3 +220,20 @@
   font-size: 14px;
   line-height: 1.6rem;
 }
+
+.remember-container{
+  display: flex;
+  & input {
+    width: 1.2rem !important;
+    height: 1.2rem !important;
+    border-radius: .3rem !important;
+
+    &:focus{
+      box-shadow: none !important;
+    }
+
+    &::before{
+      margin-right: 5px;
+    }
+  }
+}

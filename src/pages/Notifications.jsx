@@ -7,10 +7,12 @@ import "./styles/clients.scss";
 import { AuthContext } from "../context/AuthContext";
 import { GetAllNotifications } from "../api/api";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 const Clients = () => {
   const { state } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const columns = useMemo(() => [
     {
@@ -111,6 +113,12 @@ const Clients = () => {
       </button>
     </>
   );
+
+  useEffect(() => {
+    if (state?.isAuthenticated === false) {
+      return navigate("/login");
+    }
+  }, [state]);
 
   return (
     <div className="clients-container">

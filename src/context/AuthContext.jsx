@@ -51,10 +51,20 @@ const initialAuthState = {
   tokenExpTime,
 };
 
+console.log(initialAuthState)
+
+console.log(refreshToken);
+
 const AuthContext = createContext({
   state: initialAuthState,
   dispatch: () => {},
 });
+
+const getTokenExpTime = () => {
+  const currentDateTime = new Date();
+  const oneHourLater = new Date(currentDateTime.getTime() + 60 * 60 * 1000);
+  return oneHourLater;
+};
 
 const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
@@ -72,7 +82,11 @@ const AuthProvider = ({ children }) => {
       console.log(res);
       dispatch({
         type: LOGIN_SUCCESS,
-        payload: { ...res?.data, email: values.email },
+        payload: {
+          ...res?.data,
+          email: values.email,
+          tokenExpTime: getTokenExpTime(),
+        },
       });
       // dispatch({
       //   type: SET_ERROR,
@@ -91,12 +105,15 @@ const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     setIsLoading(true);
+    console.log(refreshToken);
     try {
-      const res = await API("get", "/api/user/logout");
+      const res = await API("post", "/api/user/logout", {
+        refresh_token: refreshToken,
+      });
       dispatch({ type: LOGOUT_SUCCESS });
       return res;
     } catch (err) {
-      dispatch({ type: SET_ERROR, payload: err.response.data.message });
+      //dispatch({ type: SET_ERROR, payload: err.response.data.message });
     } finally {
       setIsLoading(false);
     }

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { applicationFormSchema } from "../validation/formSchema";
 import { useFormik } from "formik";
 import logoColoured from "../assets/images/logo-coloured.png";
@@ -49,6 +49,7 @@ const ApplicationForm = () => {
   const checkboxKeys = Object.keys(initialValues.CertificationScheme);
   const legalStatusKeys = Object.keys(initialValues.LegalStatus);
   const [isLoading, setIsLoading] = useState(false);
+  const [formLoading, setFormLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [alertType, setAlertType] = useState("success");
   const [alertMsg, setAlertMsg] = useState("");
@@ -56,7 +57,31 @@ const ApplicationForm = () => {
   const rowKeys = Object.keys(initialValues.PermanentEmployee);
   const { pathname } = useLocation();
   const { state } = useContext(AuthContext);
+  const id = pathname.slice(13).slice(0, -17);
   //console.log(pathname.slice(13).slice(0, -17));
+
+  const [initialForm, setInitialForm] = useState(initialValues);
+
+  const getFormDetails = async () => {
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${state.token}` },
+      };
+      //console.log(state.token);
+      const res = await axios.get(
+        BASE_URL + `/api/application_form/get_single_application/${id}`,
+        config
+      );
+      console.log(res?.data);
+      setInitialForm(res?.data);
+      return res?.data;
+      //setApplicationStatus(res?.data[0]?.acceptance_status);
+    } catch (error) {
+      return initialValues;
+      console.log(error?.response?.data?.msg);
+    }
+    setFormLoading(false);
+  };
 
   const {
     values,
@@ -67,8 +92,9 @@ const ApplicationForm = () => {
     handleSubmit,
     setFieldValue,
     dirty,
+    setValues,
   } = useFormik({
-    initialValues,
+    initialValues: initialValues,
     validationSchema: applicationFormSchema,
     enableReinitialize: true,
     onSubmit: async (values) => {
@@ -78,7 +104,28 @@ const ApplicationForm = () => {
         return;
       }
       setIsLoading(true);
-      const id = pathname.slice(13).slice(0, -17);
+      //const changedValues = changedDivisions(initialForm, values);
+
+      // const config = {
+      //   headers: { Authorization: `Bearer ${state.token}` },
+      // };
+      // try {
+      //   const response = await axios.patch(
+      //     BASE_URL + `/api/application_form/partial_update/${id}`,
+      //     changedValues,
+      //     config
+      //   );
+      //   setAlertType("success");
+      //   setAlertMsg("Form Submitted Successfully");
+      //   setOpen(true);
+      //   console.log(response);
+      // } catch (error) {
+      //   setAlertType("error");
+      //   setAlertMsg(error?.response?.data?.msg);
+      //   setOpen(true);
+      //   console.log(error?.response?.data?.msg);
+      // }
+
       const config = {
         headers: { Authorization: `Bearer ${state.token}` },
       };

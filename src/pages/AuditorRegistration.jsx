@@ -13,7 +13,7 @@ import Alert from "@mui/material/Alert";
 import { useContext } from "react";
 import Spinner from "../components/Spinner";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
-//import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 
 const initialValues = {
   name: "",
@@ -31,7 +31,7 @@ const Login = () => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const navigate = useNavigate();
-  //const { state, login } = useContext(AuthContext);
+  const { state, login } = useContext(AuthContext);
 
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik({
@@ -92,6 +92,12 @@ const Login = () => {
     }
     setOpen(false);
   };
+
+  useEffect(() => {
+    if (state?.isAuthenticated === true) {
+      return navigate("/dashboard");
+    }
+  }, [state]);
 
   return (
     <>
@@ -213,7 +219,7 @@ const Login = () => {
                   className="submit-btn"
                   type="submit"
                 >
-                  {isLoading ? <Spinner size={20} color="white"/> : "Next"}
+                  {isLoading ? <Spinner size={20} color="white" /> : "Next"}
                 </button>
               </div>
             </form>

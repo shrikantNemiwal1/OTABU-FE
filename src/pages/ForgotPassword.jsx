@@ -14,7 +14,7 @@ import Alert from "@mui/material/Alert";
 import { useContext } from "react";
 import Spinner from "../components/Spinner";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
-//import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 
 const initialValues = {
   email: "",
@@ -31,7 +31,7 @@ const Login = () => {
   const [formStage, setFormStage] = useState(0);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const navigate = useNavigate();
-  //const { state, login } = useContext(AuthContext);
+  const { state } = useContext(AuthContext);
 
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik({
@@ -104,6 +104,12 @@ const Login = () => {
     if (reason === "clickaway") return;
     setOpen(false);
   };
+
+  useEffect(() => {
+    if (state?.isAuthenticated === true) {
+      return navigate("/dashboard");
+    }
+  }, [state]);
 
   return (
     <>

@@ -13,7 +13,7 @@ import { useContext } from "react";
 import OtpForm from "../components/OtpForm";
 import Spinner from "../components/Spinner";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
-//import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 
 const initialValues = {
   organization_name: "",
@@ -33,7 +33,8 @@ const Login = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  //const { state, login } = useContext(AuthContext);
+  const { state, login } = useContext(AuthContext);
+
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik({
       initialValues,
@@ -96,6 +97,13 @@ const Login = () => {
     }
     setOpen(false);
   };
+
+  useEffect(() => {
+    if (state?.isAuthenticated === true) {
+      return navigate("/dashboard");
+    }
+  }, [state]);
+
   return (
     <>
       <Snackbar open={open} autoHideDuration={3000} onClose={handleCloseAlert}>

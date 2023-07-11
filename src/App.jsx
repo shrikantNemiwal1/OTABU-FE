@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
 import Login from "./pages/Login";
@@ -13,12 +13,20 @@ import Application from "./pages/Application";
 import DashboardClient from "./components/DashboardClient";
 import DashboardAdmin from "./components/DashboardAdmin";
 import DashboardAuditor from "./components/DashboardAuditor";
+import ActiveClients from "./components/ActiveClients";
 import AppliedCertifications from "./components/AppliedCertifications";
 import ApplicationInfo from "./components/ApplicationInfo";
 import ApplicationForm from "./components/ApplicationForm";
+import ApplicationFormAuditor from "./components/ApplicationFormAuditor";
+import TokenExpirationTime from "./context/TokenExpirationTime";
 
 function App() {
-  const { state } = useContext(AuthContext);
+  const { state, dispatch } = useContext(AuthContext);
+
+  useEffect(() => {
+    TokenExpirationTime({ state, dispatch });
+  }, [state]);
+
   return (
     <>
       <BrowserRouter>
@@ -46,7 +54,16 @@ function App() {
           <Route exact path="notifications" element={<Notifications />} />
           <Route exact path="application/:id" element={<Application />}>
             <Route path="" element={<ApplicationInfo />} />
-            <Route path="application-form" element={<ApplicationForm />} />
+            <Route
+              path="application-form"
+              element={
+                state.role === "Client" ? (
+                  <ApplicationForm />
+                ) : (
+                  <ApplicationFormAuditor />
+                )
+              }
+            />
           </Route>
           <Route exact path="forgot-password" element={<ForgotPassword />} />
           <Route exact path="dashboard" element={<Dashboard />}>
@@ -64,7 +81,7 @@ function App() {
             />
             <Route path="active-admins" element={<p>active admins</p>} />
             <Route path="active-auditors" element={<p>active auditors</p>} />
-            <Route path="active-clients" element={<p>active clients</p>} />
+            <Route path="active-clients" element={<ActiveClients />} />
             <Route
               path="completed-clients"
               element={<p>completed clients</p>}

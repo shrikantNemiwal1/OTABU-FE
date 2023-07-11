@@ -52,14 +52,14 @@ const Table = ({
     <>
       <div className="table__container">
         <MaterialReactTable
-          // displayColumnDefOptions={{
-          //   "mrt-row-actions": {
-          //     muiTableHeadCellProps: {
-          //       align: "center",
-          //     },
-          //     size: 120,
-          //   },
-          // }}
+          displayColumnDefOptions={{
+            "mrt-row-actions": {
+              muiTableHeadCellProps: {
+                align: "center",
+              },
+              size: 120,
+            },
+          }}
           state={{ isLoading: isLoading }}
           columns={columns}
           data={data?.reverse() || []}
