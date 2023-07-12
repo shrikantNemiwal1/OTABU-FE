@@ -106,6 +106,24 @@ const DashboardNav = () => {
           </div>
           <p className="dashboard-nav__card-text">Applied Certifications</p>
         </NavLink>
+        <NavLink to="active-certifications" className="dashboard-nav__card">
+          <div className="dashboard-nav__card-head">
+            <img src={applicationForm} alt="active certi" />
+            <div className="dashboard-nav__card-detail">
+              <span>11</span>
+              <img
+                className={
+                  pathname === "/dashboard/active-certifications"
+                    ? "rotate-180deg"
+                    : "arrow-icon"
+                }
+                src={arrow}
+                alt="arrow"
+              />
+            </div>
+          </div>
+          <p className="dashboard-nav__card-text">Active Certifications</p>
+        </NavLink>
         <NavLink to="completed-certifications" className="dashboard-nav__card">
           <div className="dashboard-nav__card-head">
             <img src={completedClient} alt="active admin" />

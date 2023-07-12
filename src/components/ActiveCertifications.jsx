@@ -3,7 +3,7 @@ import Table from "./Table";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { Snackbar, Alert } from "@mui/material";
-import { GetAllActiveClients } from "../api/api";
+import { GetAllActiveCertifications } from "../api/api";
 import { useNavigate } from "react-router-dom";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -19,57 +19,28 @@ const DashboardAdmin = () => {
       accessorKey: "id",
       header: "ID",
       enableColumnOrdering: false,
-      enableEditing: false, //disable editing on this column
+      enableEditing: false,
       enableSorting: false,
       size: 30,
     },
-    {
-      accessorFn: (row) => `${row.client_name}`,
-      header: "Client Name",
-      size: 30,
-    },
+    // {
+    //   accessorFn: (row) => `${row.client_details.name}`,
+    //   header: "Client Name",
+    //   size: 30,
+    // },
     // {
     //   accessorFn: (row) => `${row.client_details.email}`,
     //   header: "Client Email",
     //   size: 30,
     // },
     // {
-    //   accessorKey: "lastName",
-    //   header: "Last Name",
-    //   size: 50,
-    //   muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-    //     ...getCommonEditTextFieldProps(cell),
-    //   }),
-    // },
-    // {
     //   accessorKey: "acceptance_status",
     //   header: "Status",
     //   size: 10,
     // },
-    // {
-    //   accessorKey: "age",
-    //   header: "Age",
-    //   size: 80,
-    //   muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-    //     ...getCommonEditTextFieldProps(cell),
-    //     type: "number",
-    //   }),
-    // },
-    // {
-    //   accessorKey: "state",
-    //   header: "State",
-    //   muiTableBodyCellEditTextFieldProps: {
-    //     select: true, //change to select for a dropdown
-    //     children: states.map((state) => (
-    //       <MenuItem key={state} value={state}>
-    //         {state}
-    //       </MenuItem>
-    //     )),
-    //   },
-    // },
   ]);
 
-  const { data, refetch, isFetching } = GetAllActiveClients(state.token);
+  const { data, refetch, isFetching } = GetAllActiveCertifications(state.token);
 
   const handleAction = async ({ type, row }) => {
     navigate(`/application/${row.id}`);
@@ -105,7 +76,7 @@ const DashboardAdmin = () => {
       <Table
         data={data?.data}
         columns={columns}
-        title={"Active clients"}
+        title={"Active Certifications"}
         height={"100vh - 280px - 8.7rem"}
         isLoading={isFetching}
         refetchData={refetch}

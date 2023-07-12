@@ -15,9 +15,9 @@ import DashboardAdmin from "./components/DashboardAdmin";
 import DashboardAuditor from "./components/DashboardAuditor";
 import ActiveClients from "./components/ActiveClients";
 import AppliedCertifications from "./components/AppliedCertifications";
+import ActiveCertifications from "./components/ActiveCertifications";
 import ApplicationInfo from "./components/ApplicationInfo";
 import ApplicationForm from "./components/ApplicationForm";
-import ApplicationFormAuditor from "./components/ApplicationFormAuditor";
 import TokenExpirationTime from "./context/TokenExpirationTime";
 
 function App() {
@@ -54,16 +54,7 @@ function App() {
           <Route exact path="notifications" element={<Notifications />} />
           <Route exact path="application/:id" element={<Application />}>
             <Route path="" element={<ApplicationInfo />} />
-            <Route
-              path="application-form"
-              element={
-                state.role === "Client" ? (
-                  <ApplicationForm />
-                ) : (
-                  <ApplicationFormAuditor />
-                )
-              }
-            />
+            <Route path="application-form" element={<ApplicationForm />} />
           </Route>
           <Route exact path="forgot-password" element={<ForgotPassword />} />
           <Route exact path="dashboard" element={<Dashboard />}>
@@ -89,6 +80,10 @@ function App() {
             <Route
               path="applied-certifications"
               element={<AppliedCertifications />}
+            />
+            <Route
+              path="active-certifications"
+              element={<ActiveCertifications />}
             />
             <Route
               path="completed-certifications"

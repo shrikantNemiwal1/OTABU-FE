@@ -14,6 +14,8 @@ const url = {
   allNotifications: "/api/notifications/get_received_notifications",
   allAppliedCertifications: "/api/approvals/get_active_approvals",
   allActiveClients: "/api/application_form/get_application_details",
+  allActiveCertifications:
+    "/api/application_form/get_client_application_details",
 };
 
 export function API(method, endpoint, payload, token) {
@@ -81,6 +83,22 @@ export function GetAllAppliedCertifications(token) {
 export function GetAllActiveClients(token) {
   const queryKey = "alActiveClients";
   const queryFn = () => API("get", url.allActiveClients, {}, token);
+  const { refetch, ...queryResult } = useQuery(
+    [queryKey],
+    queryFn,
+    queryConfig
+  );
+  return {
+    refetch: () => {
+      refetch();
+    },
+    ...queryResult,
+  };
+}
+
+export function GetAllActiveCertifications(token) {
+  const queryKey = "allActiveCertifications";
+  const queryFn = () => API("get", url.allActiveCertifications, {}, token);
   const { refetch, ...queryResult } = useQuery(
     [queryKey],
     queryFn,

@@ -57,6 +57,9 @@ const Table = ({
               muiTableHeadCellProps: {
                 align: "center",
               },
+              muiTableBodyCellProps: {
+                align: "center",
+              },
               size: 120,
             },
           }}

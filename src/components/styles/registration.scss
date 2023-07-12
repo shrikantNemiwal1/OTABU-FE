@@ -156,3 +156,7 @@ input[type="file"]::file-selector-button {
 .column-head-small {
   width: 6rem;
 }
+
+input:disabled {
+  cursor: not-allowed;
+}

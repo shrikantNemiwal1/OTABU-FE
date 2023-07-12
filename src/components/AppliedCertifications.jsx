@@ -45,7 +45,7 @@ const DashboardAdmin = () => {
   );
 
   const handleAction = async ({ type, row }) => {
-    navigate(`/application/${row.id}`);
+    navigate(`/application/${row.id}/application-form`);
   };
 
   const rowActions = ({ row, table }) => (
