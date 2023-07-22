@@ -51,9 +51,9 @@ const initialAuthState = {
   tokenExpTime,
 };
 
-console.log(initialAuthState)
+//console.log(initialAuthState)
 
-console.log(refreshToken);
+//console.log(refreshToken);
 
 const AuthContext = createContext({
   state: initialAuthState,

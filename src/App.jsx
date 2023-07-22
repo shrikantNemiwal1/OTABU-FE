@@ -18,6 +18,8 @@ import AppliedCertifications from "./components/AppliedCertifications";
 import ActiveCertifications from "./components/ActiveCertifications";
 import ApplicationInfo from "./components/ApplicationInfo";
 import ApplicationForm from "./components/ApplicationForm";
+import ApplicationReviewForm from "./components/ApplicationReviewForm";
+import QuotationForm from "./components/QuotationForm";
 import TokenExpirationTime from "./context/TokenExpirationTime";
 
 function App() {
@@ -55,6 +57,11 @@ function App() {
           <Route exact path="application/:id" element={<Application />}>
             <Route path="" element={<ApplicationInfo />} />
             <Route path="application-form" element={<ApplicationForm />} />
+            <Route
+              path="application-review-form"
+              element={<ApplicationReviewForm />}
+            />
+            <Route path="quotation-form" element={<QuotationForm />} />
           </Route>
           <Route exact path="forgot-password" element={<ForgotPassword />} />
           <Route exact path="dashboard" element={<Dashboard />}>

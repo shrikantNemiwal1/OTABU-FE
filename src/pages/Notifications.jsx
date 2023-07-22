@@ -40,7 +40,7 @@ const Clients = () => {
           headers: { Authorization: `Bearer ${state.token}` },
         };
         //console.log(state.token);
-        const res = await axios.post(
+        const res = await axios.put(
           BASE_URL +
             `/api/notifications/${
               type === "read" ? "mark_read_notification" : "delete_notification"

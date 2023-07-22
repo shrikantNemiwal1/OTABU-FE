@@ -9,6 +9,22 @@ export const formatLegalKey = (key) => {
   else return key.charAt(0).toUpperCase() + key.slice(1);
 };
 
+export const changedDivisions = (initialValues, values) => {
+  const changedDivisions = Object.keys(values).filter((division) => {
+    return (
+      JSON.stringify(values[division]) !==
+      JSON.stringify(initialValues[division])
+    );
+  });
+
+  const changedValues = changedDivisions.reduce((acc, division) => {
+    acc[division] = values[division];
+    return acc;
+  }, {});
+
+  return changedValues;
+};
+
 export const ApplicationFormInputs = {
   name_of_company: "Name of the Company",
   address: "Address",

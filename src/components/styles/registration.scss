@@ -149,12 +149,43 @@ input[type="file"]::file-selector-button {
   max-width: 20rem;
 }
 
+.row-head-large {
+  max-width: 50rem;
+  text-align: start;
+}
+
+.row-head-xlarge {
+  width: 50rem;
+  text-align: start;
+}
+
 .row-head--bold {
   font-weight: 700 !important;
 }
 
+.ml-med {
+  margin-left: 7rem !important;
+}
+
 .column-head-small {
   width: 6rem;
+}
+
+.column-head-xsmall {
+  width: 13rem;
+}
+
+.column-head-medium {
+  width: 9rem;
+}
+
+.font-size-med {
+  font-size: .9rem !important;
+}
+
+.checkbox-width-small{
+  width: 6rem !important;
+  display: inline-block !important;
 }
 
 input:disabled {
