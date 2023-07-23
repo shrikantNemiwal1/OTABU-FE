@@ -113,7 +113,7 @@ const ApplicationForm = () => {
         setOpen(true);
         console.log(response);
         setTimeout(() => {
-          //navigate("/dashboard");
+          navigate("/dashboard/active-clients");
         }, 3000);
       } catch (error) {
         setAlertType("error");

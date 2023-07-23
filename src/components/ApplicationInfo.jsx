@@ -70,12 +70,14 @@ const ApplicationInfo = () => {
           setAlertType("success");
           setAlertMsg("Remark Sent Successfully");
           setOpen(true);
+          setModalOpen(false);
           console.log(response);
         } catch (error) {
           setAlertType("error");
           setAlertMsg(error?.response?.data?.msg);
           setOpen(true);
           console.log(error?.response?.data?.msg);
+          setModalOpen(false);
         }
         setIsLoading(false);
       },

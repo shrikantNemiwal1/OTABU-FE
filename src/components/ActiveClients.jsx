@@ -28,6 +28,11 @@ const DashboardAdmin = () => {
       header: "Client Name",
       size: 30,
     },
+    {
+      accessorKey: "status",
+      header: "Status",
+      size: 30,
+    },
     // {
     //   accessorFn: (row) => `${row.client_details.email}`,
     //   header: "Client Email",
