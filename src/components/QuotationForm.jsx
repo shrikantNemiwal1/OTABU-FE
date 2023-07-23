@@ -135,6 +135,9 @@ const ApplicationForm = () => {
         ? changedDivisions(values, initialForm)
         : values;
 
+      const id = String(initialForm.QuotationPart1.id);
+      console.log(id)
+      console.log(initialForm.QuotationPart1.id);
       try {
         const response = await axios({
           method: formDisabled ? "patch" : "post",

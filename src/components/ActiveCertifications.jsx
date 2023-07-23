@@ -23,6 +23,11 @@ const DashboardAdmin = () => {
       enableSorting: false,
       size: 30,
     },
+    {
+      accessorKey: "status",
+      header: "Status",
+      size: 10,
+    },
     // {
     //   accessorFn: (row) => `${row.client_details.name}`,
     //   header: "Client Name",

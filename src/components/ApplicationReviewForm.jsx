@@ -148,7 +148,6 @@ const ApplicationForm = () => {
             </Alert>
           </Snackbar>
           <form onSubmit={handleSubmit}>
-            <fieldset disabled={formDisabled}>
               <div className="registration__form">
                 {/* ApplicationForm */}
                 <>
@@ -591,7 +590,7 @@ const ApplicationForm = () => {
                               <input
                                 type="tel"
                                 name={`TotEmplMandaysTeam.${columnKey}`}
-                                value={values?.TotEmplMandaysTeam[columnKey]}
+                                value={values?.TotEmplMandaysTeam?.[columnKey]}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 onKeyDown={(e) => {
@@ -627,7 +626,7 @@ const ApplicationForm = () => {
                         type="text"
                         name={`TotEmplMandaysTeam.${key}`}
                         id={`TotEmplMandaysTeam.${key}`}
-                        value={values.TotEmplMandaysTeam[key]}
+                        value={values?.TotEmplMandaysTeam?.[key]}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         placeholder={`Enter ${mandaysInputs[key]}`}
@@ -653,7 +652,7 @@ const ApplicationForm = () => {
                         name="TotEmplMandaysTeam.oh_sms_compl_category"
                         value="6 Months"
                         checked={
-                          values.TotEmplMandaysTeam.oh_sms_compl_category ===
+                          values?.TotEmplMandaysTeam?.oh_sms_compl_category ===
                           "6 Months"
                         }
                         onChange={handleChange}
@@ -667,7 +666,7 @@ const ApplicationForm = () => {
                         name="TotEmplMandaysTeam.oh_sms_compl_category"
                         value="9 Months"
                         checked={
-                          values.TotEmplMandaysTeam.oh_sms_compl_category ===
+                          values?.TotEmplMandaysTeam?.oh_sms_compl_category ===
                           "9 Months"
                         }
                         onChange={handleChange}
@@ -732,7 +731,7 @@ const ApplicationForm = () => {
                                   <input
                                     type="tel"
                                     name={`${columnKey}.${rowKey}`}
-                                    value={values?.[columnKey][rowKey]}
+                                    value={values?.[columnKey]?.[rowKey]}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     onKeyDown={(e) => {
@@ -746,8 +745,8 @@ const ApplicationForm = () => {
                                       }
                                     }}
                                   />
-                                  {touched[columnKey]?.[rowKey] &&
-                                    errors[columnKey]?.[rowKey] && (
+                                  {touched?.[columnKey]?.[rowKey] &&
+                                    errors?.[columnKey]?.[rowKey] && (
                                       <div>{errors[columnKey][rowKey]}</div>
                                     )}
                                 </td>
@@ -788,7 +787,7 @@ const ApplicationForm = () => {
                                   className="font-size-med"
                                   name={`IMSOfComSys.${rowKey}`}
                                   value="Yes"
-                                  checked={values.IMSOfComSys[rowKey] === "Yes"}
+                                  checked={values?.IMSOfComSys[rowKey] === "Yes"}
                                   onChange={handleChange}
                                   onBlur={handleBlur}
                                 />
@@ -800,30 +799,12 @@ const ApplicationForm = () => {
                                   className="font-size-med"
                                   name={`IMSOfComSys.${rowKey}`}
                                   value="No"
-                                  checked={values.IMSOfComSys[rowKey] === "No"}
+                                  checked={values?.IMSOfComSys[rowKey] === "No"}
                                   onChange={handleChange}
                                   onBlur={handleBlur}
                                 />
                                 <p>No</p>
                               </label>
-
-                              {/* <input
-                                type="tel"
-                                name={rowKey}
-                                value={values?.IMSOfComSys?.rowKey}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                onKeyDown={(e) => {
-                                  const key = e.key;
-                                  if (
-                                    !/^\d$/.test(key) &&
-                                    key !== "Backspace" &&
-                                    key !== "Delete"
-                                  ) {
-                                    e.preventDefault();
-                                  }
-                                }}
-                              /> */}
                               {touched?.IMSOfComSys?.rowKey &&
                                 errors?.IMSOfComSys?.rowKey && (
                                   <div>{errors.IMSOfComSys.rowKey}</div>
@@ -1058,7 +1039,7 @@ const ApplicationForm = () => {
                       type="file"
                       name="OtabuOffSignDate.review_conducted_AO_TM"
                       id="OtabuOffSignDate.review_conducted_AO_TM"
-                      value={values.OtabuOffSignDate.review_conducted_AO_TM}
+                      value={values?.OtabuOffSignDate?.review_conducted_AO_TM}
                       onChange={handleChange}
                       onBlur={handleBlur}
                     />
@@ -1077,7 +1058,7 @@ const ApplicationForm = () => {
                       type="date"
                       name="OtabuOffSignDate.date_1"
                       id="OtabuOffSignDate.date_1"
-                      value={values.OtabuOffSignDate.date_1}
+                      value={values?.OtabuOffSignDate?.date_1}
                       onChange={handleChange}
                       onBlur={handleBlur}
                     />
@@ -1098,7 +1079,7 @@ const ApplicationForm = () => {
                       type="file"
                       name="OtabuOffSignDate.tech_support_code_TE_LA"
                       id="OtabuOffSignDate.tech_support_code_TE_LA"
-                      value={values.OtabuOffSignDate.tech_support_code_TE_LA}
+                      value={values?.OtabuOffSignDate?.tech_support_code_TE_LA}
                       onChange={handleChange}
                       onBlur={handleBlur}
                     />
@@ -1117,7 +1098,7 @@ const ApplicationForm = () => {
                       type="date"
                       name="OtabuOffSignDate.date_2"
                       id="OtabuOffSignDate.date_2"
-                      value={values.OtabuOffSignDate.date_2}
+                      value={values?.OtabuOffSignDate?.date_2}
                       onChange={handleChange}
                       onBlur={handleBlur}
                     />
@@ -1138,7 +1119,7 @@ const ApplicationForm = () => {
                       type="file"
                       name="OtabuOffSignDate.approved_by_DTO_MD"
                       id="OtabuOffSignDate.approved_by_DTO_MD"
-                      value={values.OtabuOffSignDate.approved_by_DTO_MD}
+                      value={values?.OtabuOffSignDate?.approved_by_DTO_MD}
                       onChange={handleChange}
                       onBlur={handleBlur}
                     />
@@ -1157,7 +1138,7 @@ const ApplicationForm = () => {
                       type="date"
                       name="OtabuOffSignDate.date_3"
                       id="OtabuOffSignDate.date_3"
-                      value={values.OtabuOffSignDate.date_3}
+                      value={values?.OtabuOffSignDate?.date_3}
                       onChange={handleChange}
                       onBlur={handleBlur}
                     />
@@ -1183,7 +1164,6 @@ const ApplicationForm = () => {
                   </button>
                 </div>
               </div>
-            </fieldset>
           </form>
         </div>
       )}
