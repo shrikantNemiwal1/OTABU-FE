@@ -40,7 +40,7 @@ const ApplicationForm = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { state } = useContext(AuthContext);
-  const id = pathname.slice(13).slice(0, -17);
+  const id = pathname.slice(13).slice(0, -24);
 
   const [initialForm, setInitialForm] = useState(initialValues);
 
@@ -50,12 +50,12 @@ const ApplicationForm = () => {
         headers: { Authorization: `Bearer ${state.token}` },
       };
       const res = await axios.get(
-        BASE_URL + `/api/application_form/get_single_application/${id}`,
+        BASE_URL + `/api/app_review/get/${id}`,
         config
       );
       console.log(res?.data);
       setInitialForm(res?.data);
-      state.role === "Client" ? setFormDisabled(true) : null;
+      setFormDisabled(true);
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
@@ -63,7 +63,7 @@ const ApplicationForm = () => {
   };
 
   useEffect(() => {
-    //getFormDetails();
+    getFormDetails();
   }, []);
 
   const {
@@ -88,21 +88,20 @@ const ApplicationForm = () => {
       }
       setIsLoading(true);
 
-      const formValues =
-        state.role !== "Client"
-          ? changedDivisions(values, initialForm)
-          : values;
+      const formValues = formDisabled
+        ? changedDivisions(values, initialForm)
+        : values;
 
       const config = {
         headers: { Authorization: `Bearer ${state.token}` },
       };
       try {
         const response = await axios({
-          method: state.role === "Client" ? "post" : "patch",
+          method: !formDisabled ? "post" : "patch",
           url:
             BASE_URL +
-            `/api/application_form/${
-              state.role === "Client" ? "create" : "partial_update"
+            `/api/app_review/${
+              !formDisabled ? "create" : "partial_update"
             }/${id}`,
           data: formValues,
           headers: {
@@ -114,7 +113,7 @@ const ApplicationForm = () => {
         setOpen(true);
         console.log(response);
         setTimeout(() => {
-          navigate("/dashboard");
+          //navigate("/dashboard");
         }, 3000);
       } catch (error) {
         setAlertType("error");

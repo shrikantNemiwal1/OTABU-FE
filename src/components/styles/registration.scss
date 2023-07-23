@@ -167,6 +167,10 @@ input[type="file"]::file-selector-button {
   margin-left: 7rem !important;
 }
 
+.ml-0 {
+  margin: 0;
+}
+
 .column-head-small {
   width: 6rem;
 }
@@ -180,10 +184,10 @@ input[type="file"]::file-selector-button {
 }
 
 .font-size-med {
-  font-size: .9rem !important;
+  font-size: 0.9rem !important;
 }
 
-.checkbox-width-small{
+.checkbox-width-small {
   width: 6rem !important;
   display: inline-block !important;
 }
