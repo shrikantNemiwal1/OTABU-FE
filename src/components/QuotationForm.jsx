@@ -132,12 +132,9 @@ const ApplicationForm = () => {
       setIsLoading(true);
 
       const formValues = formDisabled
-        ? changedDivisions(values, initialForm)
+        ? changedDivisions(initialForm, values)
         : values;
 
-      const id = String(initialForm.QuotationPart1.id);
-      console.log(id)
-      console.log(initialForm.QuotationPart1.id);
       try {
         const response = await axios({
           method: formDisabled ? "patch" : "post",
