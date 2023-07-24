@@ -202,7 +202,12 @@ const ApplicationForm = () => {
             <div className="registration__form">
               <h2 className="form-sub-title">Quotation Form</h2>
 
-              <fieldset disabled={state.role === "Client"}>
+              <fieldset
+                disabled={
+                  state.role === "Client" ||
+                  initialForm?.Status === "Quotation Accepted by Client"
+                }
+              >
                 <div className="input__container">
                   <label htmlFor="date">Date of application :</label>
                   <input
@@ -548,7 +553,8 @@ const ApplicationForm = () => {
                     ) : null}
                   </div>
                 </div>
-                <Restricted to="Client">
+                {state.role === "Client" ||
+                initialForm?.Status === "Quotation Accepted by Client" ? (
                   <div className="input__container">
                     <label htmlFor="client_name">Client name :</label>
                     <input
@@ -569,50 +575,59 @@ const ApplicationForm = () => {
                       ) : null}
                     </div>
                   </div>
-                </Restricted>
+                ) : null}
               </fieldset>
 
-              <Restricted to="Client">
-                <div className="input__container">
-                  <label htmlFor="client_sign">Client Sign :</label>
-                  <input
-                    type="file"
-                    name="QuotationPart1.client_sign"
-                    id="client_sign"
-                    value={values.QuotationPart1.sign_otabu}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                  <div className="input__error-container">
-                    {errors.QuotationPart1?.client_sign &&
-                    touched.QuotationPart1?.client_sign ? (
-                      <p className="input__error">
-                        {errors.QuotationPart1?.client_sign}
-                      </p>
-                    ) : null}
-                  </div>
-                </div>
+              {state.role === "Client" ||
+              initialForm?.Status === "Quotation Accepted by Client" ? (
+                <>
+                  <fieldset
+                    disabled={
+                      initialForm?.Status === "Quotation Accepted by Client"
+                    }
+                  >
+                    <div className="input__container">
+                      <label htmlFor="client_sign">Client Sign :</label>
+                      <input
+                        type="file"
+                        name="QuotationPart1.client_sign"
+                        id="client_sign"
+                        value={values.QuotationPart1.sign_otabu}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <div className="input__error-container">
+                        {errors.QuotationPart1?.client_sign &&
+                        touched.QuotationPart1?.client_sign ? (
+                          <p className="input__error">
+                            {errors.QuotationPart1?.client_sign}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
 
-                <div className="input__container">
-                  <label htmlFor="client_seal">Client Seal :</label>
-                  <input
-                    type="file"
-                    name="QuotationPart1.client_seal"
-                    id="client_seal"
-                    value={values.QuotationPart1.sign_otabu}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                  <div className="input__error-container">
-                    {errors.QuotationPart1?.client_seal &&
-                    touched.QuotationPart1?.client_seal ? (
-                      <p className="input__error">
-                        {errors.QuotationPart1?.client_seal}
-                      </p>
-                    ) : null}
-                  </div>
-                </div>
-              </Restricted>
+                    <div className="input__container">
+                      <label htmlFor="client_seal">Client Seal :</label>
+                      <input
+                        type="file"
+                        name="QuotationPart1.client_seal"
+                        id="client_seal"
+                        value={values.QuotationPart1.sign_otabu}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <div className="input__error-container">
+                        {errors.QuotationPart1?.client_seal &&
+                        touched.QuotationPart1?.client_seal ? (
+                          <p className="input__error">
+                            {errors.QuotationPart1?.client_seal}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  </fieldset>
+                </>
+              ) : null}
 
               {/* Submit */}
 

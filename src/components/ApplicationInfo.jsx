@@ -106,8 +106,6 @@ const ApplicationInfo = () => {
       },
     });
 
-  console.log(state.role);
-
   return (
     <>
       <Modal
@@ -207,13 +205,11 @@ const ApplicationInfo = () => {
       ) : (
         <div className="application__info">
           <h2>Application (ID : {id})</h2>
-          {applicationStatus.includes("Application Review") &&
-            !applicationStatus.includes("Application Review Rejected") &&
-            !applicationStatus.includes("Quotation") && (
-              <button className="add-btn" onClick={() => setModalOpen(true)}>
-                Send Remark
-              </button>
-            )}
+          {applicationStatus.includes("Application Acceptance Pending") && (
+            <button className="add-btn" onClick={() => setModalOpen(true)}>
+              Send Remark
+            </button>
+          )}
           <div className="application_info-section">
             <NavLink to="application-form" className="link-without-style">
               <button className="application__btn">
@@ -257,7 +253,7 @@ const ApplicationInfo = () => {
           )}
           {(applicationStatus.includes("Application Review") ||
             applicationStatus.includes("Quotation")) &&
-            !applicationStatus.includes("Application Review Rejected") && (
+            !applicationStatus.includes("Application Acceptance Pending") && (
               <div className="application_info-section">
                 {state.role === "Client" ? (
                   <>
