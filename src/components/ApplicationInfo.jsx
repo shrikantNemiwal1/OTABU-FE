@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import view from "../assets/icons/view.svg";
 import request from "../assets/icons/request.svg";
 import print from "../assets/icons/print.svg";
@@ -31,6 +31,8 @@ const ApplicationInfo = () => {
   const { pathname } = useLocation();
   const { state } = useContext(AuthContext);
   const [modalOpen, setModalOpen] = useState(false);
+  const [applicationStatus, setApplicationStatus] = useState([]);
+  const [dataLoading, setDataLoading] = useState(true);
   const id = pathname.slice(13);
   const style = {
     position: "absolute",
@@ -46,6 +48,27 @@ const ApplicationInfo = () => {
     outline: "none",
     p: 4,
   };
+
+  const getApplicationDetails = async () => {
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${state.token}` },
+      };
+      const res = await axios.get(
+        BASE_URL + `/api/app_stage/forms_filled/${id}`,
+        config
+      );
+      console.log(res?.data);
+      setApplicationStatus(res?.data);
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+    }
+    setDataLoading(false);
+  };
+
+  useEffect(() => {
+    getApplicationDetails();
+  }, []);
 
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik({
@@ -82,6 +105,8 @@ const ApplicationInfo = () => {
         setIsLoading(false);
       },
     });
+
+  console.log(state.role);
 
   return (
     <>
@@ -175,62 +200,96 @@ const ApplicationInfo = () => {
       </Snackbar>
       <Navbar title={"Application"} />
       <SubNavbar />
-      <div className="application__info">
-        <h2>Application (ID : {id})</h2>
-        <button className="add-btn" onClick={() => setModalOpen(true)}>
-          Send Remark
-        </button>
-        <div className="application_info-section">
-          <NavLink to="application-form" className="link-without-style">
-            <button className="application__btn">
-              <img src={view} alt="view" />
-              <p>View Application Form New</p>
-            </button>
-          </NavLink>
-
-          <button className="application__btn application__btn--green">
-            <img src={print} alt="print" />
-            <p>Print Application Form New</p>
-          </button>
+      {dataLoading ? (
+        <div className="center">
+          <Spinner size={50} />
         </div>
-        <Restricted to="Admin Auditor">
+      ) : (
+        <div className="application__info">
+          <h2>Application (ID : {id})</h2>
+          {applicationStatus.includes("Application Review") &&
+            !applicationStatus.includes("Application Review Rejected") &&
+            !applicationStatus.includes("Quotation") && (
+              <button className="add-btn" onClick={() => setModalOpen(true)}>
+                Send Remark
+              </button>
+            )}
           <div className="application_info-section">
-            <NavLink
-              to="application-review-form"
-              className="link-without-style"
-            >
+            <NavLink to="application-form" className="link-without-style">
               <button className="application__btn">
                 <img src={view} alt="view" />
-                <p>Fill Application Review Form</p>
+                <p>{`${
+                  applicationStatus.includes("Application Rejected")
+                    ? "Update"
+                    : "View"
+                } Application Form`}</p>
               </button>
             </NavLink>
 
             <button className="application__btn application__btn--green">
               <img src={print} alt="print" />
-              <p>Print Application Review Form</p>
+              <p>Print Application Form New</p>
             </button>
           </div>
-        </Restricted>
-        <div className="application_info-section">
-          {state.role === "Client" ? (
-            <button className="application__btn">
-              <img src={request} alt="view" />
-              <p>View Quotation Form</p>
-            </button>
-          ) : (
-            <NavLink to="quotation-form" className="link-without-style">
-              <button className="application__btn">
-                <img src={request} alt="view" />
-                <p>Fill Quotation Form</p>
-              </button>
-            </NavLink>
+          {applicationStatus.includes("Application Form") && (
+            <Restricted to="Admin Auditor">
+              <div className="application_info-section">
+                <NavLink
+                  to="application-review-form"
+                  className="link-without-style"
+                >
+                  <button className="application__btn">
+                    <img src={view} alt="view" />
+                    <p>{`${
+                      applicationStatus.includes("Application Review Rejected")
+                        ? "Update"
+                        : "Fill"
+                    } Application Review Form`}</p>
+                  </button>
+                </NavLink>
+
+                <button className="application__btn application__btn--green">
+                  <img src={print} alt="print" />
+                  <p>Print Application Review Form</p>
+                </button>
+              </div>
+            </Restricted>
           )}
-          <button className="application__btn application__btn--green">
-            <img src={print} alt="print" />
-            <p>Print Quotation Form</p>
-          </button>
+          {(applicationStatus.includes("Application Review") ||
+            applicationStatus.includes("Quotation")) &&
+            !applicationStatus.includes("Application Review Rejected") && (
+              <div className="application_info-section">
+                {state.role === "Client" ? (
+                  <>
+                    {applicationStatus.includes("Quotation") && (
+                      <NavLink
+                        to="quotation-form"
+                        className="link-without-style"
+                      >
+                        <button className="application__btn">
+                          <img src={view} alt="view" />
+                          <p>View Quotation Form</p>
+                        </button>
+                      </NavLink>
+                    )}
+                  </>
+                ) : (
+                  <NavLink to="quotation-form" className="link-without-style">
+                    <button className="application__btn">
+                      <img src={request} alt="view" />
+                      <p>Fill Quotation Form</p>
+                    </button>
+                  </NavLink>
+                )}
+
+                <button className="application__btn application__btn--green">
+                  <img src={print} alt="print" />
+                  <p>Print Quotation Form</p>
+                </button>
+              </div>
+            )}
         </div>
-      </div>
+      )}
     </>
   );
 };

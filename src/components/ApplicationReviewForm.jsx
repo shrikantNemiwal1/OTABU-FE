@@ -113,7 +113,7 @@ const ApplicationForm = () => {
         setOpen(true);
         console.log(response);
         setTimeout(() => {
-          navigate("/dashboard/active-clients");
+          navigate(-1);
         }, 3000);
       } catch (error) {
         setAlertType("error");
@@ -1139,7 +1139,13 @@ const ApplicationForm = () => {
                   onClick={handleSubmit}
                   disabled={isLoading}
                 >
-                  {isLoading ? <Spinner size={25} color="white" /> : "Submit"}
+                  {isLoading ? (
+                    <Spinner size={25} color="white" />
+                  ) : formDisabled ? (
+                    "Update"
+                  ) : (
+                    "Submit"
+                  )}
                 </button>
               </div>
             </div>

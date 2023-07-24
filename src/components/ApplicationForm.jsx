@@ -59,6 +59,9 @@ const ApplicationForm = () => {
       console.log(res?.data);
       setInitialForm(res?.data);
       state.role === "Client" ? setFormDisabled(true) : null;
+      initialForm.Status === "Application Rejected"
+        ? setFormDisabled(false)
+        : null;
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
@@ -92,8 +95,9 @@ const ApplicationForm = () => {
       setIsLoading(true);
 
       const formValues =
-        state.role !== "Client"
-          ? changedDivisions(values, initialForm)
+        state.role !== "Client" ||
+        initialForm?.Status === "Application Rejected"
+          ? changedDivisions(initialForm, values)
           : values;
 
       const config = {
@@ -101,11 +105,20 @@ const ApplicationForm = () => {
       };
       try {
         const response = await axios({
-          method: state.role === "Client" ? "post" : "patch",
+          method:
+            initialForm?.Status === "Application Rejected"
+              ? "patch"
+              : state.role === "Client"
+              ? "post"
+              : "patch",
           url:
             BASE_URL +
             `/api/application_form/${
-              state.role === "Client" ? "create" : "partial_update"
+              initialForm?.Status === "Application Rejected"
+                ? "partial_update"
+                : state.role === "Client"
+                ? "create"
+                : "partial_update"
             }/${id}`,
           data: formValues,
           headers: {
@@ -117,7 +130,7 @@ const ApplicationForm = () => {
         setOpen(true);
         console.log(response);
         setTimeout(() => {
-          navigate("/dashboard");
+          navigate(-1);
         }, 3000);
       } catch (error) {
         setAlertType("error");
@@ -152,7 +165,13 @@ const ApplicationForm = () => {
             </Alert>
           </Snackbar>
           <form onSubmit={handleSubmit}>
-            <fieldset disabled={formDisabled}>
+            <fieldset
+              disabled={
+                initialForm?.Status === "Application Rejected"
+                  ? false
+                  : formDisabled
+              }
+            >
               <div className="registration__form">
                 {/* ApplicationForm */}
                 <>
@@ -1339,7 +1358,8 @@ const ApplicationForm = () => {
                   >
                     {isLoading ? (
                       <Spinner size={25} color="white" />
-                    ) : state.role === "Client" ? (
+                    ) : state.role === "Client" &&
+                      !(initialForm?.Status === "Application Rejected") ? (
                       "Submit"
                     ) : (
                       "Update"
