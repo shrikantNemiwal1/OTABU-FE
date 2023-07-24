@@ -1,0 +1,36 @@
+.rules {
+  &__container {
+    overflow: auto;
+    max-height: 100vh;
+    padding: 0 4rem;
+  }
+
+  &__head {
+    text-align: center;
+    margin: 2rem 0;
+  }
+
+  &__title {
+    background-color: rgba(0, 128, 0, 0.63);
+    font-weight: 500;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.3rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__detail {
+    margin-top: 0.4rem;
+  }
+}
+
+.agreement {
+  margin: 3rem 0;
+}
+
+.right-to-change {
+  font-style: italic;
+  font-weight: 500;
+  margin-top: 2rem;
+  color: red;
+}

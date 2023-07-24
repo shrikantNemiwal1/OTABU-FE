@@ -284,6 +284,26 @@ const ApplicationInfo = () => {
                 </button>
               </div>
             )}
+          {applicationStatus.includes("Quotation Accepted by Client") && (
+            <Restricted to="Client">
+              <div className="application_info-section">
+                <NavLink
+                  to="agreement-and-rules"
+                  className="link-without-style"
+                >
+                  <button className="application__btn">
+                    <img src={view} alt="view" />
+                    <p>Fill Certification Agreement and Rules</p>
+                  </button>
+                </NavLink>
+
+                <button className="application__btn application__btn--green">
+                  <img src={print} alt="print" />
+                  <p>Print Certification Agreement and Rules</p>
+                </button>
+              </div>
+            </Restricted>
+          )}
         </div>
       )}
     </>

@@ -21,6 +21,7 @@ import ApplicationForm from "./components/ApplicationForm";
 import ApplicationReviewForm from "./components/ApplicationReviewForm";
 import QuotationForm from "./components/QuotationForm";
 import TokenExpirationTime from "./context/TokenExpirationTime";
+import AgreementAndRules from "./components/AgreementAndRules";
 
 function App() {
   const { state, dispatch } = useContext(AuthContext);
@@ -62,6 +63,7 @@ function App() {
               element={<ApplicationReviewForm />}
             />
             <Route path="quotation-form" element={<QuotationForm />} />
+            <Route path="agreement-and-rules" element={<AgreementAndRules />} />
           </Route>
           <Route exact path="forgot-password" element={<ForgotPassword />} />
           <Route exact path="dashboard" element={<Dashboard />}>

@@ -87,6 +87,22 @@ export const forgotPasswordSchema = Yup.object({
     .required("Please enter confirm password"),
 });
 
+export const agreementFormSchema = Yup.object({
+  client: Yup.string(),
+  other_site: Yup.string(),
+  scope: Yup.string(),
+  other_certification: Yup.string(),
+  client_approval_date: Yup.string(),
+  client_sign: Yup.string(),
+  client_stamp: Yup.string(),
+  client_name_desig: Yup.string(),
+  company_name: Yup.string(),
+  otabu_approval_date: Yup.string(),
+  otabu_sign: Yup.string(),
+  otabu_stamp: Yup.string(),
+  otabu_name_desig: Yup.string(),
+});
+
 export const remarkFormSchema = Yup.object({
   remark: Yup.string().required("This field is required"),
   acceptance_choice: Yup.string().required("Please choose an option"),
