@@ -32,6 +32,7 @@ const ApplicationInfo = () => {
   const { state } = useContext(AuthContext);
   const [modalOpen, setModalOpen] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState([]);
+  const [remarks, setRemarks] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
   const id = pathname.slice(13);
   const style = {
@@ -66,9 +67,30 @@ const ApplicationInfo = () => {
     setDataLoading(false);
   };
 
+  const getRemarks = async () => {
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${state.token}` },
+      };
+      const res = await axios.get(
+        BASE_URL + `/api/app_review/get_app_review_remarks/${id}`,
+        config
+      );
+      console.log(res?.data);
+      setRemarks(res?.data);
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+    }
+    //setDataLoading(false);
+  };
+
   useEffect(() => {
     getApplicationDetails();
   }, []);
+
+  useEffect(() => {
+    getRemarks();
+  }, [applicationStatus]);
 
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik({
@@ -95,6 +117,7 @@ const ApplicationInfo = () => {
           setOpen(true);
           setModalOpen(false);
           console.log(response);
+          getApplicationDetails();
         } catch (error) {
           setAlertType("error");
           setAlertMsg(error?.response?.data?.msg);
@@ -303,6 +326,21 @@ const ApplicationInfo = () => {
                 </button>
               </div>
             </Restricted>
+          )}
+          {applicationStatus.includes("Quotation Accepted by Client") && (
+            <div className="application_info-section">
+              <NavLink to="audit-program" className="link-without-style">
+                <button className="application__btn">
+                  <img src={view} alt="view" />
+                  <p>Audit Program Form</p>
+                </button>
+              </NavLink>
+
+              <button className="application__btn application__btn--green">
+                <img src={print} alt="print" />
+                <p>Print Audit Program Form</p>
+              </button>
+            </div>
           )}
         </div>
       )}

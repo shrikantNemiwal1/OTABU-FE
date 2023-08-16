@@ -87,6 +87,114 @@ export const forgotPasswordSchema = Yup.object({
     .required("Please enter confirm password"),
 });
 
+export const auditProgramFormSchema = Yup.object({
+  AuditProgram: Yup.object().shape({
+    org_name: Yup.string(),
+    address: Yup.string(),
+    scope: Yup.string(),
+    standard: Yup.string(),
+    sites_2b_audited: Yup.string(),
+    certi_audit: Yup.string(),
+    surveillance_audit: Yup.string(),
+  }),
+
+  ProcessStage1: Yup.object().shape({
+    man_days: Yup.string(),
+    date_of_planning: Yup.string(),
+    lead_auditor: Yup.string(),
+    auditor: Yup.string(),
+    technical_expert: Yup.string(),
+  }),
+
+  ProcessStage2: Yup.object().shape({
+    man_days: Yup.string(),
+    date_of_planning: Yup.string(),
+    lead_auditor: Yup.string(),
+    auditor: Yup.string(),
+    technical_expert: Yup.string(),
+  }),
+
+  ProcessSurveillance1: Yup.object().shape({
+    man_days: Yup.string(),
+    date_of_planning: Yup.string(),
+    lead_auditor: Yup.string(),
+    auditor: Yup.string(),
+    technical_expert: Yup.string(),
+  }),
+
+  ProcessSurveillance2: Yup.object().shape({
+    man_days: Yup.string(),
+    date_of_planning: Yup.string(),
+    lead_auditor: Yup.string(),
+    auditor: Yup.string(),
+    technical_expert: Yup.string(),
+  }),
+
+  ProcessRenewal: Yup.object().shape({
+    man_days: Yup.string(),
+    date_of_planning: Yup.string(),
+    lead_auditor: Yup.string(),
+    auditor: Yup.string(),
+    technical_expert: Yup.string(),
+  }),
+
+  TopManagePolicyImprove: Yup.object().shape({
+    stage1: Yup.string(),
+    stage2: Yup.string(),
+    sa1: Yup.string(),
+    sa2: Yup.string(),
+    renewal: Yup.string(),
+  }),
+
+  QMSDocConOrgRiskIntMRM: Yup.object().shape({
+    stage1: Yup.string(),
+    stage2: Yup.string(),
+    sa1: Yup.string(),
+    sa2: Yup.string(),
+    renewal: Yup.string(),
+  }),
+
+  HRTrainWork: Yup.object().shape({
+    stage1: Yup.string(),
+    stage2: Yup.string(),
+    sa1: Yup.string(),
+    sa2: Yup.string(),
+    renewal: Yup.string(),
+  }),
+
+  MarketCustReqFeedback: Yup.object().shape({
+    stage1: Yup.string(),
+    stage2: Yup.string(),
+    sa1: Yup.string(),
+    sa2: Yup.string(),
+    renewal: Yup.string(),
+  }),
+
+  ProductionQAMaintAnalyCA: Yup.object().shape({
+    stage1: Yup.string(),
+    stage2: Yup.string(),
+    sa1: Yup.string(),
+    sa2: Yup.string(),
+    renewal: Yup.string(),
+  }),
+
+  PurchaseStoresDispatch: Yup.object().shape({
+    stage1: Yup.string(),
+    stage2: Yup.string(),
+    sa1: Yup.string(),
+    sa2: Yup.string(),
+    renewal: Yup.string(),
+  }),
+
+  UseOfLogo: Yup.object().shape({
+    stage1: Yup.string(),
+    stage2: Yup.string(),
+    sa1: Yup.string(),
+    sa2: Yup.string(),
+    renewal: Yup.string(),
+  }),
+});
+
 export const agreementFormSchema = Yup.object({
   client: Yup.string(),
   other_site: Yup.string(),
