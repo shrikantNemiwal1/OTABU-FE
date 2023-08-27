@@ -275,8 +275,7 @@ const AgreementAndRules = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { state } = useContext(AuthContext);
-  const id = pathname.slice(13).slice(0, -15);
-
+  const id = pathname.slice(13).slice(0, -20);
   const [initialForm, setInitialForm] = useState(initialValues);
 
   const getFormDetails = async () => {
@@ -285,7 +284,7 @@ const AgreementAndRules = () => {
         headers: { Authorization: `Bearer ${state.token}` },
       };
       const res = await axios.get(
-        BASE_URL + `/api/quotation/get_quotation/${id}`,
+        BASE_URL + `/api/client_agreement/get/${id}`,
         config
       );
       console.log(res?.data);
@@ -298,7 +297,7 @@ const AgreementAndRules = () => {
   };
 
   useEffect(() => {
-    //getFormDetails();
+    getFormDetails();
   }, []);
 
   const {
@@ -323,29 +322,12 @@ const AgreementAndRules = () => {
       }
       setIsLoading(true);
 
-      const formValues =
-        state.role === "Client"
-          ? {
-              client_sign: values.QuotationPart1.client_sign,
-              client_seal: values.QuotationPart1.client_seal,
-            }
-          : formDisabled
-          ? changedDivisions(initialForm, values)
-          : values;
+      const formValues = values;
 
       try {
         const response = await axios({
-          method:
-            state.role === "Client" ? "post" : formDisabled ? "patch" : "post",
-          url:
-            BASE_URL +
-            `/api/quotation/${
-              state.role === "Client"
-                ? "create_quotation_client"
-                : formDisabled
-                ? "partial_update_quotation"
-                : "create_quotation_admin"
-            }/${id}`,
+          method: "post",
+          url: BASE_URL + `/api/client_agreement/create/${id}`,
           data: formValues,
           headers: {
             Authorization: `Bearer ${state.token}`,
@@ -405,95 +387,96 @@ const AgreementAndRules = () => {
         & Rules without prior notification.
       </p>
       <form onSubmit={handleSubmit} className="agreement">
-        <div className="input__container">
-          <label htmlFor="client_approval_date">
-            Client Approval on Dated :{" "}
-          </label>
-          <input
-            type="date"
-            name="client_approval_date"
-            id="client_approval_date"
-            value={values.client_approval_date}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-          <div className="input__error-container">
-            {errors.client_approval_date && touched.client_approval_date ? (
-              <p className="input__error">{errors.client_approval_date}</p>
-            ) : null}
+        <fieldset disabled={state.role !== "Client" || formDisabled}>
+          <div className="input__container">
+            <label htmlFor="client_approval_date">
+              Client Approval on Dated :{" "}
+            </label>
+            <input
+              type="date"
+              name="client_approval_date"
+              id="client_approval_date"
+              value={values.client_approval_date}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+            <div className="input__error-container">
+              {errors.client_approval_date && touched.client_approval_date ? (
+                <p className="input__error">{errors.client_approval_date}</p>
+              ) : null}
+            </div>
           </div>
-        </div>
 
-        <div className="input__container">
-          <label htmlFor="client_sign">Signature :</label>
-          <input
-            type="file"
-            name="client_sign"
-            id="client_sign"
-            value={values.sign_otabu}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-          <div className="input__error-container">
-            {errors.client_sign && touched.client_sign ? (
-              <p className="input__error">{errors.client_sign}</p>
-            ) : null}
+          <div className="input__container">
+            <label htmlFor="client_sign">Signature :</label>
+            <input
+              type="file"
+              name="client_sign"
+              id="client_sign"
+              value={values.sign_otabu}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+            <div className="input__error-container">
+              {errors.client_sign && touched.client_sign ? (
+                <p className="input__error">{errors.client_sign}</p>
+              ) : null}
+            </div>
           </div>
-        </div>
 
-        <div className="input__container">
-          <label htmlFor="client_stamp">Company Stamp :</label>
-          <input
-            type="file"
-            name="client_stamp"
-            id="client_stamp"
-            value={values.sign_otabu}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-          <div className="input__error-container">
-            {errors.client_stamp && touched.client_stamp ? (
-              <p className="input__error">{errors.client_stamp}</p>
-            ) : null}
+          <div className="input__container">
+            <label htmlFor="client_stamp">Company Stamp :</label>
+            <input
+              type="file"
+              name="client_stamp"
+              id="client_stamp"
+              value={values.sign_otabu}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+            <div className="input__error-container">
+              {errors.client_stamp && touched.client_stamp ? (
+                <p className="input__error">{errors.client_stamp}</p>
+              ) : null}
+            </div>
           </div>
-        </div>
 
-        <div className="input__container">
-          <label htmlFor="client_name_desig">Name & Designation: </label>
-          <input
-            type="text"
-            name="client_name_desig"
-            id="client_name_desig"
-            value={values.client_name_desig}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            placeholder="Enter Name & Designation"
-          />
-          <div className="input__error-container">
-            {errors.client_name_desig && touched.client_name_desig ? (
-              <p className="input__error">{errors.client_name_desig}</p>
-            ) : null}
+          <div className="input__container">
+            <label htmlFor="client_name_desig">Name & Designation: </label>
+            <input
+              type="text"
+              name="client_name_desig"
+              id="client_name_desig"
+              value={values.client_name_desig}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="Enter Name & Designation"
+            />
+            <div className="input__error-container">
+              {errors.client_name_desig && touched.client_name_desig ? (
+                <p className="input__error">{errors.client_name_desig}</p>
+              ) : null}
+            </div>
           </div>
-        </div>
 
-        <div className="input__container">
-          <label htmlFor="company_name">Company Name: </label>
-          <input
-            type="text"
-            name="company_name"
-            id="company_name"
-            value={values.company_name}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            placeholder="Enter Company Name"
-          />
-          <div className="input__error-container">
-            {errors.company_name && touched.company_name ? (
-              <p className="input__error">{errors.company_name}</p>
-            ) : null}
+          <div className="input__container">
+            <label htmlFor="company_name">Company Name: </label>
+            <input
+              type="text"
+              name="company_name"
+              id="company_name"
+              value={values.company_name}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="Enter Company Name"
+            />
+            <div className="input__error-container">
+              {errors.company_name && touched.company_name ? (
+                <p className="input__error">{errors.company_name}</p>
+              ) : null}
+            </div>
           </div>
-        </div>
-
+        </fieldset>
         <div className="input__container">
           <button
             className="registration__submit"

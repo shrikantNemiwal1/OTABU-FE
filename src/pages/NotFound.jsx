@@ -10,7 +10,9 @@ const NotFound = () => {
 
   useEffect(() => {
     const redirectTimer = setTimeout(() => {
-      state?.isAuthenticated ? navigate("/dashboard") : navigate("/login");
+      state?.isAuthenticated
+        ? navigate("/dashboard", { replace: true })
+        : navigate("/login", { replace: true });
     }, 3000); // 5 seconds
 
     const countdownTimer = setInterval(() => {

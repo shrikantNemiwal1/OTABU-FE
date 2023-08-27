@@ -11,7 +11,7 @@ const Clients = () => {
 
   useEffect(() => {
     if (state?.isAuthenticated === false) {
-      return navigate("/login");
+      return navigate("/login", { replace: true });
     }
   }, [state]);
 

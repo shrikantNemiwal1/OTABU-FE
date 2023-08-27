@@ -86,6 +86,7 @@ const DashboardAdmin = () => {
         isLoading={isFetching}
         refetchData={refetch}
         rowActions={rowActions}
+        showActions={true}
       />
     </>
   );

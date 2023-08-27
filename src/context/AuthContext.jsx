@@ -12,11 +12,10 @@ export function API(method, endpoint, payload, token) {
       endpoint.startsWith("/") ? endpoint.slice(1) : endpoint
     }`,
     data: payload,
-    // headers: {
-    //   Authorization: `Bearer ${encrypted}`,
-    // },
   });
 }
+
+let refToken = "";
 
 const name = localStorage.getItem("otabu-audit-name")
   ? localStorage.getItem("otabu-audit-name")
@@ -51,10 +50,6 @@ const initialAuthState = {
   tokenExpTime,
 };
 
-//console.log(initialAuthState)
-
-//console.log(refreshToken);
-
 const AuthContext = createContext({
   state: initialAuthState,
   dispatch: () => {},
@@ -72,6 +67,7 @@ const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
 const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialAuthState);
   const [isLoading, setIsLoading] = useState(false);
+
   const login = async (values) => {
     setIsLoading(true);
     try {
@@ -88,15 +84,9 @@ const AuthProvider = ({ children }) => {
           tokenExpTime: getTokenExpTime(),
         },
       });
-      // dispatch({
-      //   type: SET_ERROR,
-      //   payload: null,
-      // });
       return res;
     } catch (err) {
       console.log(err);
-      //console.error(err.response.data.message);
-      //dispatch({ type: SET_ERROR, payload: err.response.data.message });
       return err;
     } finally {
       setIsLoading(false);
@@ -108,12 +98,12 @@ const AuthProvider = ({ children }) => {
     console.log(refreshToken);
     try {
       const res = await API("post", "/api/user/logout", {
-        refresh_token: refreshToken,
+        refresh_token: state?.refreshToken,
       });
       dispatch({ type: LOGOUT_SUCCESS });
       return res;
     } catch (err) {
-      //dispatch({ type: SET_ERROR, payload: err.response.data.message });
+      return err;
     } finally {
       setIsLoading(false);
     }

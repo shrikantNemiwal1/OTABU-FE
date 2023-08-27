@@ -112,74 +112,73 @@ const initialValues = {
   },
 
   TopManagePolicyImprove: {
-    stage1: "",
-    stage2: "",
-    sa1: "",
-    sa2: "",
-    renewal: "",
+    stage1: "No",
+    stage2: "No",
+    sa1: "No",
+    sa2: "No",
+    renewal: "No",
   },
 
   QMSDocConOrgRiskIntMRM: {
-    stage1: "",
-    stage2: "",
-    sa1: "",
-    sa2: "",
-    renewal: "",
+    stage1: "No",
+    stage2: "No",
+    sa1: "No",
+    sa2: "No",
+    renewal: "No",
   },
 
   HRTrainWork: {
-    stage1: "",
-    stage2: "",
-    sa1: "",
-    sa2: "",
-    renewal: "",
+    stage1: "No",
+    stage2: "No",
+    sa1: "No",
+    sa2: "No",
+    renewal: "No",
   },
 
   MarketCustReqFeedback: {
-    stage1: "",
-    stage2: "",
-    sa1: "",
-    sa2: "",
-    renewal: "",
+    stage1: "No",
+    stage2: "No",
+    sa1: "No",
+    sa2: "No",
+    renewal: "No",
   },
 
   ProductionQAMaintAnalyCA: {
-    stage1: "",
-    stage2: "",
-    sa1: "",
-    sa2: "",
-    renewal: "",
+    stage1: "No",
+    stage2: "No",
+    sa1: "No",
+    sa2: "No",
+    renewal: "No",
   },
 
   PurchaseStoresDispatch: {
-    stage1: "",
-    stage2: "",
-    sa1: "",
-    sa2: "",
-    renewal: "",
+    stage1: "No",
+    stage2: "No",
+    sa1: "No",
+    sa2: "No",
+    renewal: "No",
   },
 
   UseOfLogo: {
-    stage1: "",
-    stage2: "",
-    sa1: "",
-    sa2: "",
-    renewal: "",
+    stage1: "No",
+    stage2: "No",
+    sa1: "No",
+    sa2: "No",
+    renewal: "No",
   },
 };
 
 const AuditProgramForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
-  const [formDisabled, setFormDisabled] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
   const [open, setOpen] = useState(false);
   const [alertType, setAlertType] = useState("success");
   const [alertMsg, setAlertMsg] = useState("");
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { state } = useContext(AuthContext);
-  const id = pathname.slice(13).slice(0, -15);
-
+  const id = pathname.slice(13).slice(0, -14);
   const [initialForm, setInitialForm] = useState(initialValues);
 
   const getFormDetails = async () => {
@@ -188,12 +187,12 @@ const AuditProgramForm = () => {
         headers: { Authorization: `Bearer ${state.token}` },
       };
       const res = await axios.get(
-        BASE_URL + `/api/quotation/get_quotation/${id}`,
+        BASE_URL + `/api/audit_program/get/${id}`,
         config
       );
       console.log(res?.data);
       setInitialForm(res?.data);
-      setFormDisabled(true);
+      setFormSubmitted(true);
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
@@ -201,7 +200,7 @@ const AuditProgramForm = () => {
   };
 
   useEffect(() => {
-    //getFormDetails();
+    getFormDetails();
   }, []);
 
   const {
@@ -226,28 +225,17 @@ const AuditProgramForm = () => {
       }
       setIsLoading(true);
 
-      const formValues =
-        state.role === "Client"
-          ? {
-              client_sign: values.QuotationPart1.client_sign,
-              client_seal: values.QuotationPart1.client_seal,
-            }
-          : formDisabled
-          ? changedDivisions(initialForm, values)
-          : values;
+      const formValues = formSubmitted
+        ? changedDivisions(initialForm, values)
+        : values;
 
       try {
         const response = await axios({
-          method:
-            state.role === "Client" ? "post" : formDisabled ? "patch" : "post",
+          method: formSubmitted ? "patch" : "post",
           url:
             BASE_URL +
-            `/api/quotation/${
-              state.role === "Client"
-                ? "create_quotation_client"
-                : formDisabled
-                ? "partial_update_quotation"
-                : "create_quotation_admin"
+            `/api/audit_program/${
+              formSubmitted ? "partial_update" : "create"
             }/${id}`,
           data: formValues,
           headers: {
@@ -269,7 +257,6 @@ const AuditProgramForm = () => {
       setIsLoading(false);
     },
   });
-
   return (
     <>
       {formLoading ? (
@@ -411,13 +398,15 @@ const AuditProgramForm = () => {
                       <tbody>
                         {Object.keys(rowKeys).map((rowKey) => (
                           <tr key={rowKey} className="table-row">
-                            <th className="row-head m-med">{rowKeys[rowKey]}</th>
+                            <th className="row-head m-med">
+                              {rowKeys[rowKey]}
+                            </th>
                             {Object.keys(colKeys).map((colKey) => (
                               <td key={`${rowKey}-${colKey}`}>
                                 <label className="checkbox-label input-small">
                                   <input
-                                    type="radio"
-                                    name={`values.${rowKey}.${colKey}`}
+                                    type="checkbox"
+                                    name={`${rowKey}.${colKey}`}
                                     checked={
                                       values?.[rowKey]?.[colKey] === "Yes"
                                     }
@@ -446,22 +435,24 @@ const AuditProgramForm = () => {
 
               {/* Submit */}
 
-              <div className="input__container">
-                <button
-                  className="registration__submit"
-                  type="submit"
-                  onClick={handleSubmit}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <Spinner size={25} color="white" />
-                  ) : formDisabled && state.role !== "Client" ? (
-                    "Update"
-                  ) : (
-                    "Submit"
-                  )}
-                </button>
-              </div>
+              {state.role === "Admin Auditor" && (
+                <div className="input__container">
+                  <button
+                    className="registration__submit"
+                    type="submit"
+                    onClick={handleSubmit}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <Spinner size={25} color="white" />
+                    ) : formSubmitted && state.role !== "Client" ? (
+                      "Update"
+                    ) : (
+                      "Submit"
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           </form>
         </div>

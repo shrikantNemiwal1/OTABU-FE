@@ -16,6 +16,7 @@ const url = {
   allActiveClients: "/api/application_form/get_application_details",
   allActiveCertifications:
     "/api/application_form/get_client_application_details",
+  allAuditors: "api/select_auditor/get_auditors_list",
 };
 
 export function API(method, endpoint, payload, token) {
@@ -99,6 +100,22 @@ export function GetAllActiveClients(token) {
 export function GetAllActiveCertifications(token) {
   const queryKey = "allActiveCertifications";
   const queryFn = () => API("get", url.allActiveCertifications, {}, token);
+  const { refetch, ...queryResult } = useQuery(
+    [queryKey],
+    queryFn,
+    queryConfig
+  );
+  return {
+    refetch: () => {
+      refetch();
+    },
+    ...queryResult,
+  };
+}
+
+export function GetAllAuditors(token) {
+  const queryKey = "allAuditors";
+  const queryFn = () => API("get", url.allAuditors, {}, token);
   const { refetch, ...queryResult } = useQuery(
     [queryKey],
     queryFn,

@@ -23,6 +23,9 @@ import QuotationForm from "./components/QuotationForm";
 import TokenExpirationTime from "./context/TokenExpirationTime";
 import AgreementAndRules from "./components/AgreementAndRules";
 import AuditProgramForm from "./components/AuditProgramForm";
+import IntimationLetter1 from "./components/IntimationLetter1";
+import AuditPlanStage1Form from "./components/AuditPlanStage1Form";
+import AssignAuditor from "./components/AssignAuditor";
 
 function App() {
   const { state, dispatch } = useContext(AuthContext);
@@ -66,6 +69,12 @@ function App() {
             <Route path="quotation-form" element={<QuotationForm />} />
             <Route path="agreement-and-rules" element={<AgreementAndRules />} />
             <Route path="audit-program" element={<AuditProgramForm />} />
+            <Route path="intimation-letter-1" element={<IntimationLetter1 />} />
+            <Route path="assign-auditor" element={<AssignAuditor />} />
+            <Route
+              path="audit-plan-stage-1"
+              element={<AuditPlanStage1Form />}
+            />
           </Route>
           <Route exact path="forgot-password" element={<ForgotPassword />} />
           <Route exact path="dashboard" element={<Dashboard />}>

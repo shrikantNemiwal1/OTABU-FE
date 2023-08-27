@@ -15,20 +15,7 @@ const Navbar = ({ title }) => {
   const handleLogout = async () => {
     console.log("logout");
     await logout();
-    navigate("/");
-    // axios
-    //   .post(BASE_URL + "/api/user/logout", {
-    //     refresh_token: state.refreshToken,
-    //   })
-    //   .then((response) => {
-    //     console.log(response);
-    //     state.role === "Client"
-    //       ? navigate("/login/client")
-    //       : navigate("/login/auditor");
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
+    navigate("/", { replace: true });
   };
 
   return (

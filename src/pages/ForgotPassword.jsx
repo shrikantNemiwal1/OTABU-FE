@@ -47,7 +47,7 @@ const Login = () => {
           });
           console.log(res);
           setEmail(values.email);
-          navigate("/login");
+          navigate("/login", { replace: true });
         } catch (error) {
           setAlertMsg(error?.response?.data?.msg);
           setOpen(true);

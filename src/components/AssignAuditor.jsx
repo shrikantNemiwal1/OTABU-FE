@@ -3,18 +3,22 @@ import Table from "./Table";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { Snackbar, Alert } from "@mui/material";
-import { GetAllPendingClient } from "../api/api";
+import { GetAllAuditors } from "../api/api";
+import { useLocation } from "react-router-dom";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
-const DashboardAdmin = () => {
+const AssignAuditor = () => {
   const [open, setOpen] = useState(false);
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("success");
+  const [rowSelection, setRowSelection] = useState({});
+  const [isAuditorAssigned, setIsAuditorAssigned] = useState(false);
   const { state } = useContext(AuthContext);
-
+  const { pathname } = useLocation();
+  const id = pathname.slice(13).slice(0, -15);
   const columns = useMemo(() => [
     {
-      accessorKey: "client",
+      accessorKey: "id",
       header: "ID",
       enableColumnOrdering: false,
       enableEditing: false, //disable editing on this column
@@ -22,71 +26,72 @@ const DashboardAdmin = () => {
       size: 30,
     },
     {
-      accessorFn: (row) => `${row.client_details.name}`,
-      header: "Client Name",
+      accessorKey: "auditor_name",
+      header: "Auditor Name",
       size: 30,
     },
-    {
-      accessorFn: (row) => `${row.client_details.email}`,
-      header: "Client Email",
-      size: 30,
-    },
-    // {
-    //   accessorKey: "lastName",
-    //   header: "Last Name",
-    //   size: 50,
-    //   muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-    //     ...getCommonEditTextFieldProps(cell),
-    //   }),
-    // },
-    {
-      accessorKey: "acceptance_status",
-      header: "Status",
-      size: 10,
-    },
-    // {
-    //   accessorKey: "age",
-    //   header: "Age",
-    //   size: 80,
-    //   muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-    //     ...getCommonEditTextFieldProps(cell),
-    //     type: "number",
-    //   }),
-    // },
-    // {
-    //   accessorKey: "state",
-    //   header: "State",
-    //   muiTableBodyCellEditTextFieldProps: {
-    //     select: true, //change to select for a dropdown
-    //     children: states.map((state) => (
-    //       <MenuItem key={state} value={state}>
-    //         {state}
-    //       </MenuItem>
-    //     )),
-    //   },
-    // },
   ]);
 
-  const { data, refetch, isFetching } = GetAllPendingClient(state.token);
+  const getAssignedAuditor = async () => {
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${state.token}` },
+      };
+      const res = await axios.get(
+        BASE_URL + `/api/select_auditor/get_assigned_auditor/${id}`,
+        config
+      );
+      console.log(res?.data);
+      setRowSelection(res?.data ? { [res?.data?.id]: true } : {});
+      setIsAuditorAssigned(true);
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+    }
+  };
 
-  // const fetchTableData = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     const config = {
-  //       headers: { Authorization: `Bearer ${state.token}` },
-  //     };
-  //     //console.log(state.token);
-  //     const res = await axios.get(
-  //       BASE_URL + "/api/approvals/get_pending_approvals",
-  //       config
-  //     );
-  //     console.log(res);
-  //     setData(res?.data);
-  //   } catch (error) {
-  //     console.log(error?.response?.data?.msg);
-  //   }
-  //   setIsLoading(false);
-  // };
+  useEffect(() => {
+    getAssignedAuditor();
+  }, []);
+
+  const { data, refetch, isFetching } = GetAllAuditors(state.token);
+
+  const handleAssignAuditor = async (row) => {
+    const rowId = Object.keys(row)[0];
+    if (rowId === undefined) {
+      setAlertMsg("Select an auditor");
+      setAlertType("warning");
+      setOpen(true);
+    } else {
+      try {
+        const config = {
+          headers: { Authorization: `Bearer ${state.token}` },
+        };
+        const res = isAuditorAssigned
+          ? await axios.put(
+              BASE_URL +
+                `/api/select_auditor/update_assigned_auditor/${rowId}/${id}`,
+              {},
+              config
+            )
+          : await axios.post(
+              BASE_URL + `/api/select_auditor/select_auditor/${rowId}/${id}`,
+              {},
+              config
+            );
+        setIsAuditorAssigned(true);
+        setAlertMsg(res?.data?.msg);
+        setAlertType("success");
+        setOpen(true);
+        refetch();
+      } catch (error) {
+        console.log(error);
+        console.log(error?.response?.data?.msg);
+        setAlertMsg(error?.response?.data?.msg);
+        setAlertType("error");
+        setOpen(true);
+      }
+    }
+  };
 
   const handleAction = async ({ type, row }) => {
     console.log(type, row);
@@ -154,19 +159,24 @@ const DashboardAdmin = () => {
           {alertMsg}
         </Alert>
       </Snackbar>
+      <div>
+        <h2 className="form-sub-title">Assign Auditor</h2>
+      </div>
       <Table
         data={data?.data}
         columns={columns}
-        title={"Pending Client list"}
-        height={"100vh - 280px - 8.7rem"}
+        title={"Auditors"}
+        height={"100vh - 205px"}
         isLoading={isFetching}
-        refetchData={refetch}
+        refetchData={handleAssignAuditor}
+        toolName={"Assign"}
         rowActions={rowActions}
-        showActions={true}
-        selectRow={false}
+        selectRow={true}
+        rowSelection={rowSelection}
+        setRowSelection={setRowSelection}
       />
     </>
   );
 };
 
-export default DashboardAdmin;
+export default AssignAuditor;

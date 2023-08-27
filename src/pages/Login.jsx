@@ -34,17 +34,9 @@ const Login = () => {
         try {
           setIsLoading(true);
           const res = await login(values);
-          console.log(res);
+
           if (res?.status === 200) {
-            navigate("/dashboard");
-          }
-          if (res?.response?.status === 400) {
-            setErrMsg(res?.response?.data?.msg);
-            setOpen(true);
-          }
-          if (res?.response?.status === 404) {
-            setErrMsg(res?.response?.data?.msg);
-            setOpen(true);
+            navigate("/dashboard", { replace: true });
           }
         } catch (error) {
           console.log("error", error?.response?.data?.msg);
@@ -52,19 +44,6 @@ const Login = () => {
           setOpen(true);
         }
         setIsLoading(false);
-        // axios
-        //   .post(BASE_URL + "/api/user/login", {
-        //     email: values.email,
-        //     password: values.password,
-        //   })
-        //   .then((response) => {
-        //     console.log(response);
-        //     navigate("/dashboard");
-        //   })
-        //   .catch((error) => {
-        //     setOpen(true);
-        //     console.log(error);
-        //   });
       },
     });
 
@@ -75,7 +54,7 @@ const Login = () => {
 
   useEffect(() => {
     if (state?.isAuthenticated === true) {
-      return navigate("/dashboard");
+      return navigate("/dashboard", { replace: true });
     }
   }, [state]);
 

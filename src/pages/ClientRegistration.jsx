@@ -82,7 +82,7 @@ const Login = () => {
         }
       );
       //console.log(response);
-      navigate("/login/auditor");
+      navigate("/login/auditor", { replace: true });
     } catch (error) {
       setAlertMsg(error?.response?.data?.msg);
       setOpen(true);
@@ -100,7 +100,7 @@ const Login = () => {
 
   useEffect(() => {
     if (state?.isAuthenticated === true) {
-      return navigate("/dashboard");
+      return navigate("/dashboard", { replace: true });
     }
   }, [state]);
 

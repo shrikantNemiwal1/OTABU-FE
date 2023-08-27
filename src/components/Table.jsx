@@ -45,25 +45,25 @@ const Table = ({
   isLoading,
   refetchData,
   rowActions,
+  showActions,
+  toolName,
+  selectRow,
+  rowSelection,
+  setRowSelection,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
-
   return (
     <>
       <div className="table__container">
         <MaterialReactTable
-          displayColumnDefOptions={{
-            "mrt-row-actions": {
-              muiTableHeadCellProps: {
-                align: "center",
-              },
-              muiTableBodyCellProps: {
-                align: "center",
-              },
-              size: 120,
-            },
-          }}
-          state={{ isLoading: isLoading }}
+          // displayColumnDefOptions={{
+          //   "mrt-row-actions": {
+          //     muiTableHeadCellProps: {
+          //       align: "center",
+          //     },
+          //     size: 120,
+          //   },
+          // }}
           columns={columns}
           data={data?.reverse() || []}
           muiTableContainerProps={{
@@ -71,9 +71,26 @@ const Table = ({
               height: `calc(${height})`,
             },
           }}
+          enableMultiRowSelection={false}
+          enableRowSelection={selectRow}
+          getRowId={(row) => row.id}
+          muiTableBodyRowProps={({ row }) => ({
+            onClick: row.getToggleSelectedHandler(),
+            sx: { cursor: "pointer" },
+          })}
+          onRowSelectionChange={setRowSelection}
+          state={
+            selectRow
+              ? {
+                  rowSelection,
+                  isLoading: isLoading,
+                }
+              : { isLoading }
+          }
+          positionToolbarAlertBanner="bottom"
           enableColumnOrdering
           enableStickyHeader
-          enableRowActions
+          enableRowActions={showActions}
           positionActionsColumn="last"
           renderRowActions={({ row, table }) => rowActions({ row, table })}
           // renderRowActions={({ row, table }) => (
@@ -116,13 +133,12 @@ const Table = ({
             <>
               <h2 className="table-title">
                 {title}
-                <button className="add-btn" onClick={refetchData}>
-                  Refresh
+                <button
+                  className="add-btn"
+                  onClick={() => refetchData(rowSelection)}
+                >
+                  {toolName ? toolName : "Refresh"}
                 </button>
-                {/* <button className="add-btn" onClick={() => setModalOpen(true)}>
-                  <img src={addIcon} alt="plus" />
-                  Add Auditor
-                </button> */}
               </h2>
             </>
           )}
