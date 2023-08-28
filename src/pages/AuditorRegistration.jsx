@@ -124,7 +124,7 @@ const Login = () => {
                 <label htmlFor="name">Name</label>
                 <div className="input-block__input">
                   <input
-                    type="tel"
+                    type="text"
                     id="name"
                     name="name"
                     value={values.name}
