@@ -125,13 +125,13 @@ const Clients = () => {
       <Sidebar />
       <main>
         <Navbar title={"Notifications"} />
-        <SubNavbar />
+        {/* <SubNavbar /> */}
         <Table
           data={data?.data.reverse()}
           columns={columns}
           isLoading={isFetching}
           title={"Notifications"}
-          height={"100vh - 280px - 1rem"}
+          height={"100vh - 215px"}
           refetchData={refetch}
           handleAction={handleAction}
           rowActions={rowActions}

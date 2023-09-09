@@ -248,7 +248,7 @@ const ApplicationInfo = () => {
         </Alert>
       </Snackbar>
       <Navbar title={"Application"} />
-      <SubNavbar />
+      {/* <SubNavbar /> */}
       {dataLoading ? (
         <div className="center">
           <Spinner size={50} />
@@ -493,6 +493,39 @@ const ApplicationInfo = () => {
                       ? "View"
                       : "Fill"
                   } Audit Plan stage 1 Form`}</p>
+                </button>
+              </NavLink>
+              <button className="application__btn application__btn--green">
+                <img src={print} alt="print" />
+                <p>Print Audit Plan stage 1 Form</p>
+              </button>
+            </div>
+          )}
+
+          {/* Audit Plan 1 */}
+          {((state.role === "Admin Auditor" &&
+            applicationStatus.includes("Auditor Assigned")) ||
+            applicationStatus.includes("Audit Plan Stage 1")) && (
+            <div className="application_info-section">
+              <NavLink to="audit-plan-stage-1" className="link-without-style">
+                <button className="application__btn">
+                  <img
+                    src={
+                      applicationStatus.includes(
+                        "Intimation Letter 1 Prepared"
+                      ) || applicationStatus.includes("Audit Plan Stage 1")
+                        ? view
+                        : request
+                    }
+                    alt="view"
+                  />
+                  <p>{`${
+                    applicationStatus.includes(
+                      "Intimation Letter 1 Prepared"
+                    ) || applicationStatus.includes("Audit Plan Stage 1")
+                      ? "View"
+                      : "Fill"
+                  } Audit Report stage 1 Form`}</p>
                 </button>
               </NavLink>
               <button className="application__btn application__btn--green">

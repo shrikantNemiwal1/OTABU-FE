@@ -21,6 +21,18 @@
   flex-wrap: wrap;
 }
 
+.checkbox-container-vert {
+  flex-direction: column;
+
+  & label:nth-child(2) {
+    margin-bottom: 2rem;
+  }
+
+  & label {
+    max-width: 100%;
+  }
+}
+
 input[type="checkbox"],
 input[type="radio"] {
   /* Add if not using autoprefixer */

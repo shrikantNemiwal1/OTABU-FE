@@ -23,7 +23,7 @@ const Dashboard = () => {
       <Sidebar />
       <main>
         <Navbar />
-        <SubNavbar />
+        {/* <SubNavbar /> */}
         <DashboardNav />
         <Outlet />
       </main>

@@ -26,6 +26,7 @@ import AuditProgramForm from "./components/AuditProgramForm";
 import IntimationLetter1 from "./components/IntimationLetter1";
 import AuditPlanStage1Form from "./components/AuditPlanStage1Form";
 import AssignAuditor from "./components/AssignAuditor";
+import AuditReportStage1Form from "./components/AuditReportStage1Form";
 
 function App() {
   const { state, dispatch } = useContext(AuthContext);
@@ -74,6 +75,10 @@ function App() {
             <Route
               path="audit-plan-stage-1"
               element={<AuditPlanStage1Form />}
+            />
+            <Route
+              path="audit-report-stage-1"
+              element={<AuditReportStage1Form />}
             />
           </Route>
           <Route exact path="forgot-password" element={<ForgotPassword />} />

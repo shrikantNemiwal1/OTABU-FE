@@ -151,6 +151,9 @@ const Login = () => {
                     onBlur={handleBlur}
                     disabled={isLoading}
                     placeholder="Email"
+                    onKeyDown={(e) => {
+                      if (e.key === " ") e.preventDefault();
+                    }}
                   />
                 </div>
 

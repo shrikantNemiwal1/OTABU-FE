@@ -30,21 +30,14 @@ const Navbar = ({ title }) => {
         </div>
       </div>
       <div className="navbar__items-right">
+        {/* <div className="navbar__avatar">
+          <img src="" alt="avatar" />
+          <p>User name</p>
+        </div> */}
         <ul>
           <li>
             <NavLink to="/notifications">
               <img src={bell} alt="bell" />
-            </NavLink>
-          </li>
-        </ul>
-        <div className="navbar__avatar">
-          <img src="" alt="avatar" />
-          <p>User name</p>
-        </div>
-        <ul>
-          <li>
-            <NavLink>
-              <img src={setting} alt="setting" />
             </NavLink>
           </li>
           <li>

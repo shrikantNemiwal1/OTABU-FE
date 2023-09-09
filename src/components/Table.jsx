@@ -87,6 +87,7 @@ const Table = ({
                 }
               : { isLoading }
           }
+          initialState={{ density: "compact" }}
           positionToolbarAlertBanner="bottom"
           enableColumnOrdering
           enableStickyHeader

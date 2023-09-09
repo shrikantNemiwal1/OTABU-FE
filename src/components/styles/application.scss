@@ -45,11 +45,20 @@ fieldset {
   margin: auto !important;
 }
 
+.input-big {
+  width: 30rem !important;
+  margin-inline: auto !important;
+}
+
 .font-small {
   font-size: 12px !important;
   height: 3.4rem;
 }
 
-.m-med{
-  padding: .5rem;
+.m-med {
+  padding: 0.5rem;
+}
+
+.text-start {
+  text-align: start;
 }

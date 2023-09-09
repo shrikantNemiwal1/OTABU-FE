@@ -91,6 +91,9 @@ const Login = () => {
                   onBlur={handleBlur}
                   disabled={isLoading}
                   placeholder="Enter your Email"
+                  onKeyDown={(e) => {
+                    if (e.key === " ") e.preventDefault();
+                  }}
                 />
               </div>
               {errors.email && touched.email ? (

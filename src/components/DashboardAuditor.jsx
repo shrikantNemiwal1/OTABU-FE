@@ -1,7 +1,124 @@
-import React from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import Table from "./Table";
+import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
+import { Snackbar, Alert } from "@mui/material";
+import { GetAllActiveClients, GetAllPendingClient } from "../api/api";
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 const DashboardAuditor = () => {
-  return <div>DashboardAuditor</div>;
+  const [open, setOpen] = useState(false);
+  const [alertMsg, setAlertMsg] = useState("");
+  const [alertType, setAlertType] = useState("success");
+  const { state } = useContext(AuthContext);
+
+  const columns = useMemo(() => [
+    {
+      accessorKey: "client",
+      header: "ID",
+      enableColumnOrdering: false,
+      enableEditing: false, //disable editing on this column
+      enableSorting: false,
+      size: 30,
+    },
+    {
+      accessorFn: (row) => `${row.client_details.name}`,
+      header: "Client Name",
+      size: 30,
+    },
+    {
+      accessorFn: (row) => `${row.client_details.email}`,
+      header: "Client Email",
+      size: 30,
+    },
+    {
+      accessorKey: "acceptance_status",
+      header: "Status",
+      size: 10,
+    },
+  ]);
+
+  const { data, refetch, isFetching } = GetAllActiveClients(state.token);
+
+  const handleAction = async ({ type, row }) => {
+    console.log(type, row);
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${state.token}` },
+      };
+      //console.log(state.token);
+      const res = await axios.put(
+        BASE_URL + `/api/approvals/update_approval_applicationform/${row.id}`,
+        { acceptance_status: type === "accept" ? "1" : "0" },
+        config
+      );
+      console.log(res);
+      setAlertMsg(res?.data?.message);
+      setAlertType("success");
+      setOpen(true);
+      refetch();
+      const noti = await axios.post(
+        BASE_URL + "/api/notifications/send_notification",
+        {
+          message: `Application ${type === "accept" ? "accepted" : "rejected"}`,
+          receiver_email: row.client_details.email,
+        },
+        config
+      );
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+      setAlertMsg(error?.response?.data?.msg);
+      setAlertType("error");
+      setOpen(true);
+    }
+  };
+
+  const rowActions = ({ row, table }) => (
+    <>
+      <button
+        onClick={() => handleAction({ type: "accept", row: row.original })}
+        className="application-action application-action--accept"
+      >
+        Accept
+      </button>
+      <button
+        onClick={() => handleAction({ type: "reject", row: row.original })}
+        className="application-action application-action--reject"
+      >
+        Reject
+      </button>
+    </>
+  );
+
+  return (
+    <>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={() => setOpen(false)}
+      >
+        <Alert
+          variant="filled"
+          onClose={() => setOpen(false)}
+          severity={alertType}
+          sx={{ width: "100%" }}
+        >
+          {alertMsg}
+        </Alert>
+      </Snackbar>
+      <Table
+        data={data?.data}
+        columns={columns}
+        title={"Pending Client list"}
+        height={"100vh - 215px - 8rem"}
+        isLoading={isFetching}
+        refetchData={refetch}
+        rowActions={rowActions}
+        showActions={true}
+        selectRow={false}
+      />
+    </>
+  );
 };
 
 export default DashboardAuditor;
