@@ -387,7 +387,7 @@ const AuditProgramForm = () => {
                     <table className="table-form">
                       <thead>
                         <tr>
-                          <th></th>
+                          <th className="row-head-big"></th>
                           {Object.keys(colKeys).map((colKey) => (
                             <th className="column-head-medium" key={colKey}>
                               {colKeys[colKey]}

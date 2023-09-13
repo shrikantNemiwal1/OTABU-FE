@@ -33,36 +33,43 @@ const Login = () => {
   const navigate = useNavigate();
   const { state, login } = useContext(AuthContext);
 
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
-    useFormik({
-      initialValues,
-      validationSchema: auditorRegistrationSchema,
-      onSubmit: async (values) => {
-        //console.log(values);
-        setIsLoading(true);
-        try {
-          const response = await axios.post(
-            BASE_URL + "/api/user/register/auditor",
-            values
-          );
-          console.log(response);
-          setFormSubmitted(true);
+  const {
+    values,
+    errors,
+    touched,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues,
+    validationSchema: auditorRegistrationSchema,
+    onSubmit: async (values) => {
+      //console.log(values);
+      setIsLoading(true);
+      try {
+        const response = await axios.post(
+          BASE_URL + "/api/user/register/auditor",
+          values
+        );
+        console.log(response);
+        setFormSubmitted(true);
+        setEmail(values.email);
+      } catch (error) {
+        if (
+          error?.response?.data?.msg ===
+          "Email Registered. Verification Pending"
+        ) {
           setEmail(values.email);
-        } catch (error) {
-          if (
-            error?.response?.data?.msg ===
-            "Email Registered. Verification Pending"
-          ) {
-            setEmail(values.email);
-            setFormSubmitted(true);
-          }
-          setAlertMsg(error?.response?.data?.msg);
-          setOpen(true);
-          //console.log(error?.response?.data?.msg);
+          setFormSubmitted(true);
         }
-        setIsLoading(false);
-      },
-    });
+        setAlertMsg(error?.response?.data?.msg);
+        setOpen(true);
+        //console.log(error?.response?.data?.msg);
+      }
+      setIsLoading(false);
+    },
+  });
 
   const handleOtpSubmit = async (event) => {
     event.preventDefault();
@@ -98,6 +105,13 @@ const Login = () => {
       return navigate("/dashboard", { replace: true });
     }
   }, [state]);
+
+  const handlePaste = (event) => {
+    event.preventDefault();
+    const pastedText = event.clipboardData.getData("text/plain");
+    const newValue = pastedText.replace(/\s/g, "");
+    setFieldValue("email", newValue);
+  };
 
   return (
     <>
@@ -154,6 +168,7 @@ const Login = () => {
                     onKeyDown={(e) => {
                       if (e.key === " ") e.preventDefault();
                     }}
+                    onPaste={handlePaste}
                   />
                 </div>
 

@@ -35,7 +35,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { state, login } = useContext(AuthContext);
 
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
+  const { values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue } =
     useFormik({
       initialValues,
       validationSchema: clientRegistrationSchema,
@@ -103,6 +103,13 @@ const Login = () => {
       return navigate("/dashboard", { replace: true });
     }
   }, [state]);
+
+  const handlePaste = (event) => {
+    event.preventDefault();
+    const pastedText = event.clipboardData.getData("text/plain");
+    const newValue = pastedText.replace(/\s/g, "");
+    setFieldValue("email", newValue);
+  };
 
   return (
     <>
@@ -200,6 +207,7 @@ const Login = () => {
                     onKeyDown={(e) => {
                       if (e.key === " ") e.preventDefault();
                     }}
+                    onPaste={handlePaste}
                   />
                 </div>
 
@@ -207,7 +215,6 @@ const Login = () => {
                   {errors.email && touched.email ? errors.email : null}
                 </p>
               </div>
-
               <div className="input-block">
                 <label htmlFor="password">Password</label>
                 <div className="input-block__input">
@@ -233,7 +240,6 @@ const Login = () => {
                   {errors.password && touched.password ? errors.password : null}
                 </p>
               </div>
-
               <div className="input-block">
                 <label htmlFor="confirm_password">Confirm Password</label>
                 <div className="input-block__input">

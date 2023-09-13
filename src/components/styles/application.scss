@@ -42,7 +42,7 @@ fieldset {
 
 .input-small {
   width: 4rem !important;
-  margin: auto !important;
+  margin: auto !important; 
 }
 
 .input-big {
@@ -61,4 +61,8 @@ fieldset {
 
 .text-start {
   text-align: start;
+}
+
+.row-head-big{
+  width: 26rem;
 }

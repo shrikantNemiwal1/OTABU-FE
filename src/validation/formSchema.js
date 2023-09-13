@@ -623,7 +623,7 @@ export const applicationReviewFormSchema = Yup.object().shape({
 export const applicationFormSchema = Yup.object().shape({
   ApplicationForm: Yup.object().shape({
     date_of_app: Yup.string(),
-    name_of_company: Yup.string().required("This field is required"),
+    name_of_company: Yup.string(),
     address: Yup.string(),
     website: Yup.string(),
     email: Yup.string(),
@@ -737,7 +737,7 @@ export const applicationFormSchema = Yup.object().shape({
     tot_emp: Yup.string(),
   }),
   IntegratedCerti: Yup.object().shape({
-    ims_integrated_doc: Yup.string().required("Please select an option"),
+    ims_integrated_doc: Yup.string(),
     management_reviews: Yup.string(),
     internal_audits: Yup.string(),
     policy_objectives: Yup.string(),

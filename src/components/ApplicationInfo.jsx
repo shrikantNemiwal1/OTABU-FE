@@ -256,14 +256,16 @@ const ApplicationInfo = () => {
       ) : (
         <div className="application__info">
           <h2>Application (ID : {id})</h2>
-          {(state.role === "Admin Auditor" &&
+          {((state.role === "Admin Auditor" &&
             applicationStatus.includes("Application Acceptance Pending")) ||
             (state.role === "Client" &&
-              applicationStatus.includes("Audit Plan 1 Acceptance Pending") && (
-                <button className="add-btn" onClick={() => setModalOpen(true)}>
-                  Send Remark
-                </button>
-              ))}
+              applicationStatus.includes(
+                "Audit Plan 1 Acceptance Pending"
+              ))) && (
+            <button className="add-btn" onClick={() => setModalOpen(true)}>
+              Send Remark
+            </button>
+          )}
 
           {/* ApplicationForm */}
           <div className="application_info-section">
@@ -411,7 +413,8 @@ const ApplicationInfo = () => {
           {((state.role === "Admin Auditor" &&
             applicationStatus.includes("Audit Program")) ||
             applicationStatus.includes("Intimation Letter 1 Prepared") ||
-            applicationStatus.includes("Audit Plan Stage 1")) && (
+            applicationStatus.includes("Audit Plan Stage 1") ||
+            applicationStatus.includes("Auditor Assigned")) && (
             <div className="application_info-section">
               <NavLink to="intimation-letter-1" className="link-without-style">
                 <button className="application__btn">
@@ -419,7 +422,9 @@ const ApplicationInfo = () => {
                     src={
                       applicationStatus.includes(
                         "Intimation Letter 1 Prepared"
-                      ) || applicationStatus.includes("Audit Plan Stage 1")
+                      ) ||
+                      applicationStatus.includes("Audit Plan Stage 1") ||
+                      applicationStatus.includes("Auditor Assigned")
                         ? view
                         : request
                     }
@@ -428,7 +433,9 @@ const ApplicationInfo = () => {
                   <p>{`${
                     applicationStatus.includes(
                       "Intimation Letter 1 Prepared"
-                    ) || applicationStatus.includes("Audit Plan Stage 1")
+                    ) ||
+                    applicationStatus.includes("Audit Plan Stage 1") ||
+                    applicationStatus.includes("Auditor Assigned")
                       ? "View"
                       : "Fill"
                   } Intimation Letter 1 Form`}</p>
@@ -504,8 +511,8 @@ const ApplicationInfo = () => {
 
           {/* Audit Plan 1 */}
           {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Auditor Assigned")) ||
-            applicationStatus.includes("Audit Plan Stage 1")) && (
+            applicationStatus.includes("Audit Plan Stage 1")) ||
+            applicationStatus.includes("Audit Plan Sta1")) && (
             <div className="application_info-section">
               <NavLink to="audit-plan-stage-1" className="link-without-style">
                 <button className="application__btn">

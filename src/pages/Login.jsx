@@ -25,27 +25,37 @@ const Login = () => {
   const navigate = useNavigate();
   const { state, login } = useContext(AuthContext);
 
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
-    useFormik({
-      initialValues,
-      validationSchema: loginSchema,
-      onSubmit: async (values) => {
-        console.log(values);
-        try {
-          setIsLoading(true);
-          const res = await login(values);
+  const {
+    values,
+    errors,
+    touched,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues,
+    validationSchema: loginSchema,
+    onSubmit: async (values) => {
+      console.log(values);
+      try {
+        setIsLoading(true);
+        const res = await login(values);
 
-          if (res?.status === 200) {
-            navigate("/dashboard", { replace: true });
-          }
-        } catch (error) {
-          console.log("error", error?.response?.data?.msg);
-          setErrMsg(error);
+        if (res?.status === 200) {
+          navigate("/dashboard", { replace: true });
+        } else {
+          setErrMsg(res?.response?.data?.msg);
           setOpen(true);
         }
-        setIsLoading(false);
-      },
-    });
+      } catch (error) {
+        console.log("error", error?.response?.data?.msg);
+        setErrMsg(error);
+        setOpen(true);
+      }
+      setIsLoading(false);
+    },
+  });
 
   const handleCloseAlert = (event, reason) => {
     if (reason === "clickaway") return;
@@ -57,6 +67,13 @@ const Login = () => {
       return navigate("/dashboard", { replace: true });
     }
   }, [state]);
+
+  const handlePaste = (event) => {
+    event.preventDefault();
+    const pastedText = event.clipboardData.getData("text/plain");
+    const newValue = pastedText.replace(/\s/g, "");
+    setFieldValue("email", newValue);
+  };
 
   return (
     <>
@@ -94,6 +111,7 @@ const Login = () => {
                   onKeyDown={(e) => {
                     if (e.key === " ") e.preventDefault();
                   }}
+                  onPaste={handlePaste}
                 />
               </div>
               {errors.email && touched.email ? (
