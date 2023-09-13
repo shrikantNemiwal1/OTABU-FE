@@ -89,7 +89,7 @@ const Login = () => {
       </Snackbar>
       <div className="wrapper">
         <div className="login__container">
-          <img className="login__logo" src={logoColoured} alt="" />
+          <img className="login__logo" src={logoColoured} alt="" /> 
           <div className="login__head">
             <h2>Welcome to Otabu Certification</h2>
             <h2>Otabu Certification Pvt.Ltd.</h2>
