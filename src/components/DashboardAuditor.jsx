@@ -3,7 +3,8 @@ import Table from "./Table";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { Snackbar, Alert } from "@mui/material";
-import { GetAllActiveClients, GetAllPendingClient } from "../api/api";
+import { GetAllAssignedApplications, GetAllPendingClient } from "../api/api";
+import { useNavigate } from "react-router-dom";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 const DashboardAuditor = () => {
@@ -11,85 +12,40 @@ const DashboardAuditor = () => {
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("success");
   const { state } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const columns = useMemo(() => [
     {
-      accessorKey: "client",
+      accessorKey: "application_id",
       header: "ID",
       enableColumnOrdering: false,
-      enableEditing: false, //disable editing on this column
+      enableEditing: false,
       enableSorting: false,
       size: 30,
     },
-    {
-      accessorFn: (row) => `${row.client_details.name}`,
-      header: "Client Name",
-      size: 30,
-    },
-    {
-      accessorFn: (row) => `${row.client_details.email}`,
-      header: "Client Email",
-      size: 30,
-    },
-    {
-      accessorKey: "acceptance_status",
-      header: "Status",
-      size: 10,
-    },
+    // {
+    //   accessorKey: "status",
+    //   header: "Status",
+    //   size: 10,
+    // },
   ]);
 
-  const { data, refetch, isFetching } = GetAllActiveClients(state.token);
+  const { data, refetch, isFetching } = GetAllAssignedApplications(state.token);
 
   const handleAction = async ({ type, row }) => {
-    console.log(type, row);
-    try {
-      const config = {
-        headers: { Authorization: `Bearer ${state.token}` },
-      };
-      //console.log(state.token);
-      const res = await axios.put(
-        BASE_URL + `/api/approvals/update_approval_applicationform/${row.id}`,
-        { acceptance_status: type === "accept" ? "1" : "0" },
-        config
-      );
-      console.log(res);
-      setAlertMsg(res?.data?.message);
-      setAlertType("success");
-      setOpen(true);
-      refetch();
-      const noti = await axios.post(
-        BASE_URL + "/api/notifications/send_notification",
-        {
-          message: `Application ${type === "accept" ? "accepted" : "rejected"}`,
-          receiver_email: row.client_details.email,
-        },
-        config
-      );
-    } catch (error) {
-      console.log(error?.response?.data?.msg);
-      setAlertMsg(error?.response?.data?.msg);
-      setAlertType("error");
-      setOpen(true);
-    }
+    navigate(`/application/${row.application_id}`);
   };
 
   const rowActions = ({ row, table }) => (
     <>
       <button
         onClick={() => handleAction({ type: "accept", row: row.original })}
-        className="application-action application-action--accept"
+        className="application-action"
       >
-        Accept
-      </button>
-      <button
-        onClick={() => handleAction({ type: "reject", row: row.original })}
-        className="application-action application-action--reject"
-      >
-        Reject
+        View
       </button>
     </>
   );
-
   return (
     <>
       <Snackbar
@@ -110,7 +66,7 @@ const DashboardAuditor = () => {
         data={data?.data}
         columns={columns}
         title={"Pending Client list"}
-        height={"100vh - 215px - 8rem"}
+        height={"100vh - 215px - 1rem"}
         isLoading={isFetching}
         refetchData={refetch}
         rowActions={rowActions}

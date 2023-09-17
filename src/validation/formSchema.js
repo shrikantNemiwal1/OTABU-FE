@@ -154,7 +154,7 @@ export const auditPlanStage1FormSchema = Yup.object({
 });
 
 export const auditReportStage1FormSchema = Yup.object({
-  "Non Confirmity": Yup.string(),
+  Non_Confirmity: Yup.string(),
   AuditReport_1: Yup.object({
     org_name: Yup.string(),
     address: Yup.string(),
@@ -174,13 +174,14 @@ export const auditReportStage1FormSchema = Yup.object({
     date_audt: Yup.string(),
     audt_obj: Yup.string(),
   }),
-  OpenCloseMeet: Yup.object({
-    s_id: Yup.string(),
-    attendee: Yup.string(),
-    designa: Yup.string(),
-    open_meet: Yup.string(),
-    clos_meet: Yup.string(),
-  }),
+  OpenCloseMeet: Yup.array().of(
+    Yup.object().shape({
+      attendee: Yup.string(),
+      designa: Yup.string(),
+      open_meet: Yup.string(),
+      clos_meet: Yup.string(),
+    })
+  ),
   AuditConcluions: Yup.object({
     change_clnt_detail: Yup.string(),
     manag_sys_addr: Yup.string(),
@@ -193,13 +194,14 @@ export const auditReportStage1FormSchema = Yup.object({
     org_proced_2: Yup.string(),
     tot_num_defici: Yup.string(),
   }),
-  Improvement: Yup.object({
-    s_no: Yup.string(),
-    detil: Yup.string(),
-    clnt_propos_act: Yup.string(),
-    audr_follow_note: Yup.string(),
-    date_closed: Yup.string(),
-  }),
+  Improvement: Yup.array().of(
+    Yup.object().shape({
+      detil: Yup.string(),
+      clnt_propos_act: Yup.string(),
+      audr_follow_note: Yup.string(),
+      date_closed: Yup.string(),
+    })
+  ),
   NonConfirmity: Yup.object({
     non_confirmity: Yup.string(),
   }),

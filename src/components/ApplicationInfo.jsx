@@ -105,7 +105,7 @@ const ApplicationInfo = () => {
   }, []);
 
   useEffect(() => {
-    getRemarks();
+    //getRemarks();
     if (
       applicationStatus.includes("Auditor Assigned") ||
       (applicationStatus.includes("Audit Plan Stage 1") &&
@@ -485,18 +485,14 @@ const ApplicationInfo = () => {
                 <button className="application__btn">
                   <img
                     src={
-                      applicationStatus.includes(
-                        "Intimation Letter 1 Prepared"
-                      ) || applicationStatus.includes("Audit Plan Stage 1")
+                      applicationStatus.includes("Audit Plan Stage 1")
                         ? view
                         : request
                     }
                     alt="view"
                   />
                   <p>{`${
-                    applicationStatus.includes(
-                      "Intimation Letter 1 Prepared"
-                    ) || applicationStatus.includes("Audit Plan Stage 1")
+                    applicationStatus.includes("Audit Plan Stage 1")
                       ? "View"
                       : "Fill"
                   } Audit Plan stage 1 Form`}</p>
@@ -509,38 +505,37 @@ const ApplicationInfo = () => {
             </div>
           )}
 
-          {/* Audit Plan 1 */}
-          {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Audit Plan Stage 1")) ||
-            applicationStatus.includes("Audit Plan Sta1")) && (
-            <div className="application_info-section">
-              <NavLink to="audit-plan-stage-1" className="link-without-style">
-                <button className="application__btn">
-                  <img
-                    src={
+          {/* Audit Report 1 */}
+          {state.role === "Auditor" &&
+            applicationStatus.includes("Audit Plan 1 Accepted") && (
+              <div className="application_info-section">
+                <NavLink to="audit-report-stage-1" className="link-without-style">
+                  <button className="application__btn">
+                    <img
+                      src={
+                        applicationStatus.includes(
+                          "Intimation Letter 1 Prepared"
+                        ) || applicationStatus.includes("Audit Program")
+                          ? view
+                          : request
+                      }
+                      alt="view"
+                    />
+                    <p>{`${
                       applicationStatus.includes(
                         "Intimation Letter 1 Prepared"
-                      ) || applicationStatus.includes("Audit Plan Stage 1")
-                        ? view
-                        : request
-                    }
-                    alt="view"
-                  />
-                  <p>{`${
-                    applicationStatus.includes(
-                      "Intimation Letter 1 Prepared"
-                    ) || applicationStatus.includes("Audit Plan Stage 1")
-                      ? "View"
-                      : "Fill"
-                  } Audit Report stage 1 Form`}</p>
+                      ) || applicationStatus.includes("Audit Program")
+                        ? "View"
+                        : "Fill"
+                    } Audit Report Form`}</p>
+                  </button>
+                </NavLink>
+                <button className="application__btn application__btn--green">
+                  <img src={print} alt="print" />
+                  <p>Print Audit Program Form</p>
                 </button>
-              </NavLink>
-              <button className="application__btn application__btn--green">
-                <img src={print} alt="print" />
-                <p>Print Audit Plan stage 1 Form</p>
-              </button>
-            </div>
-          )}
+              </div>
+            )}
         </div>
       )}
     </>

@@ -92,8 +92,25 @@ const RecomendDisclaimInputsAuditor = {
   auditor_sign: "Signature",
 };
 
+const OpenCloseMeetCols = {
+  attendee: "Attendees",
+  designa: "Designation",
+  open_meet: "Opening Meeting",
+  clos_meet: "Closing Meeting",
+};
+
+const ImprovementCols = {
+  detil: "Details",
+  clnt_propos_act: "Clients Proposed Actions",
+  audr_follow_note: "Auditor Follow up notes",
+  date_closed: "Date Closed",
+};
+
 const initialValues = {
-  "Non Confirmity": "",
+  Non_Confirmity: "",
+  NonConfirmity: {
+    non_confirmity: "",
+  },
   AuditReport_1: {
     org_name: "",
     address: "",
@@ -113,13 +130,40 @@ const initialValues = {
     date_audt: "",
     audt_obj: "",
   },
-  OpenCloseMeet: {
-    s_id: "",
-    attendee: "",
-    designa: "",
-    open_meet: "",
-    clos_meet: "",
-  },
+  OpenCloseMeet: [
+    {
+      s_id: 1,
+      attendee: "",
+      designa: "",
+      open_meet: "",
+      clos_meet: "",
+    },
+
+    {
+      s_id: 2,
+      attendee: "",
+      designa: "",
+      open_meet: "",
+      clos_meet: "",
+    },
+  ],
+  Improvement: [
+    {
+      s_no: 1,
+      detil: "",
+      clnt_propos_act: "",
+      audr_follow_note: "",
+      date_closed: "",
+    },
+
+    {
+      s_no: 2,
+      detil: "",
+      clnt_propos_act: "",
+      audr_follow_note: "",
+      date_closed: "",
+    },
+  ],
   AuditConcluions: {
     change_clnt_detail: "",
     manag_sys_addr: "",
@@ -131,16 +175,6 @@ const initialValues = {
     fulint_audt_org: "",
     org_proced_2: "",
     tot_num_defici: "",
-  },
-  Improvement: {
-    s_no: "",
-    detil: "",
-    clnt_propos_act: "",
-    audr_follow_note: "",
-    date_closed: "",
-  },
-  NonConfirmity: {
-    non_confirmity: "",
   },
   Comment: {
     contxt_org: "",
@@ -216,7 +250,7 @@ const AuditReportStage1Form = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { state } = useContext(AuthContext);
-  const id = pathname.slice(13).slice(0, -19);
+  const id = pathname.slice(13).slice(0, -21);
 
   const getFormDetails = async () => {
     try {
@@ -224,7 +258,7 @@ const AuditReportStage1Form = () => {
         headers: { Authorization: `Bearer ${state.token}` },
       };
       const res = await axios.get(
-        BASE_URL + `/api/audit_plan/get/${id}`,
+        BASE_URL + `/api/audit_report_1/get/${id}`,
         config
       );
       console.log(res?.data);
@@ -237,7 +271,7 @@ const AuditReportStage1Form = () => {
   };
 
   useEffect(() => {
-    //getFormDetails();
+    getFormDetails();
   }, []);
 
   const {
@@ -271,7 +305,7 @@ const AuditReportStage1Form = () => {
           method: formSubmitted ? "patch" : "post",
           url:
             BASE_URL +
-            `/api/audit_plan/${
+            `/api/audit_report_1/${
               formSubmitted ? "partial_update" : "create"
             }/${id}`,
           data: formValues,
@@ -343,6 +377,66 @@ const AuditReportStage1Form = () => {
                     </div>
                   </div>
                 ))}
+
+                <div className="input__container">
+                  <label htmlFor="">OPENING & CLOSING MEETING :</label>
+                  <table className="table-form">
+                    <thead>
+                      <tr>
+                        <th>S.No.</th>
+                        {Object.keys(OpenCloseMeetCols).map((columnKey) => (
+                          <th key={columnKey}>
+                            {OpenCloseMeetCols[columnKey]}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[1, 2].map((rowKey) => (
+                        <tr key={rowKey} className="table-row">
+                          <th
+                            className={`row-head${
+                              rowKey === "tot_emp" ? "--bold" : ""
+                            }`}
+                          >
+                            {rowKey}
+                          </th>
+                          {Object.keys(OpenCloseMeetCols).map((columnKey) => (
+                            <td key={`${rowKey + columnKey}`}>
+                              <input
+                                type="text"
+                                name={`OpenCloseMeet.[${
+                                  rowKey - 1
+                                }].${columnKey}`}
+                                value={
+                                  values?.OpenCloseMeet?.[rowKey - 1]?.[
+                                    columnKey
+                                  ]
+                                }
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                              />
+                              {touched?.OpenCloseMeet?.[rowKey - 1]?.[
+                                columnKey
+                              ] &&
+                                errors?.OpenCloseMeet?.[rowKey - 1]?.[
+                                  columnKey
+                                ] && (
+                                  <div>
+                                    {
+                                      errors?.OpenCloseMeet?.[rowKey - 1]?.[
+                                        columnKey
+                                      ]
+                                    }
+                                  </div>
+                                )}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
 
                 <div className="input__container checkbox-container">
                   <label>
@@ -491,42 +585,29 @@ const AuditReportStage1Form = () => {
                   </div>
                 </div>
 
-                <div className="input__container checkbox-container">
-                  <label>
-                    Temporary Site Include if find in scope Installation,
-                    Commissioning, Contracting Services, Waste Collection etc. :
+                <div className="input__container">
+                  <label htmlFor="AuditConcluions">
+                    Total Number of deficiencies identified:
                   </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="AuditPlan.temp_site"
-                      value="Yes"
-                      checked={values.AuditPlan?.temp_site === "Yes"}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>Yes</p>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="AuditPlan.temp_site"
-                      value="No"
-                      checked={values.AuditPlan?.temp_site === "No"}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>No</p>
-                  </label>
+                  <input
+                    type="text-box"
+                    name="AuditConcluions.tot_num_defici"
+                    id="AuditConcluions"
+                    value={values.AuditConcluions.tot_num_defici}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Enter Total Number of deficiencies identified"
+                  />
                   <div className="input__error-container">
-                    {errors.AuditPlan?.temp_site ||
-                    touched.AuditPlan?.temp_site ? (
+                    {errors?.AuditConcluions?.tot_num_defici &&
+                    touched?.AuditConcluions?.tot_num_defici ? (
                       <p className="input__error">
-                        {errors.AuditPlan?.temp_site}
+                        {errors?.AuditConcluions?.tot_num_defici}
                       </p>
                     ) : null}
                   </div>
                 </div>
+
                 <h2 className="form-sub-title"></h2>
                 <>
                   <div className="input__container">
@@ -576,6 +657,119 @@ const AuditReportStage1Form = () => {
                     </table>
                   </div>
                 </>
+
+                <div className="input__container">
+                  <label htmlFor="">
+                    PROVIDE DETAILED DESCRIPTIONS OF ANY AREA OF THE SYSTEM
+                    AND/OR ACTIVITY THAT REQUIRES REVISION/ IMPROVEMENT BEFORE
+                    STAGE 2 AUDIT: :
+                  </label>
+                  <table className="table-form">
+                    <thead>
+                      <tr>
+                        <th>S.No.</th>
+                        {Object.keys(ImprovementCols).map((columnKey) => (
+                          <th key={columnKey}>{ImprovementCols[columnKey]}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[1, 2].map((rowKey) => (
+                        <tr key={rowKey} className="table-row">
+                          <th
+                            className={`row-head${
+                              rowKey === "tot_emp" ? "--bold" : ""
+                            }`}
+                          >
+                            {rowKey}
+                          </th>
+                          {Object.keys(ImprovementCols).map((columnKey) => (
+                            <td key={`${rowKey + columnKey}`}>
+                              <input
+                                type="text"
+                                name={`Improvement.[${
+                                  rowKey - 1
+                                }].${columnKey}`}
+                                value={
+                                  values?.Improvement?.[rowKey - 1]?.[columnKey]
+                                }
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                              />
+                              {touched?.Improvement?.[rowKey - 1]?.[
+                                columnKey
+                              ] &&
+                                errors?.Improvement?.[rowKey - 1]?.[
+                                  columnKey
+                                ] && (
+                                  <div>
+                                    {
+                                      errors?.Improvement?.[rowKey - 1]?.[
+                                        columnKey
+                                      ]
+                                    }
+                                  </div>
+                                )}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="input__container checkbox-container">
+                  <label>Non Confirmity :</label>
+                  <label className="checkbox-label">
+                    <input
+                      type="radio"
+                      name="Non_Confirmity"
+                      value="1"
+                      checked={values.Non_Confirmity === "1"}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                    <p>Yes</p>
+                  </label>
+                  <label className="checkbox-label">
+                    <input
+                      type="radio"
+                      name="Non_Confirmity"
+                      value="0"
+                      checked={values.Non_Confirmity === "0"}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                    <p>No</p>
+                  </label>
+                  <div className="input__error-container">
+                    {errors.Non_Confirmity || touched.Non_Confirmity ? (
+                      <p className="input__error">{errors.Non_Confirmity}</p>
+                    ) : null}
+                  </div>
+                </div>
+                <div className="input__container">
+                  <label htmlFor="NonConfirmity">
+                    If Yes then reason for Non confirmity :
+                  </label>
+                  <input
+                    type="text-box"
+                    name="NonConfirmity.non_confirmity"
+                    id="NonConfirmity"
+                    value={values.NonConfirmity.non_confirmity}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Enter Reason for Non Confirmity"
+                  />
+                  <div className="input__error-container">
+                    {errors?.NonConfirmity?.non_confirmity &&
+                    touched?.NonConfirmity?.non_confirmity ? (
+                      <p className="input__error">
+                        {errors?.NonConfirmity?.non_confirmity}
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
 
                 <div className="input__container checkbox-container checkbox-container-vert">
                   <label>RECOMMENDATION:</label>

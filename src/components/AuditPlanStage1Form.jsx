@@ -234,7 +234,11 @@ const AuditProgramStage1Form = () => {
             <div className="registration__form">
               <h2 className="form-sub-title">Audit Plan 1 Form</h2>
 
-              <fieldset disabled={state.role === "Client"}>
+              <fieldset
+                disabled={
+                  state.role === "Client" || state.role === "Admin Auditor"
+                }
+              >
                 {Object.keys(CommonInputs).map((key, index) => (
                   <div className="input__container" key={key}>
                     <label htmlFor={key}>{`${CommonInputs[key]} :`}</label>
@@ -353,7 +357,7 @@ const AuditProgramStage1Form = () => {
 
               {/* Submit */}
 
-              {state.role === "Admin Auditor" && (
+              {state.role === "Auditor" && (
                 <div className="input__container">
                   <button
                     className="registration__submit"
