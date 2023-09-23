@@ -18,7 +18,9 @@
 }
 
 .application__info {
-  margin: 1rem;
+  padding: 1rem;
+  max-height: calc(100vh - 5.4rem);
+  overflow-y: auto;
 
   & h2 {
     display: inline-block;
@@ -42,7 +44,7 @@ fieldset {
 
 .input-small {
   width: 4rem !important;
-  margin: auto !important; 
+  margin: auto !important;
 }
 
 .input-big {
@@ -63,6 +65,6 @@ fieldset {
   text-align: start;
 }
 
-.row-head-big{
+.row-head-big {
   width: 26rem;
 }

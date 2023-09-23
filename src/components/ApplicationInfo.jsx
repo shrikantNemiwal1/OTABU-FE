@@ -30,6 +30,7 @@ const ApplicationInfo = () => {
   const { pathname } = useLocation();
   const { state } = useContext(AuthContext);
   const [modalOpen, setModalOpen] = useState(false);
+  const [confModalOpen, setConfModalOpen] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState([]);
   const [remarks, setRemarks] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
@@ -130,11 +131,17 @@ const ApplicationInfo = () => {
             url:
               BASE_URL +
               `/api/${
-                applicationStatus.includes("Audit Plan 1 Acceptance Pending")
-                  ? "audit_plan"
-                  : "app_review"
-              }/send_remark/${id}`,
-            data: values,
+                applicationStatus.includes("Form 39B Prepared")
+                  ? "audit_report_1/non_confirmity_acceptance"
+                  : applicationStatus.includes(
+                      "Audit Plan 1 Acceptance Pending"
+                    )
+                  ? "audit_plan/send_remark"
+                  : "app_review/send_remark"
+              }/${id}`,
+            data: confModalOpen
+              ? { acceptance_status: values.acceptance_choice }
+              : values,
             headers: {
               Authorization: `Bearer ${state.token}`,
             },
@@ -144,6 +151,7 @@ const ApplicationInfo = () => {
           setAlertMsg("Remark Sent Successfully");
           setOpen(true);
           setModalOpen(false);
+          setConfModalOpen(false);
           console.log(response);
           getApplicationDetails();
         } catch (error) {
@@ -233,6 +241,63 @@ const ApplicationInfo = () => {
           </div>
         </Box>
       </Modal>
+      <Modal
+        open={confModalOpen}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div className="modal">
+            <button
+              className="modal__close-btn"
+              onClick={() => setConfModalOpen(false)}
+            >
+              &#9587;
+            </button>
+            <div className="modal__title">Non conformity</div>
+            <div className="input__container checkbox-container">
+              <label>Accept/Reject Non Conformity</label>
+              <label className="checkbox-label">
+                <input
+                  type="radio"
+                  name="acceptance_choice"
+                  value="1"
+                  checked={values.acceptance_choice === "1"}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                <p>Accept</p>
+              </label>
+              <label className="checkbox-label">
+                <input
+                  type="radio"
+                  name="acceptance_choice"
+                  value="0"
+                  checked={values.acceptance_choice === "0"}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                <p>Reject</p>
+              </label>
+              <div className="input__error-container">
+                {errors.acceptance_choice || touched.acceptance_choice ? (
+                  <p className="input__error">{errors.acceptance_choice}</p>
+                ) : null}
+              </div>
+            </div>
+          </div>
+          <div className="input__container">
+            <button
+              className="registration__submit ml-0"
+              type="submit"
+              onClick={handleSubmit}
+              disabled={isLoading}
+            >
+              {isLoading ? <Spinner size={25} color="white" /> : "Send"}
+            </button>
+          </div>
+        </Box>
+      </Modal>
       <Snackbar
         open={open}
         autoHideDuration={3000}
@@ -266,6 +331,16 @@ const ApplicationInfo = () => {
               Send Remark
             </button>
           )}
+
+          {state.role === "Client" &&
+            applicationStatus.includes("Form 39B Prepared") && (
+              <button
+                className="add-btn"
+                onClick={() => setConfModalOpen(true)}
+              >
+                Accept Non conformity
+              </button>
+            )}
 
           {/* ApplicationForm */}
           <div className="application_info-section">
@@ -381,14 +456,17 @@ const ApplicationInfo = () => {
 
           {/* Audit Program */}
           {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Client Agreement and Rules")) ||
+            (applicationStatus.includes("Client Agreement and Rules") ||
+              applicationStatus.includes("Audit Program Prepared"))) ||
             (state.role === "Client" &&
-              applicationStatus.includes("Audit Program"))) && (
+              applicationStatus.includes("Audit Program Prepared")) ||
+            applicationStatus.includes("Audit Program")) && (
             <div className="application_info-section">
               <NavLink to="audit-program" className="link-without-style">
                 <button className="application__btn">
                   <img
                     src={
+                      applicationStatus.includes("Audit Program Prepared") ||
                       applicationStatus.includes("Audit Program")
                         ? view
                         : request
@@ -396,6 +474,7 @@ const ApplicationInfo = () => {
                     alt="view"
                   />
                   <p>{`${
+                    applicationStatus.includes("Audit Program Prepared") ||
                     applicationStatus.includes("Audit Program")
                       ? "View"
                       : "Fill"
@@ -411,7 +490,7 @@ const ApplicationInfo = () => {
 
           {/* Intimation Letter 1 */}
           {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Audit Program")) ||
+            applicationStatus.includes("Audit Program Prepared")) ||
             applicationStatus.includes("Intimation Letter 1 Prepared") ||
             applicationStatus.includes("Audit Plan Stage 1") ||
             applicationStatus.includes("Auditor Assigned")) && (
@@ -477,7 +556,7 @@ const ApplicationInfo = () => {
             )}
 
           {/* Audit Plan 1 */}
-          {((state.role === "Admin Auditor" &&
+          {((state.role === "Auditor" &&
             applicationStatus.includes("Auditor Assigned")) ||
             applicationStatus.includes("Audit Plan Stage 1")) && (
             <div className="application_info-section">
@@ -506,16 +585,91 @@ const ApplicationInfo = () => {
           )}
 
           {/* Audit Report 1 */}
-          {state.role === "Auditor" &&
-            applicationStatus.includes("Audit Plan 1 Accepted") && (
+          {((state.role === "Auditor" &&
+            applicationStatus.includes("Audit Plan 1 Accepted")) ||
+            (state.role === "Admin Auditor" &&
+              applicationStatus.includes("Audit Report Stage 1 Prepared"))) && (
+            <div className="application_info-section">
+              <NavLink to="audit-report-stage-1" className="link-without-style">
+                <button className="application__btn">
+                  <img
+                    src={
+                      applicationStatus.includes(
+                        "Intimation Letter 1 Prepared"
+                      ) || applicationStatus.includes("Audit Program")
+                        ? view
+                        : request
+                    }
+                    alt="view"
+                  />
+                  <p>{`${
+                    applicationStatus.includes(
+                      "Intimation Letter 1 Prepared"
+                    ) || applicationStatus.includes("Audit Program")
+                      ? "View"
+                      : "Fill"
+                  } Audit Report Form`}</p>
+                </button>
+              </NavLink>
+              <button className="application__btn application__btn--green">
+                <img src={print} alt="print" />
+                <p>Print Audit Program Form</p>
+              </button>
+            </div>
+          )}
+
+          {/* Non confirmities 1 */}
+          {((state.role === "Auditor" &&
+            applicationStatus.includes("Non Confirmities Raised")) ||
+            applicationStatus.includes("Form 39B Prepared")) && (
+            <div className="application_info-section">
+              <NavLink
+                to="corrective-action-report"
+                className="link-without-style"
+              >
+                <button className="application__btn">
+                  <img
+                    src={
+                      applicationStatus.includes(
+                        "Intimation Letter 1 Prepared"
+                      ) || applicationStatus.includes("Audit Program")
+                        ? view
+                        : request
+                    }
+                    alt="view"
+                  />
+                  <p>{`${
+                    applicationStatus.includes(
+                      "Intimation Letter 1 Prepared"
+                    ) || applicationStatus.includes("Audit Program")
+                      ? "View"
+                      : "Fill"
+                  } Corrective Action Report Form`}</p>
+                </button>
+              </NavLink>
+              <button className="application__btn application__btn--green">
+                <img src={print} alt="print" />
+                <p>Print Corrective Action Report Form</p>
+              </button>
+            </div>
+          )}
+
+          {/* Intimation Letter 2 */}
+          {state.role === "Admin Auditor" &&
+            applicationStatus.includes("Audit Report Stage 1 Prepared") && (
               <div className="application_info-section">
-                <NavLink to="audit-report-stage-1" className="link-without-style">
+                <NavLink
+                  to="intimation-letter-2"
+                  className="link-without-style"
+                >
                   <button className="application__btn">
                     <img
                       src={
                         applicationStatus.includes(
-                          "Intimation Letter 1 Prepared"
-                        ) || applicationStatus.includes("Audit Program")
+                          "Intimation Letter 2 Prepared"
+                        ) ||
+                        applicationStatus.includes("Audit Plan Stage 2") ||
+                        applicationStatus.includes("Auditor Assigned")
                           ? view
                           : request
                       }
@@ -523,16 +677,18 @@ const ApplicationInfo = () => {
                     />
                     <p>{`${
                       applicationStatus.includes(
-                        "Intimation Letter 1 Prepared"
-                      ) || applicationStatus.includes("Audit Program")
+                        "Intimation Letter 2 Prepared"
+                      ) ||
+                      applicationStatus.includes("Audit Plan Stage 2") ||
+                      applicationStatus.includes("Auditor Assigned")
                         ? "View"
                         : "Fill"
-                    } Audit Report Form`}</p>
+                    } Intimation Letter 2 Form`}</p>
                   </button>
                 </NavLink>
                 <button className="application__btn application__btn--green">
                   <img src={print} alt="print" />
-                  <p>Print Audit Program Form</p>
+                  <p>Print Intimation Letter 2 Form</p>
                 </button>
               </div>
             )}

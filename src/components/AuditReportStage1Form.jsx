@@ -107,7 +107,7 @@ const ImprovementCols = {
 };
 
 const initialValues = {
-  Non_Confirmity: "",
+  Non_Confirmity: "0",
   NonConfirmity: {
     non_confirmity: "",
   },

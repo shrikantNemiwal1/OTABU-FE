@@ -8,6 +8,29 @@ export const loginSchema = Yup.object({
   rememberMe: Yup.bool(),
 });
 
+export const correctiveActionReportFormSchema = Yup.object({
+  car_no: Yup.string(),
+  date: Yup.string(),
+  company: Yup.string(),
+  standard: Yup.string(),
+  clause: Yup.string(),
+  category: Yup.string(),
+  non_conf_obs: Yup.string(),
+  auditor_sign: Yup.string(),
+  auditee_accep: Yup.string(),
+  root_cause: Yup.string(),
+  corton: Yup.string(),
+  cortve_actn: Yup.string(),
+  responsibility: Yup.string(),
+  prop_impl_date: Yup.string(),
+  cortve_atn_pln: Yup.string(),
+  assessed_by_1: Yup.string(),
+  date_1: Yup.string(),
+  verifi_onsite: Yup.string(),
+  assessed_by_2: Yup.string(),
+  date_2: Yup.string(),
+});
+
 export const auditorRegistrationSchema = Yup.object({
   email: Yup.string().email().required("Please enter your email"),
   name: Yup.string().required("Please enter your name"),
@@ -405,7 +428,7 @@ export const agreementFormSchema = Yup.object({
 });
 
 export const remarkFormSchema = Yup.object({
-  remark: Yup.string().required("This field is required"),
+  remark: Yup.string(),
   acceptance_choice: Yup.string().required("Please choose an option"),
 });
 

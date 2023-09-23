@@ -65,7 +65,7 @@ const DashboardAuditor = () => {
       <Table
         data={data?.data}
         columns={columns}
-        title={"Pending Client list"}
+        title={"Assigned Applications"}
         height={"100vh - 215px - 1rem"}
         isLoading={isFetching}
         refetchData={refetch}

@@ -35,7 +35,7 @@ const initialValues = {
   otabu_sign: "",
 };
 
-const IntimationLetter1 = () => {
+const IntimationLetter = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -47,6 +47,7 @@ const IntimationLetter1 = () => {
   const { state } = useContext(AuthContext);
   const id = pathname.slice(13).slice(0, -20);
   const [initialForm, setInitialForm] = useState(initialValues);
+  const stage = pathname.slice(-1);
 
   const getFormDetails = async () => {
     try {
@@ -54,7 +55,7 @@ const IntimationLetter1 = () => {
         headers: { Authorization: `Bearer ${state.token}` },
       };
       const res = await axios.get(
-        BASE_URL + `/api/intimation_letter/get_intimation_1/${id}`,
+        BASE_URL + `/api/intimation_letter/get_intimation_${stage}/${id}`,
         config
       );
       console.log(res?.data);
@@ -100,7 +101,9 @@ const IntimationLetter1 = () => {
           url:
             BASE_URL +
             `/api/intimation_letter/${
-              formSubmitted ? "update_intimation_1" : "create_intimation_1"
+              formSubmitted
+                ? `update_intimation_${stage}`
+                : `create_intimation_${stage}`
             }/${id}`,
           data: formValues,
           headers: {
@@ -122,6 +125,7 @@ const IntimationLetter1 = () => {
       setIsLoading(false);
     },
   });
+
   return (
     <>
       {formLoading ? (
@@ -146,9 +150,9 @@ const IntimationLetter1 = () => {
           </Snackbar>
           <form onSubmit={handleSubmit}>
             <div className="registration__form">
-              <h2 className="form-sub-title">Intimation Letter 1 Form</h2>
+              <h2 className="form-sub-title">Intimation Letter {stage} Form</h2>
 
-              <fieldset disabled={state.role === "Client"}>
+              <fieldset disabled={state.role !== "Admin Auditor"}>
                 {Object.keys(inputs).map((key, index) => (
                   <div className="input__container" key={key}>
                     <label htmlFor={key}>{`${inputs[key]} :`}</label>
@@ -188,7 +192,6 @@ const IntimationLetter1 = () => {
               </fieldset>
 
               {/* Submit */}
-
               {state.role === "Admin Auditor" && (
                 <div className="input__container">
                   <button
@@ -215,4 +218,4 @@ const IntimationLetter1 = () => {
   );
 };
 
-export default IntimationLetter1;
+export default IntimationLetter;
