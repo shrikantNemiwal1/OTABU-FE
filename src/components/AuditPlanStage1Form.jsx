@@ -186,7 +186,7 @@ const AuditProgramStage1Form = () => {
           url:
             BASE_URL +
             `/api/audit_plan/${
-              formSubmitted ? "partial_update" : "create"
+              formSubmitted ? "update" : "create"
             }/${id}`,
           data: formValues,
           headers: {
