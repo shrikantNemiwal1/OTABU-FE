@@ -655,43 +655,41 @@ const ApplicationInfo = () => {
           )}
 
           {/* Intimation Letter 2 */}
-          {state.role === "Admin Auditor" &&
-            applicationStatus.includes("Audit Stage 1 Completed") && (
-              <div className="application_info-section">
-                <NavLink
-                  to="intimation-letter-2"
-                  className="link-without-style"
-                >
-                  <button className="application__btn">
-                    <img
-                      src={
-                        applicationStatus.includes(
-                          "Intimation Letter 2 Prepared"
-                        ) ||
-                        applicationStatus.includes("Audit Plan Stage 2") ||
-                        applicationStatus.includes("Auditor Assigned")
-                          ? view
-                          : request
-                      }
-                      alt="view"
-                    />
-                    <p>{`${
+          {((state.role === "Admin Auditor" &&
+            applicationStatus.includes("Audit Stage 1 Completed")) ||
+            applicationStatus.includes("Intimation Letter 2 Prepared")) && (
+            <div className="application_info-section">
+              <NavLink to="intimation-letter-2" className="link-without-style">
+                <button className="application__btn">
+                  <img
+                    src={
                       applicationStatus.includes(
                         "Intimation Letter 2 Prepared"
                       ) ||
                       applicationStatus.includes("Audit Plan Stage 2") ||
-                      applicationStatus.includes("Auditor Assigned")
-                        ? "View"
-                        : "Fill"
-                    } Intimation Letter 2 Form`}</p>
-                  </button>
-                </NavLink>
-                <button className="application__btn application__btn--green">
-                  <img src={print} alt="print" />
-                  <p>Print Intimation Letter 2 Form</p>
+                      applicationStatus.includes("Intimation Letter 2 Prepared")
+                        ? view
+                        : request
+                    }
+                    alt="view"
+                  />
+                  <p>{`${
+                    applicationStatus.includes(
+                      "Intimation Letter 2 Prepared"
+                    ) ||
+                    applicationStatus.includes("Audit Plan Stage 2") ||
+                    applicationStatus.includes("Intimation Letter 2 Prepared")
+                      ? "View"
+                      : "Fill"
+                  } Intimation Letter 2 Form`}</p>
                 </button>
-              </div>
-            )}
+              </NavLink>
+              <button className="application__btn application__btn--green">
+                <img src={print} alt="print" />
+                <p>Print Intimation Letter 2 Form</p>
+              </button>
+            </div>
+          )}
         </div>
       )}
     </>
