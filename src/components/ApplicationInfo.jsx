@@ -180,9 +180,17 @@ const ApplicationInfo = () => {
             >
               &#9587;
             </button>
-            <div className="modal__title">Send Remark</div>
+            <div className="modal__title">
+              {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
+                ? "Audit Plan 1 Acceptance"
+                : "Send Remark"}
+            </div>
             <div className="input__container checkbox-container">
-              <label>Accept/Reject Application</label>
+              <label>
+                {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
+                  ? "Accept/Reject Audit Plan 1"
+                  : "Accept/Reject Application"}
+              </label>
               <label className="checkbox-label">
                 <input
                   type="radio"
