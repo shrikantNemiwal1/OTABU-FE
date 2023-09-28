@@ -182,11 +182,11 @@ const AuditProgramStage1Form = () => {
 
       try {
         const response = await axios({
-          method: formSubmitted ? "put" : "post",
+          method: formSubmitted ? "patch" : "post",
           url:
             BASE_URL +
             `/api/audit_plan/${
-              formSubmitted ? "update" : "create"
+              formSubmitted ? "partial_update" : "create"
             }/${id}`,
           data: formValues,
           headers: {

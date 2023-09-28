@@ -23,11 +23,11 @@ const DashboardAuditor = () => {
       enableSorting: false,
       size: 30,
     },
-    // {
-    //   accessorKey: "status",
-    //   header: "Status",
-    //   size: 10,
-    // },
+    {
+      accessorKey: "status",
+      header: "Status",
+      size: 10,
+    },
   ]);
 
   const { data, refetch, isFetching } = GetAllAssignedApplications(state.token);
