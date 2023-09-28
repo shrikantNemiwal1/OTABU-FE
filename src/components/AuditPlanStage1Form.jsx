@@ -182,7 +182,7 @@ const AuditProgramStage1Form = () => {
 
       try {
         const response = await axios({
-          method: formSubmitted ? "patch" : "post",
+          method: formSubmitted ? "put" : "post",
           url:
             BASE_URL +
             `/api/audit_plan/${
