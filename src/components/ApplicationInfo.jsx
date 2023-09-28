@@ -636,14 +636,14 @@ const ApplicationInfo = () => {
                 <button className="application__btn">
                   <img
                     src={
-                      applicationStatus.includes("Intimation Letter 1 Prepare")
+                      applicationStatus.includes("Form 39B Prepared")
                         ? view
                         : request
                     }
                     alt="view"
                   />
                   <p>{`${
-                    applicationStatus.includes("Intimation Letter 1 Prepare")
+                    applicationStatus.includes("Form 39B Prepared")
                       ? "View"
                       : "Fill"
                   } Corrective Action Report Form`}</p>
