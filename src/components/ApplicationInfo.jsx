@@ -656,7 +656,7 @@ const ApplicationInfo = () => {
 
           {/* Intimation Letter 2 */}
           {state.role === "Admin Auditor" &&
-            applicationStatus.includes("Audit Report Stage 1 Prepared") && (
+            applicationStatus.includes("Audit Stage 1 Completed") && (
               <div className="application_info-section">
                 <NavLink
                   to="intimation-letter-2"
