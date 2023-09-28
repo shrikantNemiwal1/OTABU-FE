@@ -602,18 +602,16 @@ const ApplicationInfo = () => {
                 <button className="application__btn">
                   <img
                     src={
-                      applicationStatus.includes(
-                        "Intimation Letter 1 Prepared"
-                      ) || applicationStatus.includes("Audit Program")
+                      applicationStatus.includes("Non Confirmities Raised") ||
+                      applicationStatus.includes("Audit Plan 1 Accepted")
                         ? view
                         : request
                     }
                     alt="view"
                   />
                   <p>{`${
-                    applicationStatus.includes(
-                      "Intimation Letter 1 Prepared"
-                    ) || applicationStatus.includes("Audit Program")
+                    applicationStatus.includes("Non Confirmities Raised") ||
+                    applicationStatus.includes("Audit Program")
                       ? "View"
                       : "Fill"
                   } Audit Report Form`}</p>
@@ -638,18 +636,14 @@ const ApplicationInfo = () => {
                 <button className="application__btn">
                   <img
                     src={
-                      applicationStatus.includes(
-                        "Intimation Letter 1 Prepared"
-                      ) || applicationStatus.includes("Audit Program")
+                      applicationStatus.includes("Intimation Letter 1 Prepare")
                         ? view
                         : request
                     }
                     alt="view"
                   />
                   <p>{`${
-                    applicationStatus.includes(
-                      "Intimation Letter 1 Prepared"
-                    ) || applicationStatus.includes("Audit Program")
+                    applicationStatus.includes("Intimation Letter 1 Prepare")
                       ? "View"
                       : "Fill"
                   } Corrective Action Report Form`}</p>
