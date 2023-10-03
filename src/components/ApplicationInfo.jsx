@@ -52,6 +52,7 @@ const ApplicationInfo = () => {
   };
 
   const getApplicationDetails = async () => {
+    setDataLoading(true);
     try {
       const config = {
         headers: { Authorization: `Bearer ${state.token}` },
@@ -131,7 +132,11 @@ const ApplicationInfo = () => {
             url:
               BASE_URL +
               `/api/${
-                applicationStatus.includes("Form 39B Prepared")
+                applicationStatus.includes("Non Confirmities Accepted") ||
+                applicationStatus.includes("Closure Pending")
+                  ? "audit_report_1/closure_acceptance"
+                  : applicationStatus.includes("Form 39B Prepared") ||
+                    applicationStatus.includes("Closure Rejected")
                   ? "audit_report_1/non_confirmity_acceptance"
                   : applicationStatus.includes(
                       "Audit Plan 1 Acceptance Pending"
@@ -148,7 +153,7 @@ const ApplicationInfo = () => {
           });
           console.log(values);
           setAlertType("success");
-          setAlertMsg("Remark Sent Successfully");
+          setAlertMsg(response?.data?.message);
           setOpen(true);
           setModalOpen(false);
           setConfModalOpen(false);
@@ -262,9 +267,18 @@ const ApplicationInfo = () => {
             >
               &#9587;
             </button>
-            <div className="modal__title">Non conformity</div>
+            <div className="modal__title">
+              {applicationStatus.includes("Non Confirmities Accepted")
+                ? "Closure"
+                : "Non conformity"}
+            </div>
             <div className="input__container checkbox-container">
-              <label>Accept/Reject Non Conformity</label>
+              <label>
+                Accept/Reject{" "}
+                {applicationStatus.includes("Non Confirmities Accepted")
+                  ? "Closure"
+                  : "Non conformity"}
+              </label>
               <label className="checkbox-label">
                 <input
                   type="radio"
@@ -329,6 +343,9 @@ const ApplicationInfo = () => {
       ) : (
         <div className="application__info">
           <h2>Application (ID : {id})</h2>
+          <button className="add-btn" onClick={getApplicationDetails}>
+            Refresh
+          </button>
           {((state.role === "Admin Auditor" &&
             applicationStatus.includes("Application Acceptance Pending")) ||
             (state.role === "Client" &&
@@ -336,19 +353,26 @@ const ApplicationInfo = () => {
                 "Audit Plan 1 Acceptance Pending"
               ))) && (
             <button className="add-btn" onClick={() => setModalOpen(true)}>
-              Send Remark
+              {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
+                ? "Accept Audit Plan 1"
+                : "Send Remark"}
             </button>
           )}
 
-          {state.role === "Client" &&
-            applicationStatus.includes("Form 39B Prepared") && (
-              <button
-                className="add-btn"
-                onClick={() => setConfModalOpen(true)}
-              >
-                Accept Non conformity
-              </button>
-            )}
+          {((state.role === "Client" &&
+            (applicationStatus.includes("Form 39B Prepared") ||
+              applicationStatus.includes("Closure Rejected"))) ||
+            (state.role === "Auditor" &&
+              (applicationStatus.includes("Non Confirmities Accepted") ||
+                applicationStatus.includes("Closure Pending")))) && (
+            <button className="add-btn" onClick={() => setConfModalOpen(true)}>
+              Accept{" "}
+              {applicationStatus.includes("Non Confirmities Accepted") ||
+              applicationStatus.includes("Closure Pending")
+                ? "Closure"
+                : "Non conformity"}
+            </button>
+          )}
 
           {/* ApplicationForm */}
           <div className="application_info-section">
@@ -595,15 +619,14 @@ const ApplicationInfo = () => {
           {/* Audit Report 1 */}
           {((state.role === "Auditor" &&
             applicationStatus.includes("Audit Plan 1 Accepted")) ||
-            (state.role === "Admin Auditor" &&
-              applicationStatus.includes("Audit Report Stage 1 Prepared"))) && (
+            applicationStatus.includes("Audit Report 1")) && (
             <div className="application_info-section">
               <NavLink to="audit-report-stage-1" className="link-without-style">
                 <button className="application__btn">
                   <img
                     src={
                       applicationStatus.includes("Non Confirmities Raised") ||
-                      applicationStatus.includes("Audit Plan 1 Accepted")
+                      applicationStatus.includes("Audit Report 1")
                         ? view
                         : request
                     }
@@ -611,7 +634,7 @@ const ApplicationInfo = () => {
                   />
                   <p>{`${
                     applicationStatus.includes("Non Confirmities Raised") ||
-                    applicationStatus.includes("Audit Program")
+                    applicationStatus.includes("Audit Report 1")
                       ? "View"
                       : "Fill"
                   } Audit Report Form`}</p>
@@ -627,7 +650,11 @@ const ApplicationInfo = () => {
           {/* Non confirmities 1 */}
           {((state.role === "Auditor" &&
             applicationStatus.includes("Non Confirmities Raised")) ||
-            applicationStatus.includes("Form 39B Prepared")) && (
+            applicationStatus.includes("Non Confirmities Rejected") ||
+            applicationStatus.includes("Form 39B Prepared") ||
+            applicationStatus.includes("Closure Pending") ||
+            applicationStatus.includes("Closure Rejected") ||
+            applicationStatus.includes("Non Confirmities Accepted")) && (
             <div className="application_info-section">
               <NavLink
                 to="corrective-action-report"
@@ -636,14 +663,14 @@ const ApplicationInfo = () => {
                 <button className="application__btn">
                   <img
                     src={
-                      applicationStatus.includes("Form 39B Prepared")
+                      !applicationStatus.includes("Non Confirmities Raised")
                         ? view
                         : request
                     }
                     alt="view"
                   />
                   <p>{`${
-                    applicationStatus.includes("Form 39B Prepared")
+                    !applicationStatus.includes("Non Confirmities Raised")
                       ? "View"
                       : "Fill"
                   } Corrective Action Report Form`}</p>

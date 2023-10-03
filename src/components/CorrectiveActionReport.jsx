@@ -177,7 +177,7 @@ const CorrectiveActionReport = () => {
             <div className="registration__form">
               <h2 className="form-sub-title">Corrective Action Report Form</h2>
 
-              <fieldset disabled={state.role === "Client"}>
+              <fieldset disabled={state.role === "Admin Auditor"}>
                 {Object.keys(inputs).map((key, index) => (
                   <div className="input__container" key={key}>
                     <label htmlFor={key}>{`${inputs[key]} :`}</label>
@@ -223,7 +223,7 @@ const CorrectiveActionReport = () => {
               </fieldset>
 
               {/* Submit */}
-              {state.role === "Auditor" && (
+              {(state.role === "Auditor" || state.role === "Client") && (
                 <div className="input__container">
                   <button
                     className="registration__submit"
