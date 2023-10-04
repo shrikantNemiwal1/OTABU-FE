@@ -32,6 +32,26 @@ const AssignAuditor = () => {
     },
   ]);
 
+  console.log(Object.keys(rowSelection)[0], isAuditorAssigned);
+
+  const removeAssignedAuditor = async () => {
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${state.token}` },
+      };
+      const res = await axios.post(
+        BASE_URL +
+          `/api/select_auditor/remove_auditor/${
+            Object.keys(rowSelection)[0]
+          }/${id}`,
+        config
+      );
+      console.log(res?.data);
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+    }
+  };
+
   const getAssignedAuditor = async () => {
     try {
       const config = {
@@ -168,8 +188,10 @@ const AssignAuditor = () => {
         title={"Auditors"}
         height={"100vh - 205px"}
         isLoading={isFetching}
-        refetchData={handleAssignAuditor}
-        toolName={"Assign"}
+        refetchData={
+          isAuditorAssigned ? removeAssignedAuditor : handleAssignAuditor
+        }
+        toolName={isAuditorAssigned ? "Remove" : "Assign"}
         rowActions={rowActions}
         selectRow={true}
         rowSelection={rowSelection}

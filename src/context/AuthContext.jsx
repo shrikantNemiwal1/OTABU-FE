@@ -75,7 +75,7 @@ const AuthProvider = ({ children }) => {
         email: values.email,
         password: values.password,
       });
-      console.log(res);
+      console.log(res?.data);
       dispatch({
         type: LOGIN_SUCCESS,
         payload: {
