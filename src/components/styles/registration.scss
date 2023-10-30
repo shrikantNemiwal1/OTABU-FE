@@ -119,6 +119,29 @@ input[type="file"]::file-selector-button {
   }
 }
 
+.custom-select {
+  min-width: 350px;
+  width: 100%;
+}
+
+select {
+  appearance: none;
+  /* safari */
+  -webkit-appearance: none;
+  /* other styles for aesthetics */
+  width: 100%;
+  font-size: .9rem;
+  padding: 1rem;
+  background-color: #fff;
+  border: 1px solid #cccccc;
+  border-radius: 0.25rem;
+  color: #000;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 0.5rem;
+}
+
 .select-arrow {
   position: absolute;
   top: 0.6rem;

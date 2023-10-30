@@ -28,6 +28,7 @@ import AssignAuditor from "./components/AssignAuditor";
 import AuditReportStage1Form from "./components/AuditReportStage1Form";
 import IntimationLetter from "./components/IntimationLetter";
 import CorrectiveActionReport from "./components/CorrectiveActionReport";
+import AuditPlanStage2Form from "./components/AuditPlanStage2Form";
 
 function App() {
   const { state, dispatch } = useContext(AuthContext);
@@ -77,6 +78,10 @@ function App() {
             <Route
               path="audit-plan-stage-1"
               element={<AuditPlanStage1Form />}
+            />
+            <Route
+              path="audit-plan-stage-2"
+              element={<AuditPlanStage2Form />}
             />
             <Route
               path="audit-report-stage-1"

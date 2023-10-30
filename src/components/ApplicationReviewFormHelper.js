@@ -38,9 +38,7 @@ export const mandaysInputs = {
   stage_1: "Stage 1",
   stage_2: "Stage 2",
   recerti_mandays: "Recertification Man-days",
-  lead_auditor: "Lead Auditor/Team Leader",
-  auditor_1: "Auditor 1",
-  auditor_2: "Auditor 2/Technical Expert",
+  
 };
 export const workingTableColumnKeys = {
   QMSWorkingTable: "QMS Man-Days",

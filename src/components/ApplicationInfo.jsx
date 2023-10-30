@@ -560,7 +560,7 @@ const ApplicationInfo = () => {
           )}
 
           {/* Assign Auditor */}
-          {state.role === "Admin Auditor" &&
+          {/* {state.role === "Admin Auditor" &&
             (applicationStatus.includes("Intimation Letter 1 Prepared") ||
               applicationStatus.includes("Auditor Assigned") ||
               applicationStatus.includes("Audit Plan Stage 1")) && (
@@ -585,7 +585,7 @@ const ApplicationInfo = () => {
                   <p>Assigned Auditor : {assignedAuditor || "None"}</p>
                 </button>
               </div>
-            )}
+            )} */}
 
           {/* Audit Plan 1 */}
           {((state.role === "Auditor" &&
@@ -720,6 +720,35 @@ const ApplicationInfo = () => {
               </button>
             </div>
           )}
+
+          {/* Audit Plan 2 */}
+          {/* {((state.role !== "Auditor" &&
+            applicationStatus.includes("Intimation Letter 2")) ||
+            applicationStatus.includes("Audit Plan Stage 2")) && (
+            <div className="application_info-section">
+              <NavLink to="audit-plan-stage-2" className="link-without-style">
+                <button className="application__btn">
+                  <img
+                    src={
+                      applicationStatus.includes("Audit Plan Stage 2")
+                        ? view
+                        : request
+                    }
+                    alt="view"
+                  />
+                  <p>{`${
+                    applicationStatus.includes("Audit Plan Stage 2")
+                      ? "View"
+                      : "Fill"
+                  } Audit Plan stage 2 Form`}</p>
+                </button>
+              </NavLink>
+              <button className="application__btn application__btn--green">
+                <img src={print} alt="print" />
+                <p>Print Audit Plan stage 2 Form</p>
+              </button>
+            </div>
+          )} */}
         </div>
       )}
     </>

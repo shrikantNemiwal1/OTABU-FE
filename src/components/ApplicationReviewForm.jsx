@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { applicationReviewFormSchema } from "../validation/formSchema";
 import { useFormik } from "formik";
 import "./styles/registration.scss";
@@ -27,6 +27,13 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { GetAllAuditors } from "../api/api";
+
+const auditorInputs = {
+  lead_auditor: "Lead Auditor/Team Leader",
+  auditor_1: "Auditor 1",
+  auditor_2: "Auditor 2/Technical Expert",
+};
 
 const ApplicationForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -61,6 +68,8 @@ const ApplicationForm = () => {
     }
     setFormLoading(false);
   };
+
+  const { data } = GetAllAuditors(state.token);
 
   useEffect(() => {
     getFormDetails();
@@ -637,6 +646,68 @@ const ApplicationForm = () => {
                     </div>
                   </div>
                 ))}
+
+                {Object.keys(auditorInputs).map((key) => (
+                  <div className="input__container" key={key}>
+                    <label htmlFor="standard">
+                      Select {auditorInputs[key]} :
+                    </label>
+                    <div className="custom-select" id="standard">
+                      <select
+                        name={`TotEmplMandaysTeam.${key}`}
+                        id={`TotEmplMandaysTeam.${key}`}
+                        value={values?.TotEmplMandaysTeam?.[key]}
+                        onChange={handleChange}
+                      >
+                        <option value="" disabled hidden>
+                          Select an option
+                        </option>
+                        {data?.data.map((auditor) => {
+                          return (
+                            <option value={auditor.id} key={auditor.id}>
+                              {auditor.auditor_name}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    <div className="input__error-container">
+                      {errors?.TotEmplMandaysTeam?.[key] &&
+                      touched?.TotEmplMandaysTeam?.[key] ? (
+                        <p className="input__error">
+                          {errors?.TotEmplMandaysTeam?.[key]}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                ))}
+
+                {/* <div className="input__container">
+                  <label htmlFor="standard">Select :</label>
+                  <div className="custom-select" id="standard">
+                    <select
+                      name="TotEmplMandaysTeam.auditor_1"
+                      value={values.TotEmplMandaysTeam.auditor_1}
+                      onChange={handleChange}
+                    >
+                      <option value="" disabled hidden>
+                        Select auditor
+                      </option>
+                      {data?.data.map((auditor) => {
+                        return (
+                          <option value={auditor.id} key={auditor.id}>
+                            {auditor.auditor_name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                  <div className="input__error-container">
+                    {errors.position && touched.position ? (
+                      <p className="input__error">{errors.position}</p>
+                    ) : null}
+                  </div>
+                </div> */}
 
                 <div className="input__container checkbox-container">
                   <label>

@@ -176,6 +176,93 @@ export const auditPlanStage1FormSchema = Yup.object({
   }),
 });
 
+export const auditPlanStage2FormSchema = Yup.object({
+  AuditPlan2: Yup.object({
+    client: Yup.string(),
+    audit_date: Yup.string(),
+    standard: Yup.string(),
+    location: Yup.string(),
+    type_of_assessment: Yup.string(),
+    client_rep: Yup.string(),
+    temp_site_1: Yup.string(),
+    temp_site_2: Yup.string(),
+    audit_duration: Yup.string(),
+    lead_auditor: Yup.string(),
+    additional_auditors: Yup.string(),
+    scope: Yup.string(),
+  }),
+
+  LeadAuditorRes2: Yup.object({
+    opening_meeting: Yup.string(),
+    site_tour: Yup.string(),
+    top_manage: Yup.string(),
+    documentation: Yup.string(),
+    marketing: Yup.string(),
+    maintenance: Yup.string(),
+    hr: Yup.string(),
+    purchase: Yup.string(),
+    production_qual: Yup.string(),
+    report_prep: Yup.string(),
+    closing_meet: Yup.string(),
+  }),
+
+  TeamMemberrRes2: Yup.object({
+    opening_meeting: Yup.string(),
+    site_tour: Yup.string(),
+    top_manage: Yup.string(),
+    documentation: Yup.string(),
+    marketing: Yup.string(),
+    maintenance: Yup.string(),
+    hr: Yup.string(),
+    purchase: Yup.string(),
+    production_qual: Yup.string(),
+    report_prep: Yup.string(),
+    closing_meet: Yup.string(),
+  }),
+
+  ObserversRes2: Yup.object({
+    opening_meeting: Yup.string(),
+    site_tour: Yup.string(),
+    top_manage: Yup.string(),
+    documentation: Yup.string(),
+    marketing: Yup.string(),
+    maintenance: Yup.string(),
+    hr: Yup.string(),
+    purchase: Yup.string(),
+    production_qual: Yup.string(),
+    report_prep: Yup.string(),
+    closing_meet: Yup.string(),
+  }),
+
+  Auditee2: Yup.object({
+    opening_meeting: Yup.string(),
+    site_tour: Yup.string(),
+    top_manage: Yup.string(),
+    documentation: Yup.string(),
+    marketing: Yup.string(),
+    maintenance: Yup.string(),
+    hr: Yup.string(),
+    purchase: Yup.string(),
+    production_qual: Yup.string(),
+    report_prep: Yup.string(),
+    closing_meet: Yup.string(),
+  }),
+
+  CompletedRes2: Yup.object({
+    opening_meeting: Yup.string(),
+    site_tour: Yup.string(),
+    top_manage: Yup.string(),
+    documentation: Yup.string(),
+    marketing: Yup.string(),
+    maintenance: Yup.string(),
+    hr: Yup.string(),
+    purchase: Yup.string(),
+    production_qual: Yup.string(),
+    report_prep: Yup.string(),
+    closing_meet: Yup.string(),
+  }),
+});
+
 export const auditReportStage1FormSchema = Yup.object({
   Non_Confirmity: Yup.string(),
   AuditReport_1: Yup.object({
