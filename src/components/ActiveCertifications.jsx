@@ -17,7 +17,7 @@ const DashboardAdmin = () => {
   const columns = useMemo(() => [
     {
       accessorKey: "id",
-      header: "ID",
+      header: "Application ID",
       enableColumnOrdering: false,
       enableEditing: false,
       enableSorting: false,

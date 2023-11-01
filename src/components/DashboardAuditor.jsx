@@ -17,7 +17,7 @@ const DashboardAuditor = () => {
   const columns = useMemo(() => [
     {
       accessorKey: "application_id",
-      header: "ID",
+      header: "Application ID",
       enableColumnOrdering: false,
       enableEditing: false,
       enableSorting: false,
