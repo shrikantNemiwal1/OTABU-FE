@@ -3,11 +3,11 @@ import Table from "./Table";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { Snackbar, Alert } from "@mui/material";
-import { GetAllAssignedApplications, GetAllPendingClient } from "../api/api";
+import { GetAllActiveAuditors } from "../api/api";
 import { useNavigate } from "react-router-dom";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
-const DashboardAuditor = () => {
+const ActiveAuditors = () => {
   const [open, setOpen] = useState(false);
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("success");
@@ -16,24 +16,24 @@ const DashboardAuditor = () => {
 
   const columns = useMemo(() => [
     {
-      accessorKey: "application_id",
-      header: "Application ID",
+      accessorKey: "id",
+      header: "Auditor ID",
       enableColumnOrdering: false,
-      enableEditing: false,
+      enableEditing: false, //disable editing on this column
       enableSorting: false,
       size: 30,
     },
     {
-      accessorKey: "status",
-      header: "Status",
-      size: 10,
+      accessorKey: "auditor_name",
+      header: "Auditor name",
+      size: 30,
     },
-  ]);
+  ],[]);
 
-  const { data, refetch, isFetching } = GetAllAssignedApplications(state.token);
+  const { data, refetch, isFetching } = GetAllActiveAuditors(state.token);
 
   const handleAction = async ({ type, row }) => {
-    navigate(`/application/${row.application_id}`);
+    navigate(`/application/${row.id}`);
   };
 
   const rowActions = ({ row, table }) => (
@@ -46,6 +46,7 @@ const DashboardAuditor = () => {
       </button>
     </>
   );
+
   return (
     <>
       <Snackbar
@@ -65,16 +66,15 @@ const DashboardAuditor = () => {
       <Table
         data={data?.data}
         columns={columns}
-        title={"Assigned Applications"}
-        height={"100vh - 215px - 1rem"}
+        title={"Active Auditors"}
+        height={"100vh - 215px - 8rem"}
         isLoading={isFetching}
         refetchData={refetch}
         rowActions={rowActions}
-        showActions={true}
-        selectRow={false}
+        showActions={false}
       />
     </>
   );
 };
 
-export default DashboardAuditor;
+export default ActiveAuditors;

@@ -18,6 +18,9 @@ const url = {
     "/api/application_form/get_client_application_details",
   allAuditors: "api/select_auditor/get_auditors_list",
   allAssignedApplications: "api/select_auditor/get_assigned_applications",
+  allPendingAssignedApplications:
+    "/api/select_auditor/get_assigned_pending_applications",
+  allActiveAuditors: "/api/select_auditor/get_auditors_list",
 };
 
 export function API(method, endpoint, payload, token) {
@@ -34,9 +37,42 @@ export function API(method, endpoint, payload, token) {
   });
 }
 
+export function GetAllActiveAuditors(token) {
+  const queryKey = "alActiveAuditors";
+  const queryFn = () => API("get", url.allActiveAuditors, {}, token);
+  const { refetch, ...queryResult } = useQuery(
+    [queryKey],
+    queryFn,
+    queryConfig
+  );
+  return {
+    refetch: () => {
+      refetch();
+    },
+    ...queryResult,
+  };
+}
+
 export function GetAllAssignedApplications(token) {
   const queryKey = "allAssignedApplications";
   const queryFn = () => API("get", url.allAssignedApplications, {}, token);
+  const { refetch, ...queryResult } = useQuery(
+    [queryKey],
+    queryFn,
+    queryConfig
+  );
+  return {
+    refetch: () => {
+      refetch();
+    },
+    ...queryResult,
+  };
+}
+
+export function GetAllPendingAssignedApplications(token) {
+  const queryKey = "allPendingAssignedApplications";
+  const queryFn = () =>
+    API("get", url.allPendingAssignedApplications, {}, token);
   const { refetch, ...queryResult } = useQuery(
     [queryKey],
     queryFn,

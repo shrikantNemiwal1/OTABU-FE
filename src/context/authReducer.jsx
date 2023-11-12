@@ -4,13 +4,11 @@ export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
 
 export const authReducer = (state, action) => {
   switch (action.type) {
-    case SET_ERROR:
-      return { ...state, error: action.payload };
-
     case LOGIN_SUCCESS:
       localStorage.setItem("token", action.payload.access_token);
       localStorage.setItem("refresh-token", action.payload.refresh_token);
       localStorage.setItem("otabu-audit-email", action.payload.email);
+      localStorage.setItem("otabu-audit-name", action.payload.name);
       localStorage.setItem("otabu-audit-role", action.payload.role);
       localStorage.setItem("otabu-audit-exp", action.payload.tokenExpTime);
       return {
@@ -19,6 +17,7 @@ export const authReducer = (state, action) => {
         token: action.payload.access_token,
         refreshToken: action.payload.refresh_token,
         email: action.payload.email,
+        name: action.payload.name,
         role: action.payload.role,
         tokenExpTime: action.payload.tokenExpTime,
       };
@@ -28,6 +27,7 @@ export const authReducer = (state, action) => {
       localStorage.setItem("token", "");
       localStorage.setItem("refresh-token", "");
       localStorage.setItem("otabu-audit-email", "");
+      localStorage.setItem("otabu-audit-name", "");
       localStorage.setItem("otabu-audit-role", "");
       localStorage.setItem("otabu-audit-exp", "");
       return {
@@ -36,7 +36,9 @@ export const authReducer = (state, action) => {
         token: null,
         refreshToken: null,
         email: null,
+        name: null,
         role: null,
+        tokenExpTime: null,
       };
 
     default:

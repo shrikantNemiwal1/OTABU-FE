@@ -14,14 +14,14 @@ const DashboardNav = () => {
   return (
     <nav className="dashboard-nav">
       <Restricted to={"Admin Auditor"}>
-        <NavLink to="active-admins" className="dashboard-nav__card">
+        <NavLink to="pending-clients" className="dashboard-nav__card">
           <div className="dashboard-nav__card-head">
             <img src={activeAdmin} alt="active admin" />
             <div className="dashboard-nav__card-detail">
               <span>11</span>
               <img
                 className={
-                  pathname === "/dashboard/active-admins"
+                  pathname === "/dashboard/pending-clients"
                     ? "rotate-180deg"
                     : "arrow-icon"
                 }
@@ -30,7 +30,7 @@ const DashboardNav = () => {
               />
             </div>
           </div>
-          <p className="dashboard-nav__card-text">Active Admins</p>
+          <p className="dashboard-nav__card-text">Pending Clients</p>
         </NavLink>
         <NavLink to="active-auditors" className="dashboard-nav__card">
           <div className="dashboard-nav__card-head">
@@ -141,6 +141,48 @@ const DashboardNav = () => {
             </div>
           </div>
           <p className="dashboard-nav__card-text">Completed Certifications</p>
+        </NavLink>
+      </Restricted>
+      <Restricted to="Auditor">
+        <NavLink to="assigned-pending" className="dashboard-nav__card">
+          <div className="dashboard-nav__card-head">
+            <img src={applicationForm} alt="active admin" />
+            <div className="dashboard-nav__card-detail">
+              <span>11</span>
+              <img
+                className={
+                  pathname === "/dashboard/assigned-pending"
+                    ? "rotate-180deg"
+                    : "arrow-icon"
+                }
+                src={arrow}
+                alt="arrow"
+              />
+            </div>
+          </div>
+          <p className="dashboard-nav__card-text">
+            Assigned Pending Applications
+          </p>
+        </NavLink>
+        <NavLink to="assigned-active" className="dashboard-nav__card">
+          <div className="dashboard-nav__card-head">
+            <img src={applicationForm} alt="active certi" />
+            <div className="dashboard-nav__card-detail">
+              <span>11</span>
+              <img
+                className={
+                  pathname === "/dashboard/assigned-active"
+                    ? "rotate-180deg"
+                    : "arrow-icon"
+                }
+                src={arrow}
+                alt="arrow"
+              />
+            </div>
+          </div>
+          <p className="dashboard-nav__card-text">
+            Assigned Active applications
+          </p>
         </NavLink>
       </Restricted>
     </nav>

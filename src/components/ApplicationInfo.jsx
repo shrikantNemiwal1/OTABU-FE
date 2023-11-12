@@ -142,6 +142,10 @@ const ApplicationInfo = () => {
                       "Audit Plan 1 Acceptance Pending"
                     )
                   ? "audit_plan/send_remark"
+                  : applicationStatus.includes(
+                      "Audit Plan 2 Acceptance Pending"
+                    )
+                  ? "audit_plan_2/send_remark"
                   : "app_review/send_remark"
               }/${id}`,
             data: confModalOpen
@@ -188,12 +192,18 @@ const ApplicationInfo = () => {
             <div className="modal__title">
               {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
                 ? "Audit Plan 1 Acceptance"
+                : applicationStatus.includes("Audit Plan 2 Acceptance Pending")
+                ? "Audit Plan 2 Acceptance"
                 : "Send Remark"}
             </div>
             <div className="input__container checkbox-container">
               <label>
                 {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
                   ? "Accept/Reject Audit Plan 1"
+                  : applicationStatus.includes(
+                      "Audit Plan 2 Acceptance Pending"
+                    )
+                  ? "Accept/Reject Audit Plan 2"
                   : "Accept/Reject Application"}
               </label>
               <label className="checkbox-label">
@@ -346,18 +356,23 @@ const ApplicationInfo = () => {
           <button className="add-btn" onClick={getApplicationDetails}>
             Refresh
           </button>
-          {((state.role === "Admin Auditor" &&
+          {(state.role === "Admin Auditor" &&
             applicationStatus.includes("Application Acceptance Pending")) ||
             (state.role === "Client" &&
-              applicationStatus.includes(
-                "Audit Plan 1 Acceptance Pending"
-              ))) && (
-            <button className="add-btn" onClick={() => setModalOpen(true)}>
-              {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
-                ? "Accept Audit Plan 1"
-                : "Send Remark"}
-            </button>
-          )}
+              (applicationStatus.includes("Audit Plan 1 Acceptance Pending") ||
+                applicationStatus.includes(
+                  "Audit Plan 2 Acceptance Pending"
+                )) && (
+                <button className="add-btn" onClick={() => setModalOpen(true)}>
+                  {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
+                    ? "Accept Audit Plan 1"
+                    : applicationStatus.includes(
+                        "Audit Plan 2 Acceptance Pending"
+                      )
+                    ? "Accept Audit Plan 2"
+                    : "Send Remark"}
+                </button>
+              ))}
 
           {((state.role === "Client" &&
             (applicationStatus.includes("Form 39B Prepared") ||
@@ -589,7 +604,8 @@ const ApplicationInfo = () => {
 
           {/* Audit Plan 1 */}
           {((state.role === "Auditor" &&
-            applicationStatus.includes("Auditor Assigned")) ||
+            applicationStatus.includes("Intimation Letter 1 Prepared")) ||
+            applicationStatus.includes("Auditor Assigned") ||
             applicationStatus.includes("Audit Plan Stage 1")) && (
             <div className="application_info-section">
               <NavLink to="audit-plan-stage-1" className="link-without-style">
@@ -687,7 +703,8 @@ const ApplicationInfo = () => {
           {((state.role === "Admin Auditor" &&
             (applicationStatus.includes("Audit Stage 1 Completed") ||
               applicationStatus.includes("Closure Accepted"))) ||
-            applicationStatus.includes("Intimation Letter 2 Prepared")) && (
+            applicationStatus.includes("Intimation Letter 2 Prepared") ||
+            applicationStatus.includes("Intimation Letter 2")) && (
             <div className="application_info-section">
               <NavLink to="intimation-letter-2" className="link-without-style">
                 <button className="application__btn">
@@ -697,7 +714,7 @@ const ApplicationInfo = () => {
                         "Intimation Letter 2 Prepared"
                       ) ||
                       applicationStatus.includes("Audit Plan Stage 2") ||
-                      applicationStatus.includes("Intimation Letter 2 Prepared")
+                      applicationStatus.includes("Intimation Letter 2")
                         ? view
                         : request
                     }
@@ -708,7 +725,7 @@ const ApplicationInfo = () => {
                       "Intimation Letter 2 Prepared"
                     ) ||
                     applicationStatus.includes("Audit Plan Stage 2") ||
-                    applicationStatus.includes("Intimation Letter 2 Prepared")
+                    applicationStatus.includes("Intimation Letter 2")
                       ? "View"
                       : "Fill"
                   } Intimation Letter 2 Form`}</p>
@@ -722,7 +739,7 @@ const ApplicationInfo = () => {
           )}
 
           {/* Audit Plan 2 */}
-          {/* {((state.role !== "Auditor" &&
+          {((state.role === "Auditor" &&
             applicationStatus.includes("Intimation Letter 2")) ||
             applicationStatus.includes("Audit Plan Stage 2")) && (
             <div className="application_info-section">
@@ -730,14 +747,20 @@ const ApplicationInfo = () => {
                 <button className="application__btn">
                   <img
                     src={
-                      applicationStatus.includes("Audit Plan Stage 2")
+                      applicationStatus.includes("Audit Plan Stage 2") ||
+                      applicationStatus.includes(
+                        "Audit Plan 2 Acceptance Pending"
+                      )
                         ? view
                         : request
                     }
                     alt="view"
                   />
                   <p>{`${
-                    applicationStatus.includes("Audit Plan Stage 2")
+                    applicationStatus.includes("Audit Plan Stage 2") ||
+                    applicationStatus.includes(
+                      "Audit Plan 2 Acceptance Pending"
+                    )
                       ? "View"
                       : "Fill"
                   } Audit Plan stage 2 Form`}</p>
@@ -748,7 +771,98 @@ const ApplicationInfo = () => {
                 <p>Print Audit Plan stage 2 Form</p>
               </button>
             </div>
-          )} */}
+          )}
+
+          {/* Audit Report 2 */}
+          {((state.role === "Auditor" &&
+            applicationStatus.includes("Audit Plan 2 Accepted")) ||
+            applicationStatus.includes("Audit Report 2")) && (
+            <div className="application_info-section">
+              <NavLink to="audit-report-stage-2" className="link-without-style">
+                <button className="application__btn">
+                  <img
+                    src={
+                      applicationStatus.includes("Non Confirmities Raised") ||
+                      applicationStatus.includes("Audit Report 2")
+                        ? view
+                        : request
+                    }
+                    alt="view"
+                  />
+                  <p>{`${
+                    applicationStatus.includes("Non Confirmities Raised") ||
+                    applicationStatus.includes("Audit Report 2")
+                      ? "View"
+                      : "Fill"
+                  } Audit Report 2 Form`}</p>
+                </button>
+              </NavLink>
+              <button className="application__btn application__btn--green">
+                <img src={print} alt="print" />
+                <p>Print Audit Report 2 Form</p>
+              </button>
+            </div>
+          )}
+
+          {/* Technical Committee Report */}
+          {state.role === "Admin Auditor" && (
+            <div className="application_info-section">
+              <NavLink
+                to="technical-committee-report"
+                className="link-without-style"
+              >
+                <button className="application__btn">
+                  <img
+                    src={
+                      applicationStatus.includes("Intimation Letter 2 Prepared")
+                        ? view
+                        : request
+                    }
+                    alt="view"
+                  />
+                  <p>{`${
+                    applicationStatus.includes("Intimation Letter 2 Prepared")
+                      ? "View"
+                      : "Fill"
+                  } Technical Committee Report Form`}</p>
+                </button>
+              </NavLink>
+              <button className="application__btn application__btn--green">
+                <img src={print} alt="print" />
+                <p>Print Technical Committee Report Form</p>
+              </button>
+            </div>
+          )}
+
+          {/* Certification Issue Checklist */}
+          {state.role === "Admin Auditor" && (
+            <div className="application_info-section">
+              <NavLink
+                to="certificate-issue-checklist"
+                className="link-without-style"
+              >
+                <button className="application__btn">
+                  <img
+                    src={
+                      applicationStatus.includes("Intimation Letter 2 Prepared")
+                        ? view
+                        : request
+                    }
+                    alt="view"
+                  />
+                  <p>{`${
+                    applicationStatus.includes("Intimation Letter 2 Prepared")
+                      ? "View"
+                      : "Fill"
+                  } Certification Issue Checklist Form`}</p>
+                </button>
+              </NavLink>
+              <button className="application__btn application__btn--green">
+                <img src={print} alt="print" />
+                <p>Print Certification Issue Checklist Form</p>
+              </button>
+            </div>
+          )}
         </div>
       )}
     </>

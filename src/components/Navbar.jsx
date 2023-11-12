@@ -1,10 +1,10 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import search from "../assets/icons/search.svg";
 import bell from "../assets/icons/bell.svg";
-import setting from "../assets/icons/setting.svg";
+import profile from "../assets/images/default-profile.jpg";
 import logoutIcon from "../assets/icons/logout.svg";
 import "./styles/navbar.scss";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
@@ -18,6 +18,11 @@ const Navbar = ({ title }) => {
     navigate("/", { replace: true });
   };
 
+  useEffect(() => {
+    if (state?.isAuthenticated === false)
+      return navigate("/", { replace: true });
+  }, [state]);
+
   return (
     <nav className="navbar">
       <div className="navbar__items-left">
@@ -30,10 +35,13 @@ const Navbar = ({ title }) => {
         </div>
       </div>
       <div className="navbar__items-right">
-        {/* <div className="navbar__avatar">
-          <img src="" alt="avatar" />
-          <p>User name</p>
-        </div> */}
+        <div className="navbar__avatar">
+          <img src={profile} alt="avatar" />
+          <div>
+            <p>{state?.name}</p>
+            <span>{state?.role}</span>
+          </div>
+        </div>
         <ul>
           <li>
             <NavLink to="/notifications">

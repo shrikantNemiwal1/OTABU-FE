@@ -1,5 +1,5 @@
 // main file
-import React, { createContext, useReducer, useState } from "react";
+import { createContext, useReducer, useState } from "react";
 import { authReducer } from "./authReducer";
 import axios from "axios";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
@@ -17,9 +17,6 @@ export function API(method, endpoint, payload, token) {
 
 let refToken = "";
 
-const name = localStorage.getItem("otabu-audit-name")
-  ? localStorage.getItem("otabu-audit-name")
-  : "";
 const mobile = localStorage.getItem("otabu-audit-mobile")
   ? localStorage.getItem("otabu-audit-mobile")
   : "";
@@ -31,6 +28,9 @@ const refreshToken = localStorage.getItem("refresh-token")
   : "";
 const email = localStorage.getItem("otabu-audit-email")
   ? localStorage.getItem("otabu-audit-email")
+  : "";
+const name = localStorage.getItem("otabu-audit-name")
+  ? localStorage.getItem("otabu-audit-name")
   : "";
 const role = localStorage.getItem("otabu-audit-role")
   ? localStorage.getItem("otabu-audit-role")

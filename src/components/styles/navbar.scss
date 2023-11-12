@@ -73,6 +73,14 @@
     &:nth-child(2) {
       margin-right: 1rem;
     }
+
+    & p{
+      line-height: 13px;
+    }
+
+    & span{
+      font-size: 12px;
+    }
   }
 
   &__avatar {
@@ -83,7 +91,9 @@
     margin-right: 1rem;
 
     & img {
-      padding: 1.4rem;
+      width: 35px;
+      height: 35px;
+      padding: 0;
       border-radius: 50%;
     }
   }

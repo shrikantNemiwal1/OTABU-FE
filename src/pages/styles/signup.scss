@@ -39,19 +39,27 @@
     outline: none;
     border-radius: 6px;
     border: none;
-    background: #F5F5DC;
+    background: #f5f5dc;
   }
 }
 
-.otp-text{
+.otp-text {
   margin-top: 3rem;
-  color: #355B3E;
+  color: #355b3e;
 
-  & h2{
+  & h2 {
     font-size: 20px;
   }
 
-  & p{
+  & p {
     font-size: 14px;
   }
+}
+
+.m-2 {
+  margin-block: 2rem !important;
+}
+
+button:disabled{
+  cursor: not-allowed;
 }

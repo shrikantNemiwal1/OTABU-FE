@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
 import Login from "./pages/Login";
@@ -12,7 +12,6 @@ import Notifications from "./pages/Notifications";
 import Application from "./pages/Application";
 import DashboardClient from "./components/DashboardClient";
 import DashboardAdmin from "./components/DashboardAdmin";
-import DashboardAuditor from "./components/DashboardAuditor";
 import ActiveClients from "./components/ActiveClients";
 import AppliedCertifications from "./components/AppliedCertifications";
 import ActiveCertifications from "./components/ActiveCertifications";
@@ -29,6 +28,12 @@ import AuditReportStage1Form from "./components/AuditReportStage1Form";
 import IntimationLetter from "./components/IntimationLetter";
 import CorrectiveActionReport from "./components/CorrectiveActionReport";
 import AuditPlanStage2Form from "./components/AuditPlanStage2Form";
+import AssignedActiveApplications from "./components/AssignedActiveApplications";
+import AssignedPendingApplications from "./components/AssignedPendingApplications";
+import ActiveAuditors from "./components/ActiveAuditors";
+import AuditReportStage2Form from "./components/AuditReportStage2Form.jsx";
+import TechnicalCommitteeReportForm from "./components/TechnicalCommitteeReportForm";
+import CertificationIssueChecklistForm from "./components/CertificationIssueChecklistForm";
 
 function App() {
   const { state, dispatch } = useContext(AuthContext);
@@ -88,8 +93,20 @@ function App() {
               element={<AuditReportStage1Form />}
             />
             <Route
+              path="audit-report-stage-2"
+              element={<AuditReportStage2Form />}
+            />
+            <Route
               path="corrective-action-report"
               element={<CorrectiveActionReport />}
+            />
+            <Route
+              path="technical-committee-report"
+              element={<TechnicalCommitteeReportForm />}
+            />
+            <Route
+              path="certificate-issue-checklist"
+              element={<CertificationIssueChecklistForm />}
             />
           </Route>
 
@@ -99,16 +116,16 @@ function App() {
               path=""
               element={
                 state.role === "Admin Auditor" ? (
-                  <DashboardAdmin />
+                  <Navigate to="/dashboard/pending-clients" replace={true} />
                 ) : state.role === "Auditor" ? (
-                  <DashboardAuditor />
+                  <Navigate to="/dashboard/assigned-pending" replace={true} />
                 ) : (
                   <DashboardClient />
                 )
               }
             />
-            <Route path="active-admins" element={<p>active admins</p>} />
-            <Route path="active-auditors" element={<p>active auditors</p>} />
+            <Route path="pending-clients" element={<DashboardAdmin />} />
+            <Route path="active-auditors" element={<ActiveAuditors />} />
             <Route path="active-clients" element={<ActiveClients />} />
             <Route
               path="completed-clients"
@@ -125,6 +142,14 @@ function App() {
             <Route
               path="completed-certifications"
               element={<p>completed certifications</p>}
+            />
+            <Route
+              path="assigned-pending"
+              element={<AssignedPendingApplications />}
+            />
+            <Route
+              path="assigned-active"
+              element={<AssignedActiveApplications />}
             />
           </Route>
           <Route exact path="clients/:id" element={<Clients />} />

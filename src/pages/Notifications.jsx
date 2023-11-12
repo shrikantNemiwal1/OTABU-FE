@@ -17,7 +17,7 @@ const Clients = () => {
   const columns = useMemo(() => [
     {
       accessorKey: "id",
-      header: "ID",
+      header: "Application ID",
       enableColumnOrdering: false,
       enableEditing: false, //disable editing on this column
       enableSorting: false,

@@ -10,7 +10,7 @@ export const formatLegalKey = (key) => {
 };
 
 export const changedDivisions = (initialValues, values) => {
-  console.log(initialValues,values)
+  console.log(initialValues, values);
   const changedDivisions = Object.keys(values).filter((division) => {
     return (
       JSON.stringify(values[division]) !==
@@ -375,6 +375,7 @@ export const initialValues = {
   },
   ISO37001: {
     no_empl: "",
+    abms_risk: "",
   },
   OtabuOffUse: {
     name_otabu: "",

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import Table from "./Table";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
