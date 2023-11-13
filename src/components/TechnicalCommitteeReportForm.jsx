@@ -239,7 +239,7 @@ const TechnicalCommitteeReportForm = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { state } = useContext(AuthContext);
-  const id = pathname.slice(13).slice(0, -15);
+  const id = pathname.slice(13).slice(0, -27);
 
   const [initialForm, setInitialForm] = useState(initialValues);
 
@@ -290,6 +290,8 @@ const TechnicalCommitteeReportForm = () => {
       const formValues = formDisabled
         ? changedDivisions(initialForm, values)
         : values;
+
+      console.log(formValues);
 
       try {
         const response = await axios({

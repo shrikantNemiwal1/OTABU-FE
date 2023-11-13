@@ -34,6 +34,7 @@ import ActiveAuditors from "./components/ActiveAuditors";
 import AuditReportStage2Form from "./components/AuditReportStage2Form.jsx";
 import TechnicalCommitteeReportForm from "./components/TechnicalCommitteeReportForm";
 import CertificationIssueChecklistForm from "./components/CertificationIssueChecklistForm";
+import CorrectiveActionReport2 from "./components/CorrectiveActionReport2.jsx";
 
 function App() {
   const { state, dispatch } = useContext(AuthContext);
@@ -99,6 +100,10 @@ function App() {
             <Route
               path="corrective-action-report"
               element={<CorrectiveActionReport />}
+            />
+            <Route
+              path="corrective-action-report-2"
+              element={<CorrectiveActionReport2 />}
             />
             <Route
               path="technical-committee-report"

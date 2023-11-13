@@ -61,7 +61,7 @@ const ApplicationInfo = () => {
         BASE_URL + `/api/app_stage/forms_filled/${id}`,
         config
       );
-      console.log(res?.data);
+      // console.log(res?.data);
       setApplicationStatus(res?.data);
     } catch (error) {
       console.log(error?.response?.data?.msg);
@@ -134,10 +134,14 @@ const ApplicationInfo = () => {
               `/api/${
                 applicationStatus.includes("Non Confirmities Accepted") ||
                 applicationStatus.includes("Closure Pending")
-                  ? "audit_report_1/closure_acceptance"
+                  ? applicationStatus.includes("Audit Plan Stage 2")
+                    ? "audit_report_2/closure_acceptance"
+                    : "audit_report_1/closure_acceptance"
                   : applicationStatus.includes("Form 39B Prepared") ||
                     applicationStatus.includes("Closure Rejected")
-                  ? "audit_report_1/non_confirmity_acceptance"
+                  ? applicationStatus.includes("Audit Plan Stage 2")
+                    ? "audit_report_2/non_confirmity_acceptance"
+                    : "audit_report_1/non_confirmity_acceptance"
                   : applicationStatus.includes(
                       "Audit Plan 1 Acceptance Pending"
                     )
@@ -356,23 +360,21 @@ const ApplicationInfo = () => {
           <button className="add-btn" onClick={getApplicationDetails}>
             Refresh
           </button>
-          {(state.role === "Admin Auditor" &&
+          {((state.role === "Admin Auditor" &&
             applicationStatus.includes("Application Acceptance Pending")) ||
             (state.role === "Client" &&
               (applicationStatus.includes("Audit Plan 1 Acceptance Pending") ||
                 applicationStatus.includes(
                   "Audit Plan 2 Acceptance Pending"
-                )) && (
-                <button className="add-btn" onClick={() => setModalOpen(true)}>
-                  {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
-                    ? "Accept Audit Plan 1"
-                    : applicationStatus.includes(
-                        "Audit Plan 2 Acceptance Pending"
-                      )
-                    ? "Accept Audit Plan 2"
-                    : "Send Remark"}
-                </button>
-              ))}
+                )))) && (
+            <button className="add-btn" onClick={() => setModalOpen(true)}>
+              {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
+                ? "Accept Audit Plan 1"
+                : applicationStatus.includes("Audit Plan 2 Acceptance Pending")
+                ? "Accept Audit Plan 2"
+                : "Send Remark"}
+            </button>
+          )}
 
           {((state.role === "Client" &&
             (applicationStatus.includes("Form 39B Prepared") ||
@@ -670,34 +672,35 @@ const ApplicationInfo = () => {
             applicationStatus.includes("Form 39B Prepared") ||
             applicationStatus.includes("Closure Pending") ||
             applicationStatus.includes("Closure Rejected") ||
-            applicationStatus.includes("Non Confirmities Accepted")) && (
-            <div className="application_info-section">
-              <NavLink
-                to="corrective-action-report"
-                className="link-without-style"
-              >
-                <button className="application__btn">
-                  <img
-                    src={
+            applicationStatus.includes("Non Confirmities Accepted")) &&
+            !applicationStatus.includes("Audit Plan Stage 2") && (
+              <div className="application_info-section">
+                <NavLink
+                  to="corrective-action-report"
+                  className="link-without-style"
+                >
+                  <button className="application__btn">
+                    <img
+                      src={
+                        !applicationStatus.includes("Non Confirmities Raised")
+                          ? view
+                          : request
+                      }
+                      alt="view"
+                    />
+                    <p>{`${
                       !applicationStatus.includes("Non Confirmities Raised")
-                        ? view
-                        : request
-                    }
-                    alt="view"
-                  />
-                  <p>{`${
-                    !applicationStatus.includes("Non Confirmities Raised")
-                      ? "View"
-                      : "Fill"
-                  } Corrective Action Report Form`}</p>
+                        ? "View"
+                        : "Fill"
+                    } Corrective Action Report Form`}</p>
+                  </button>
+                </NavLink>
+                <button className="application__btn application__btn--green">
+                  <img src={print} alt="print" />
+                  <p>Print Corrective Action Report Form</p>
                 </button>
-              </NavLink>
-              <button className="application__btn application__btn--green">
-                <img src={print} alt="print" />
-                <p>Print Corrective Action Report Form</p>
-              </button>
-            </div>
-          )}
+              </div>
+            )}
 
           {/* Intimation Letter 2 */}
           {((state.role === "Admin Auditor" &&
@@ -740,8 +743,10 @@ const ApplicationInfo = () => {
 
           {/* Audit Plan 2 */}
           {((state.role === "Auditor" &&
-            applicationStatus.includes("Intimation Letter 2")) ||
-            applicationStatus.includes("Audit Plan Stage 2")) && (
+            applicationStatus.includes("Intimation Letter 2 Prepared")) ||
+            applicationStatus.includes("Audit Plan Stage 2") ||
+            applicationStatus.includes("Audit Plan Stage 2 Completed") ||
+            applicationStatus.includes("Audit Plan 2 Acceptance Pending")) && (
             <div className="application_info-section">
               <NavLink to="audit-plan-stage-2" className="link-without-style">
                 <button className="application__btn">
@@ -804,35 +809,76 @@ const ApplicationInfo = () => {
             </div>
           )}
 
-          {/* Technical Committee Report */}
-          {state.role === "Admin Auditor" && (
-            <div className="application_info-section">
-              <NavLink
-                to="technical-committee-report"
-                className="link-without-style"
-              >
-                <button className="application__btn">
-                  <img
-                    src={
-                      applicationStatus.includes("Intimation Letter 2 Prepared")
-                        ? view
-                        : request
-                    }
-                    alt="view"
-                  />
-                  <p>{`${
-                    applicationStatus.includes("Intimation Letter 2 Prepared")
-                      ? "View"
-                      : "Fill"
-                  } Technical Committee Report Form`}</p>
+          {/* Non confirmities 2 */}
+          {((state.role === "Auditor" &&
+            applicationStatus.includes("Non Confirmities Raised")) ||
+            applicationStatus.includes("Non Confirmities Rejected") ||
+            applicationStatus.includes("Form 39B Prepared") ||
+            applicationStatus.includes("Closure Pending") ||
+            applicationStatus.includes("Closure Rejected") ||
+            applicationStatus.includes("Non Confirmities Accepted")) &&
+            applicationStatus.includes("Audit Plan Stage 2") && (
+              <div className="application_info-section">
+                <NavLink
+                  to="corrective-action-report-2"
+                  className="link-without-style"
+                >
+                  <button className="application__btn">
+                    <img
+                      src={
+                        !applicationStatus.includes("Non Confirmities Raised")
+                          ? view
+                          : request
+                      }
+                      alt="view"
+                    />
+                    <p>{`${
+                      !applicationStatus.includes("Non Confirmities Raised")
+                        ? "View"
+                        : "Fill"
+                    } Corrective Action Report Form`}</p>
+                  </button>
+                </NavLink>
+                <button className="application__btn application__btn--green">
+                  <img src={print} alt="print" />
+                  <p>Print Corrective Action Report Form</p>
                 </button>
-              </NavLink>
-              <button className="application__btn application__btn--green">
-                <img src={print} alt="print" />
-                <p>Print Technical Committee Report Form</p>
-              </button>
-            </div>
-          )}
+              </div>
+            )}
+
+          {/* Technical Committee Report */}
+          {state.role === "Admin Auditor" &&
+            (applicationStatus.includes("Audit Stage 2 Completed") ||
+              applicationStatus.includes("Closure Accepted")) && (
+              <div className="application_info-section">
+                <NavLink
+                  to="technical-committee-report"
+                  className="link-without-style"
+                >
+                  <button className="application__btn">
+                    <img
+                      src={
+                        applicationStatus.includes(
+                          "Intimation Letter 2 Prepared"
+                        )
+                          ? view
+                          : request
+                      }
+                      alt="view"
+                    />
+                    <p>{`${
+                      applicationStatus.includes("Intimation Letter 2 Prepared")
+                        ? "View"
+                        : "Fill"
+                    } Technical Committee Report Form`}</p>
+                  </button>
+                </NavLink>
+                <button className="application__btn application__btn--green">
+                  <img src={print} alt="print" />
+                  <p>Print Technical Committee Report Form</p>
+                </button>
+              </div>
+            )}
 
           {/* Certification Issue Checklist */}
           {state.role === "Admin Auditor" && (

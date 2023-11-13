@@ -231,7 +231,7 @@ const NonConfirmitiesCols = {
 };
 
 const initialValues = {
-  Non_Confirmity: "",
+  Non_Confirmity: "0",
 
   AuditReport_2: {
     org_name: "",
@@ -271,7 +271,7 @@ const initialValues = {
 
   OpenCloseMeet: [
     {
-      s_id: "",
+      s_id: "1",
       attendee: "",
       designa: "",
       open_meet: "",
@@ -279,7 +279,7 @@ const initialValues = {
     },
 
     {
-      s_id: "",
+      s_id: "2",
       attendee: "",
       designa: "",
       open_meet: "",
@@ -289,7 +289,7 @@ const initialValues = {
 
   NonConfirm: [
     {
-      s_no: "",
+      s_no: "1",
       correct_acns: "",
       category: "",
       clause_refer: "",
@@ -298,7 +298,7 @@ const initialValues = {
     },
 
     {
-      s_no: "",
+      s_no: "2",
       correct_acns: "",
       category: "",
       clause_refer: "",
@@ -469,7 +469,7 @@ const AuditReportStage2Form = () => {
   };
 
   useEffect(() => {
-    // getFormDetails();
+    getFormDetails();
   }, []);
 
   const {
@@ -497,6 +497,7 @@ const AuditReportStage2Form = () => {
       const formValues = formSubmitted
         ? changedDivisions(initialForm, values)
         : values;
+      console.log(formValues);
 
       try {
         const response = await axios({
@@ -615,6 +616,37 @@ const AuditReportStage2Form = () => {
                     </div>
                   </div>
                 ))}
+
+                <div className="input__container checkbox-container">
+                  <label>Non Confirmities :</label>
+                  <label className="checkbox-label">
+                    <input
+                      type="radio"
+                      name={`Non_Confirmity`}
+                      value="1"
+                      checked={values.Non_Confirmity == "1"}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                    <p>Yes</p>
+                  </label>
+                  <label className="checkbox-label">
+                    <input
+                      type="radio"
+                      name={`Non_Confirmity`}
+                      value="0"
+                      checked={values.Non_Confirmity == "0"}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                    <p>No</p>
+                  </label>
+                  <div className="input__error-container">
+                    {errors.Non_Confirmity || touched.Non_Confirmity ? (
+                      <p className="input__error">{errors.Non_Confirmity}</p>
+                    ) : null}
+                  </div>
+                </div>
 
                 <div className="input__container">
                   <label htmlFor="">Observation / Non Conformities :</label>

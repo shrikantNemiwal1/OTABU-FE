@@ -168,7 +168,7 @@ const AuditPlanStage2Form = () => {
   };
 
   useEffect(() => {
-    //getFormDetails();
+    getFormDetails();
   }, []);
 
   const {

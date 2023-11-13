@@ -74,7 +74,7 @@ const CertificationIssueChecklistForm = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { state } = useContext(AuthContext);
-  const id = pathname.slice(13).slice(0, -15);
+  const id = pathname.slice(13).slice(0, -28);
 
   const [initialForm, setInitialForm] = useState(initialValues);
 

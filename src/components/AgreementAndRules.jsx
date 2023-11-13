@@ -351,6 +351,20 @@ const AgreementAndRules = () => {
 
   return (
     <div className="rules__container">
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={() => setOpen(false)}
+      >
+        <Alert
+          variant="filled"
+          onClose={() => setOpen(false)}
+          severity={alertType}
+          sx={{ width: "100%" }}
+        >
+          {alertMsg}
+        </Alert>
+      </Snackbar>
       <h2 className="rules__head">CERTIFICATION AGREEMENT AND RULES</h2>
       <p>
         Agreement between OTABU Global Services Pvt. Ltd. (herein referred as
