@@ -849,7 +849,8 @@ const ApplicationInfo = () => {
           {/* Technical Committee Report */}
           {state.role === "Admin Auditor" &&
             (applicationStatus.includes("Audit Stage 2 Completed") ||
-              applicationStatus.includes("Closure Accepted")) && (
+              applicationStatus.includes("Closure Accepted") ||
+              applicationStatus.includes("Technical Committee Report")) && (
               <div className="application_info-section">
                 <NavLink
                   to="technical-committee-report"
@@ -859,15 +860,19 @@ const ApplicationInfo = () => {
                     <img
                       src={
                         applicationStatus.includes(
-                          "Intimation Letter 2 Prepared"
-                        )
+                          "Technical Committee Report Completed"
+                        ) ||
+                        applicationStatus.includes("Technical Committee Report")
                           ? view
                           : request
                       }
                       alt="view"
                     />
                     <p>{`${
-                      applicationStatus.includes("Intimation Letter 2 Prepared")
+                      applicationStatus.includes(
+                        "Technical Committee Report Completed"
+                      ) ||
+                      applicationStatus.includes("Technical Committee Report")
                         ? "View"
                         : "Fill"
                     } Technical Committee Report Form`}</p>
@@ -881,34 +886,44 @@ const ApplicationInfo = () => {
             )}
 
           {/* Certification Issue Checklist */}
-          {state.role === "Admin Auditor" && (
-            <div className="application_info-section">
-              <NavLink
-                to="certificate-issue-checklist"
-                className="link-without-style"
-              >
-                <button className="application__btn">
-                  <img
-                    src={
-                      applicationStatus.includes("Intimation Letter 2 Prepared")
-                        ? view
-                        : request
-                    }
-                    alt="view"
-                  />
-                  <p>{`${
-                    applicationStatus.includes("Intimation Letter 2 Prepared")
-                      ? "View"
-                      : "Fill"
-                  } Certification Issue Checklist Form`}</p>
+          {state.role === "Admin Auditor" &&
+            (applicationStatus.includes(
+              "Technical Committee Report Completed"
+            ) ||
+              applicationStatus.includes(
+                "certificate Issue Checklist Completed"
+              )) && (
+              <div className="application_info-section">
+                <NavLink
+                  to="certificate-issue-checklist"
+                  className="link-without-style"
+                >
+                  <button className="application__btn">
+                    <img
+                      src={
+                        applicationStatus.includes(
+                          "certificate Issue Checklist Completed"
+                        )
+                          ? view
+                          : request
+                      }
+                      alt="view"
+                    />
+                    <p>{`${
+                      applicationStatus.includes(
+                        "certificate Issue Checklist Completed"
+                      )
+                        ? "View"
+                        : "Fill"
+                    } Certification Issue Checklist Form`}</p>
+                  </button>
+                </NavLink>
+                <button className="application__btn application__btn--green">
+                  <img src={print} alt="print" />
+                  <p>Print Certification Issue Checklist Form</p>
                 </button>
-              </NavLink>
-              <button className="application__btn application__btn--green">
-                <img src={print} alt="print" />
-                <p>Print Certification Issue Checklist Form</p>
-              </button>
-            </div>
-          )}
+              </div>
+            )}
         </div>
       )}
     </>
