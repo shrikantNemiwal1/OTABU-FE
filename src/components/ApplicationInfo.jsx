@@ -282,14 +282,16 @@ const ApplicationInfo = () => {
               &#9587;
             </button>
             <div className="modal__title">
-              {applicationStatus.includes("Non Confirmities Accepted")
+              {applicationStatus.includes("Non Confirmities Accepted") ||
+              applicationStatus.includes("Closure Pending")
                 ? "Closure"
                 : "Non conformity"}
             </div>
             <div className="input__container checkbox-container">
               <label>
                 Accept/Reject{" "}
-                {applicationStatus.includes("Non Confirmities Accepted")
+                {applicationStatus.includes("Non Confirmities Accepted") ||
+                applicationStatus.includes("Closure Pending")
                   ? "Closure"
                   : "Non conformity"}
               </label>
@@ -392,22 +394,24 @@ const ApplicationInfo = () => {
           )}
 
           {/* ApplicationForm */}
-          <div className="application_info-section">
-            <NavLink to="application-form" className="link-without-style">
-              <button className="application__btn">
-                <img src={view} alt="view" />
-                <p>{`${
-                  applicationStatus.includes("Application Rejected")
-                    ? "Update"
-                    : "View"
-                } Application Form`}</p>
+          {state.role !== "Auditor" && (
+            <div className="application_info-section">
+              <NavLink to="application-form" className="link-without-style">
+                <button className="application__btn">
+                  <img src={view} alt="view" />
+                  <p>{`${
+                    applicationStatus.includes("Application Rejected")
+                      ? "Update"
+                      : "View"
+                  } Application Form`}</p>
+                </button>
+              </NavLink>
+              <button className="application__btn application__btn--green">
+                <img src={print} alt="print" />
+                <p>Print Application Form New</p>
               </button>
-            </NavLink>
-            <button className="application__btn application__btn--green">
-              <img src={print} alt="print" />
-              <p>Print Application Form New</p>
-            </button>
-          </div>
+            </div>
+          )}
 
           {/* Application Review */}
           {state.role === "Admin Auditor" &&
@@ -449,7 +453,8 @@ const ApplicationInfo = () => {
           {(applicationStatus.includes("Application Review") ||
             (state.role === "Client" &&
               applicationStatus.includes("Quotation"))) &&
-            !applicationStatus.includes("Application Acceptance Pending") && (
+            !applicationStatus.includes("Application Acceptance Pending") &&
+            !applicationStatus.includes("Application Rejected") && (
               <div className="application_info-section">
                 <NavLink to="quotation-form" className="link-without-style">
                   <button className="application__btn">
@@ -491,11 +496,22 @@ const ApplicationInfo = () => {
             <div className="application_info-section">
               <NavLink to="agreement-and-rules" className="link-without-style">
                 <button className="application__btn">
-                  <img src={view} alt="view" />
-                  <p>Certification Agreement and Rules</p>
+                  <img
+                    src={
+                      applicationStatus.includes("Client Agreement and Rules")
+                        ? view
+                        : request
+                    }
+                    alt="view"
+                  />
+                  <p>
+                    {applicationStatus.includes("Client Agreement and Rules")
+                      ? "View"
+                      : "Fill"}{" "}
+                    Certification Agreement and Rules
+                  </p>
                 </button>
               </NavLink>
-
               <button className="application__btn application__btn--green">
                 <img src={print} alt="print" />
                 <p>Print Certification Agreement and Rules</p>
@@ -655,12 +671,12 @@ const ApplicationInfo = () => {
                     applicationStatus.includes("Audit Report 1")
                       ? "View"
                       : "Fill"
-                  } Audit Report Form`}</p>
+                  } Audit Report 1 Form`}</p>
                 </button>
               </NavLink>
               <button className="application__btn application__btn--green">
                 <img src={print} alt="print" />
-                <p>Print Audit Program Form</p>
+                <p>Print Audit Program 1 Form</p>
               </button>
             </div>
           )}
@@ -849,8 +865,8 @@ const ApplicationInfo = () => {
           {/* Technical Committee Report */}
           {state.role === "Admin Auditor" &&
             (applicationStatus.includes("Audit Stage 2 Completed") ||
-              applicationStatus.includes("Closure Accepted") ||
-              applicationStatus.includes("Technical Committee Report")) && (
+              applicationStatus.includes("Technical Committee Report") ||
+              applicationStatus.includes("Audit Report 1")) && (
               <div className="application_info-section">
                 <NavLink
                   to="technical-committee-report"
