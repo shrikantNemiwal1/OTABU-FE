@@ -866,7 +866,7 @@ const ApplicationInfo = () => {
           {state.role === "Admin Auditor" &&
             (applicationStatus.includes("Audit Stage 2 Completed") ||
               applicationStatus.includes("Technical Committee Report") ||
-              applicationStatus.includes("Audit Report 1")) && (
+              applicationStatus.includes("Audit Report 1 ihi")) && (
               <div className="application_info-section">
                 <NavLink
                   to="technical-committee-report"
@@ -877,8 +877,7 @@ const ApplicationInfo = () => {
                       src={
                         applicationStatus.includes(
                           "Technical Committee Report Completed"
-                        ) ||
-                        applicationStatus.includes("Technical Committee Report")
+                        )
                           ? view
                           : request
                       }
@@ -887,8 +886,7 @@ const ApplicationInfo = () => {
                     <p>{`${
                       applicationStatus.includes(
                         "Technical Committee Report Completed"
-                      ) ||
-                      applicationStatus.includes("Technical Committee Report")
+                      )
                         ? "View"
                         : "Fill"
                     } Technical Committee Report Form`}</p>
