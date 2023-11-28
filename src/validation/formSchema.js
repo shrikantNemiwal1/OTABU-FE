@@ -920,9 +920,9 @@ export const applicationReviewFormSchema = Yup.object().shape({
     stage_2: Yup.string(),
     surveil_freq: Yup.string(),
     recerti_mandays: Yup.string(),
-    lead_auditor: Yup.string(),
-    auditor_1: Yup.string(),
-    auditor_2: Yup.string(),
+    lead_auditor: Yup.string().required("This field is required"),
+    auditor_1: Yup.string().required("This field is required"),
+    auditor_2: Yup.string().required("This field is required"),
   }),
 
   QMSWorkingTable: Yup.object().shape({
