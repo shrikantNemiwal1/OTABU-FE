@@ -876,7 +876,7 @@ const ApplicationInfo = () => {
                     <img
                       src={
                         applicationStatus.includes(
-                          "Technical Committee Report Completed"
+                          "Technical Committee Report Completed" || "certificate Issue Checklist Completed"
                         )
                           ? view
                           : request
