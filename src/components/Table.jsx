@@ -132,15 +132,15 @@ const Table = ({
           //)}
           renderTopToolbarCustomActions={() => (
             <>
-              <h2 className="table-title">
+              <button
+                className="add-btn"
+                onClick={() => refetchData(rowSelection)}
+              >
+                {toolName ? toolName : "Refresh"}
+              </button>
+              {/* <h2 className="table-title">
                 {title}
-                <button
-                  className="add-btn"
-                  onClick={() => refetchData(rowSelection)}
-                >
-                  {toolName ? toolName : "Refresh"}
-                </button>
-              </h2>
+              </h2> */}
             </>
           )}
         />

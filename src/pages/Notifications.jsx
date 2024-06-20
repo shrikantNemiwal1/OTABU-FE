@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
-import SubNavbar from "../components/SubNavbar";
 import Table from "../components/Table";
 import "./styles/clients.scss";
 import { AuthContext } from "../context/AuthContext";

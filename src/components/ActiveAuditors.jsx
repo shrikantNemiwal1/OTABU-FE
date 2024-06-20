@@ -67,7 +67,7 @@ const ActiveAuditors = () => {
         data={data?.data}
         columns={columns}
         title={"Active Auditors"}
-        height={"100vh - 215px - 8rem"}
+        height={"100vh - 215px"}
         isLoading={isFetching}
         refetchData={refetch}
         rowActions={rowActions}

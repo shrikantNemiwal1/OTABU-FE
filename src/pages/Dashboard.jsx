@@ -2,7 +2,6 @@ import React, { useContext, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
-import SubNavbar from "../components/SubNavbar";
 import DashboardNav from "./../components/DashboardNav";
 import Table from "../components/Table";
 import "./styles/dashboard.scss";
@@ -24,7 +23,7 @@ const Dashboard = () => {
       <main>
         <Navbar />
         {/* <SubNavbar /> */}
-        <DashboardNav />
+        {/* <DashboardNav /> */}
         <Outlet />
       </main>
     </div>

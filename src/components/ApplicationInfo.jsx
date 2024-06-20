@@ -4,7 +4,6 @@ import request from "../assets/icons/request.svg";
 import print from "../assets/icons/print.svg";
 import "./styles/application.scss";
 import Navbar from "../components/Navbar";
-import SubNavbar from "../components/SubNavbar";
 import { NavLink, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import Restricted from "./Restricted";

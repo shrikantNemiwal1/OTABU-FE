@@ -125,10 +125,11 @@ function App() {
                 ) : state.role === "Auditor" ? (
                   <Navigate to="/dashboard/assigned-pending" replace={true} />
                 ) : (
-                  <DashboardClient />
+                  <Navigate to="/dashboard/new-application" replace={true} />
                 )
               }
             />
+            <Route path="new-application" element={<DashboardClient />} />
             <Route path="pending-clients" element={<DashboardAdmin />} />
             <Route path="active-auditors" element={<ActiveAuditors />} />
             <Route path="active-clients" element={<ActiveClients />} />

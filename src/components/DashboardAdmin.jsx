@@ -158,7 +158,7 @@ const DashboardAdmin = () => {
         data={data?.data}
         columns={columns}
         title={"Pending Client list"}
-        height={"100vh - 215px - 8rem"}
+        height={"100vh - 215px"}
         isLoading={isFetching}
         refetchData={refetch}
         rowActions={rowActions}

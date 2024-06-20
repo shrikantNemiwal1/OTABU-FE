@@ -65,7 +65,7 @@ const DashboardAdmin = () => {
         data={data?.data}
         columns={columns}
         title={"Applied Certifications"}
-        height={"100vh - 215px - 8rem"}
+        height={"100vh - 215px"}
         isLoading={isFetching}
         refetchData={refetch}
         rowActions={rowActions}

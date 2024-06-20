@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import axios from "axios";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import search from "../assets/icons/search.svg";
 import bell from "../assets/icons/bell.svg";
@@ -12,6 +12,7 @@ const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 const Navbar = ({ title }) => {
   const { state, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const handleLogout = async () => {
     console.log("logout");
     await logout();
@@ -23,16 +24,24 @@ const Navbar = ({ title }) => {
       return navigate("/", { replace: true });
   }, [state]);
 
+  const name =
+    pathname.slice(1, 10) == "dashboard"
+      ? pathname
+          .slice(11)
+          .replace("-", " ")
+          .replace(/(^\w|\s\w)/g, (m) => m.toUpperCase())
+      : "";
+      
   return (
     <nav className="navbar">
       <div className="navbar__items-left">
-        <p>{title ? title : "Dashboard"}</p>
-        <div className="navbar__search">
+        <p>{title ? title : name ? name : "Dashboard"}</p>
+        {/* <div className="navbar__search">
           <input id="search" type="text" placeholder="search" />
           <label htmlFor="search">
             <img src={search} alt="search" />
           </label>
-        </div>
+        </div> */}
       </div>
       <div className="navbar__items-right">
         <div className="navbar__avatar">

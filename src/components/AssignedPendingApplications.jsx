@@ -161,7 +161,7 @@ const AssignedPendingApplications = () => {
         data={data?.data}
         columns={columns}
         title={"Assigned Pending Applications"}
-        height={"100vh - 215px - 8rem"}
+        height={"100vh - 215px"}
         isLoading={isFetching}
         refetchData={refetch}
         rowActions={rowActions}

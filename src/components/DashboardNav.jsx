@@ -176,7 +176,7 @@ const DashboardNav = () => {
                     : "arrow-icon"
                 }
                 src={arrow}
-                alt="arrow"
+                alt="arrow" 
               />
             </div>
           </div>
