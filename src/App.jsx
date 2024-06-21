@@ -35,6 +35,7 @@ import AuditReportStage2Form from "./components/AuditReportStage2Form.jsx";
 import TechnicalCommitteeReportForm from "./components/TechnicalCommitteeReportForm";
 import CertificationIssueChecklistForm from "./components/CertificationIssueChecklistForm";
 import CorrectiveActionReport2 from "./components/CorrectiveActionReport2.jsx";
+import NewApplicationForm from "./components/NewApplicationForm.jsx";
 
 function App() {
   const { state, dispatch } = useContext(AuthContext);
@@ -70,6 +71,7 @@ function App() {
           <Route exact path="notifications" element={<Notifications />} />
           <Route exact path="application/:id" element={<Application />}>
             <Route path="" element={<ApplicationInfo />} />
+            <Route path="new-application" element={<NewApplicationForm />} />
             <Route path="application-form" element={<ApplicationForm />} />
             <Route
               path="application-review-form"

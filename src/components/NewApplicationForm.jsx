@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
@@ -10,6 +10,7 @@ import Spinner from "./Spinner";
 import "./styles/radioCards.scss";
 import { useFormik } from "formik";
 import { basicApplicationFormSchema } from "../validation/formSchema";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const certificationSchemes = [
   "ISO 9001",
@@ -44,13 +45,41 @@ const inputs = {
   contact_person_design: "Contact Person Design",
 };
 
-const DashboardClient = () => {
+const NewApplicationForm = () => {
+  const [formLoading, setFormLoading] = useState(true);
+  const [formSubmitted, setFormSubmitted] = useState(false);
   const [open, setOpen] = useState(false);
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("success");
   const [isLoading, setIsLoading] = useState(false);
-  const { state } = useContext(AuthContext);
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
   const [certification_type, setCertiScheme] = useState(1);
+  const [initialForm, setInitialForm] = useState(initialValues);
+  const { state } = useContext(AuthContext);
+  const id = pathname.slice(13).slice(0, -16);
+
+  const getNewApplicationDetails = async () => {
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${state.token}` },
+      };
+      const res = await axios.get(
+        BASE_URL + `/api/application_form/get_basic_application_form/${id}`,
+        config
+      );
+      console.log(res?.data);
+      setInitialForm(res?.data);
+      setFormSubmitted(true);
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+    }
+    setFormLoading(false);
+  };
+
+  useEffect(() => {
+    getNewApplicationDetails();
+  }, []);
 
   const handleSubmitSurveillance = async () => {
     setIsLoading(true);
@@ -84,7 +113,7 @@ const DashboardClient = () => {
     handleSubmit,
     dirty,
   } = useFormik({
-    initialValues: initialValues,
+    initialValues: initialForm,
     validationSchema: basicApplicationFormSchema,
     enableReinitialize: true,
     onSubmit: async (values, actions) => {
@@ -126,22 +155,28 @@ const DashboardClient = () => {
   });
 
   return (
-    <div>
-      <Snackbar
-        open={open}
-        autoHideDuration={3000}
-        onClose={() => setOpen(false)}
-      >
-        <Alert
-          variant="filled"
-          onClose={() => setOpen(false)}
-          severity={alertType}
-          sx={{ width: "100%" }}
-        >
-          {alertMsg}
-        </Alert>
-      </Snackbar>
-      <div className="grid">
+    <>
+      {formLoading ? (
+        <div className="center">
+          <Spinner size={50} />
+        </div>
+      ) : (
+        <div>
+          <Snackbar
+            open={open}
+            autoHideDuration={3000}
+            onClose={() => setOpen(false)}
+          >
+            <Alert
+              variant="filled"
+              onClose={() => setOpen(false)}
+              severity={alertType}
+              sx={{ width: "100%" }}
+            >
+              {alertMsg}
+            </Alert>
+          </Snackbar>
+          {/* <div className="grid">
         <label className="card" htmlFor="radio1">
           <input
             name="plan"
@@ -181,87 +216,77 @@ const DashboardClient = () => {
             <span className="plan-type">Recertification</span>
           </span>
         </label>
-        <label className="card" htmlFor="radio4">
-          <input
-            name="plan"
-            checked={certification_type == 4}
-            onChange={() => setCertiScheme(4)}
-            className="radio"
-            type="radio"
-            id="radio4"
-          />
-          <span className="plan-details" aria-hidden="true">
-            <span className="plan-type">Transfer Certification</span>
-          </span>
-        </label>
-      </div>
-      <div className="registration registration--basic-form">
-        <Snackbar
-          open={open}
-          autoHideDuration={3000}
-          onClose={() => setOpen(false)}
-        >
-          <Alert
-            variant="filled"
-            onClose={() => setOpen(false)}
-            severity={alertType}
-            sx={{ width: "100%" }}
-          >
-            {alertMsg}
-          </Alert>
-        </Snackbar>
-        <form onSubmit={handleSubmit}>
-          {certification_type !== 2 ? (
-            <div className="registration__form">
-              <fieldset
-                disabled={
-                  state.role === "Admin Auditor" || state.role === "Auditor"
-                }
+      </div> */}
+          <div className="registration">
+            <Snackbar
+              open={open}
+              autoHideDuration={3000}
+              onClose={() => setOpen(false)}
+            >
+              <Alert
+                variant="filled"
+                onClose={() => setOpen(false)}
+                severity={alertType}
+                sx={{ width: "100%" }}
               >
-                {Object.keys(inputs).map((key) => (
-                  <div className="input__container" key={key}>
-                    <label htmlFor={key}>{`${inputs[key]} :`}</label>
-                    <input
-                      type={"text"}
-                      name={key}
-                      id={key}
-                      value={values[key]}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      placeholder={`Enter ${inputs[key]}`}
-                    />
-                    <div className="input__error-container">
-                      {errors[key] || touched[key] ? (
-                        <p className="input__error">{errors[key]}</p>
-                      ) : null}
+                {alertMsg}
+              </Alert>
+            </Snackbar>
+            <form onSubmit={handleSubmit}>
+              <h2 className="form-sub-title">New Application Form</h2>
+              {certification_type !== 2 ? (
+                <div className="registration__form">
+                  <fieldset
+                    disabled={
+                      state.role === "Admin Auditor" ||
+                      state.role === "Auditor" ||
+                      state.role === "Client"
+                    }
+                  >
+                    {Object.keys(inputs).map((key) => (
+                      <div className="input__container" key={key}>
+                        <label htmlFor={key}>{`${inputs[key]} :`}</label>
+                        <input
+                          type={"text"}
+                          name={key}
+                          id={key}
+                          value={values[key]}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          placeholder={`Enter ${inputs[key]}`}
+                        />
+                        <div className="input__error-container">
+                          {errors[key] || touched[key] ? (
+                            <p className="input__error">{errors[key]}</p>
+                          ) : null}
+                        </div>
+                      </div>
+                    ))}
+                    <div className="input__container">
+                      <label htmlFor="standard">
+                        Select Certification Scheme :
+                      </label>
+                      <div className="custom-select" id="standard">
+                        <select
+                          name={`certification_scheme`}
+                          id={`certification_scheme`}
+                          value={values.certification_scheme}
+                          onChange={handleChange}
+                        >
+                          {certificationSchemes.map((scheme) => {
+                            return (
+                              <option value={scheme} key={scheme}>
+                                {scheme}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
                     </div>
-                  </div>
-                ))}
-                <div className="input__container">
-                  <label htmlFor="standard">
-                    Select Certification Scheme :
-                  </label>
-                  <div className="custom-select" id="standard">
-                    <select
-                      name={`certification_scheme`}
-                      id={`certification_scheme`}
-                      value={values.certification_scheme}
-                      onChange={handleChange}
-                    >
-                      {certificationSchemes.map((scheme) => {
-                        return (
-                          <option value={scheme} key={scheme}>
-                            {scheme}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
-                </div>
-              </fieldset>
+                  </fieldset>
 
-              {/* Submit */}
-              {state.role === "Client" && (
+                  {/* Submit */}
+                  {/* {state.role === "Client" && (
                 <div className="input__container">
                   <button
                     className="registration__submit"
@@ -272,24 +297,26 @@ const DashboardClient = () => {
                     {isLoading ? <Spinner size={25} color="white" /> : "Submit"}
                   </button>
                 </div>
+              )} */}
+                </div>
+              ) : (
+                <div className="input__container">
+                  <button
+                    className="registration__submit"
+                    type="submit"
+                    onClick={handleSubmitSurveillance}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? <Spinner size={25} color="white" /> : "Send"}
+                  </button>
+                </div>
               )}
-            </div>
-          ) : (
-            <div className="input__container">
-              <button
-                className="registration__submit"
-                type="submit"
-                onClick={handleSubmitSurveillance}
-                disabled={isLoading}
-              >
-                {isLoading ? <Spinner size={25} color="white" /> : "Send"}
-              </button>
-            </div>
-          )}
-        </form>
-      </div>
-    </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
-export default DashboardClient;
+export default NewApplicationForm;

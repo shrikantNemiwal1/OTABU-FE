@@ -1,6 +1,7 @@
 .registration {
   height: 100vh;
   overflow-y: auto;
+  padding-bottom: 1rem;
 
   &__head {
     width: 100%;
@@ -30,7 +31,7 @@
   }
 
   &--basic-form{
-    height: calc(100vh - 12rem);
+    height: calc(100vh - 11rem);
   }
 }
 

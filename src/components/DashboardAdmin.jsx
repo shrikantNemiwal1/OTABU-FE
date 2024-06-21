@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { Snackbar, Alert } from "@mui/material";
 import { GetAllPendingClient } from "../api/api";
+import { useNavigate } from "react-router-dom";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 const DashboardAdmin = () => {
@@ -11,6 +12,7 @@ const DashboardAdmin = () => {
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("success");
   const { state } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const columns = useMemo(() => [
     {
@@ -90,40 +92,50 @@ const DashboardAdmin = () => {
 
   const handleAction = async ({ type, row }) => {
     console.log(type, row);
-    try {
-      const config = {
-        headers: { Authorization: `Bearer ${state.token}` },
-      };
-      //console.log(state.token);
-      const res = await axios.put(
-        BASE_URL +
-          `/api/app_form_approval/update_basic_appform_approval/${row.basic_app_id}`,
-        { acceptance_status: type === "accept" ? "1" : "0" },
-        config
-      );
-      console.log(res);
-      setAlertMsg(res?.data?.message);
-      setAlertType("success");
-      setOpen(true);
-      refetch();
-      // const noti = await axios.post(
-      //   BASE_URL + "/api/notifications/send_notification",
-      //   {
-      //     message: `Application ${type === "accept" ? "accepted" : "rejected"}`,
-      //     receiver_email: row.client_details.email,
-      //   },
-      //   config
-      // );
-    } catch (error) {
-      console.log(error?.response?.data?.msg);
-      setAlertMsg(error?.response?.data?.msg);
-      setAlertType("error");
-      setOpen(true);
+    if (type == "view")
+      navigate(`/application/${row.basic_app_id}/new-application`);
+    else {
+      try {
+        const config = {
+          headers: { Authorization: `Bearer ${state.token}` },
+        };
+        //console.log(state.token);
+        const res = await axios.put(
+          BASE_URL +
+            `/api/app_form_approval/update_basic_appform_approval/${row.basic_app_id}`,
+          { acceptance_status: type === "accept" ? "1" : "0" },
+          config
+        );
+        console.log(res);
+        setAlertMsg(res?.data?.message);
+        setAlertType("success");
+        setOpen(true);
+        refetch();
+        // const noti = await axios.post(
+        //   BASE_URL + "/api/notifications/send_notification",
+        //   {
+        //     message: `Application ${type === "accept" ? "accepted" : "rejected"}`,
+        //     receiver_email: row.client_details.email,
+        //   },
+        //   config
+        // );
+      } catch (error) {
+        console.log(error?.response?.data?.msg);
+        setAlertMsg(error?.response?.data?.msg);
+        setAlertType("error");
+        setOpen(true);
+      }
     }
   };
 
   const rowActions = ({ row, table }) => (
     <>
+      <button
+        onClick={() => handleAction({ type: "view", row: row.original })}
+        className="application-action application-action--accept"
+      >
+        View
+      </button>
       <button
         onClick={() => handleAction({ type: "accept", row: row.original })}
         className="application-action application-action--accept"

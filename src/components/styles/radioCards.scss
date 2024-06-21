@@ -18,7 +18,7 @@
   border-radius: 10px;
 
   @media (min-width: 42em) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -133,7 +133,7 @@
 
 .plan-type {
   color: var(--color-green);
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: bold;
   line-height: 1em;
 }
