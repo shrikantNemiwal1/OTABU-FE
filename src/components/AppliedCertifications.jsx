@@ -15,8 +15,27 @@ const DashboardAdmin = () => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "id",
+        accessorKey: "basic_app_id",
         header: "Application ID",
+        enableColumnOrdering: false,
+        enableEditing: false,
+        enableSorting: false,
+        size: 30,
+      },
+      {
+        accessorKey: "acceptance_status",
+        header: "Acceptance Status",
+        enableColumnOrdering: false,
+        enableEditing: false,
+        enableSorting: false,
+        size: 30,
+      },
+      {
+        accessorFn: (row) => {
+          const date = new Date(row.created_at);
+          return date.toLocaleDateString();
+        },
+        header: "Create Date",
         enableColumnOrdering: false,
         enableEditing: false,
         enableSorting: false,

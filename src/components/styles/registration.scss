@@ -28,6 +28,10 @@
       background: #057751;
     }
   }
+
+  &--basic-form{
+    height: calc(100vh - 12rem);
+  }
 }
 
 .form-sub-title {

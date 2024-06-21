@@ -1,4 +1,6 @@
 import * as Yup from "yup";
+const phoneRegExp =
+  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
 export const loginSchema = Yup.object({
   password: Yup.string()
@@ -6,6 +8,22 @@ export const loginSchema = Yup.object({
     .required("Please enter your Password"),
   email: Yup.string().email().required("Please enter your Email"),
   rememberMe: Yup.bool(),
+});
+
+export const basicApplicationFormSchema = Yup.object({
+  certification_type: Yup.string(),
+  name_of_company: Yup.string().required("This field is required"),
+  scope_of_certification: Yup.string(),
+  address: Yup.string(),
+  Website: Yup.string().url(),
+  email: Yup.string().email().required("This field is required"),
+  phone_number: Yup.string()
+    .required("This field is required")
+    .matches(phoneRegExp, "Phone number is not valid")
+    .min(10, "Phone number is too short")
+    .max(10, "Phone number is too long"),
+  contact_person_name: Yup.string(),
+  contact_person_design: Yup.string(),
 });
 
 export const correctiveActionReportFormSchema = Yup.object({

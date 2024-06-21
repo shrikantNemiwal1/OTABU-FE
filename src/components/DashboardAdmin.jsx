@@ -14,7 +14,7 @@ const DashboardAdmin = () => {
 
   const columns = useMemo(() => [
     {
-      accessorKey: "client",
+      accessorKey: "basic_app_id",
       header: "Application ID",
       enableColumnOrdering: false,
       enableEditing: false, //disable editing on this column
@@ -96,7 +96,8 @@ const DashboardAdmin = () => {
       };
       //console.log(state.token);
       const res = await axios.put(
-        BASE_URL + `/api/approvals/update_approval_applicationform/${row.id}`,
+        BASE_URL +
+          `/api/app_form_approval/update_basic_appform_approval/${row.basic_app_id}`,
         { acceptance_status: type === "accept" ? "1" : "0" },
         config
       );
@@ -105,14 +106,14 @@ const DashboardAdmin = () => {
       setAlertType("success");
       setOpen(true);
       refetch();
-      const noti = await axios.post(
-        BASE_URL + "/api/notifications/send_notification",
-        {
-          message: `Application ${type === "accept" ? "accepted" : "rejected"}`,
-          receiver_email: row.client_details.email,
-        },
-        config
-      );
+      // const noti = await axios.post(
+      //   BASE_URL + "/api/notifications/send_notification",
+      //   {
+      //     message: `Application ${type === "accept" ? "accepted" : "rejected"}`,
+      //     receiver_email: row.client_details.email,
+      //   },
+      //   config
+      // );
     } catch (error) {
       console.log(error?.response?.data?.msg);
       setAlertMsg(error?.response?.data?.msg);

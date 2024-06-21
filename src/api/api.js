@@ -10,9 +10,9 @@ const queryConfig = {
 };
 
 const url = {
-  allPendingClient: "/api/approvals/get_pending_approvals",
+  allPendingClient: "/api/app_form_approval/get_pending_approvals",
   allNotifications: "/api/notifications/get_received_notifications",
-  allAppliedCertifications: "/api/approvals/get_active_approvals",
+  allAppliedCertifications: "/api/app_form_approval/get_pending_applicationform",
   allActiveClients: "/api/application_form/get_application_details",
   allActiveCertifications:
     "/api/application_form/get_client_application_details",

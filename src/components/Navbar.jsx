@@ -31,7 +31,7 @@ const Navbar = ({ title }) => {
           .replace("-", " ")
           .replace(/(^\w|\s\w)/g, (m) => m.toUpperCase())
       : "";
-      
+
   return (
     <nav className="navbar">
       <div className="navbar__items-left">
