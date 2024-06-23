@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -12,7 +12,8 @@ const queryConfig = {
 const url = {
   allPendingClient: "/api/app_form_approval/get_pending_approvals",
   allNotifications: "/api/notifications/get_received_notifications",
-  allAppliedCertifications: "/api/app_form_approval/get_pending_applicationform",
+  allAppliedCertifications:
+    "/api/app_form_approval/get_pending_applicationform",
   allActiveClients: "/api/application_form/get_application_details",
   allActiveCertifications:
     "/api/application_form/get_client_application_details",

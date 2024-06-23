@@ -48,17 +48,28 @@ const DashboardAdmin = () => {
   const { data, refetch, isFetching } = GetAllActiveCertifications(state.token);
 
   const handleAction = async ({ type, row }) => {
-    navigate(`/application/${row.id}`);
+    if (type == "fill-form")
+      navigate(`/application/${row.id}/application-form`);
+    else navigate(`/application/${row.id}`);
   };
 
   const rowActions = ({ row, table }) => (
     <>
-      <button
-        onClick={() => handleAction({ type: "accept", row: row.original })}
-        className="application-action"
-      >
-        View
-      </button>
+      {row?.original?.status == "Application Form Incomplete" ? (
+        <button
+          onClick={() => handleAction({ type: "fill-form", row: row.original })}
+          className="application-action"
+        >
+          Fill Application Form
+        </button>
+      ) : (
+        <button
+          onClick={() => handleAction({ type: "accept", row: row.original })}
+          className="application-action"
+        >
+          View
+        </button>
+      )}
     </>
   );
 

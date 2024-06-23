@@ -5,14 +5,35 @@ import axios from "axios";
 import { Snackbar, Alert } from "@mui/material";
 import { GetAllPendingClient } from "../api/api";
 import { useNavigate } from "react-router-dom";
+import { Box, Modal } from "@mui/material";
+import Spinner from "./Spinner";
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "calc(50vw + 4rem)",
+  minWidth: "400px",
+  bgcolor: "background.paper",
+  border: "none",
+  borderRadius: "1rem",
+  boxShadow: 24,
+  outline: "none",
+  p: 4,
+};
 
 const DashboardAdmin = () => {
   const [open, setOpen] = useState(false);
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("success");
   const { state } = useContext(AuthContext);
+  const [remark, setRemark] = useState("");
   const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currRow, setCurrRow] = useState(null);
 
   const columns = useMemo(() => [
     {
@@ -71,25 +92,6 @@ const DashboardAdmin = () => {
 
   const { data, refetch, isFetching } = GetAllPendingClient(state.token);
 
-  // const fetchTableData = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     const config = {
-  //       headers: { Authorization: `Bearer ${state.token}` },
-  //     };
-  //     //console.log(state.token);
-  //     const res = await axios.get(
-  //       BASE_URL + "/api/approvals/get_pending_approvals",
-  //       config
-  //     );
-  //     console.log(res);
-  //     setData(res?.data);
-  //   } catch (error) {
-  //     console.log(error?.response?.data?.msg);
-  //   }
-  //   setIsLoading(false);
-  // };
-
   const handleAction = async ({ type, row }) => {
     console.log(type, row);
     if (type == "view")
@@ -99,7 +101,6 @@ const DashboardAdmin = () => {
         const config = {
           headers: { Authorization: `Bearer ${state.token}` },
         };
-        //console.log(state.token);
         const res = await axios.put(
           BASE_URL +
             `/api/app_form_approval/update_basic_appform_approval/${row.basic_app_id}`,
@@ -109,26 +110,51 @@ const DashboardAdmin = () => {
         console.log(res);
         setAlertMsg(res?.data?.message);
         setAlertType("success");
-        setOpen(true);
         refetch();
-        // const noti = await axios.post(
-        //   BASE_URL + "/api/notifications/send_notification",
-        //   {
-        //     message: `Application ${type === "accept" ? "accepted" : "rejected"}`,
-        //     receiver_email: row.client_details.email,
-        //   },
-        //   config
-        // );
       } catch (error) {
         console.log(error?.response?.data?.msg);
         setAlertMsg(error?.response?.data?.msg);
         setAlertType("error");
-        setOpen(true);
       }
     }
   };
 
-  const rowActions = ({ row, table }) => (
+  const handleReject = (row) => {
+    setCurrRow(row);
+    setModalOpen(true);
+  };
+
+  const handleSendRemark = async () => {
+    setIsLoading(true);
+    console.log(currRow);
+    try {
+      const response = await axios({
+        method: "put",
+        url:
+          BASE_URL +
+          `/api/app_form_approval/update_basic_appform_approval/${currRow?.basic_app_id}`,
+        data: {
+          acceptance_status: "0",
+          remarks: remark,
+        },
+        headers: {
+          Authorization: `Bearer ${state.token}`,
+        },
+      });
+      setAlertType("success");
+      setAlertMsg(response?.data?.message);
+      setRemark("");
+      refetch();
+    } catch (error) {
+      setAlertType("error");
+      setAlertMsg(error?.response?.data?.msg);
+    }
+    setOpen(true);
+    setModalOpen(false);
+    setIsLoading(false);
+  };
+
+  const rowActions = ({ row }) => (
     <>
       <button
         onClick={() => handleAction({ type: "view", row: row.original })}
@@ -143,7 +169,7 @@ const DashboardAdmin = () => {
         Accept
       </button>
       <button
-        onClick={() => handleAction({ type: "reject", row: row.original })}
+        onClick={() => handleReject(row.original)}
         className="application-action application-action--reject"
       >
         Reject
@@ -153,6 +179,43 @@ const DashboardAdmin = () => {
 
   return (
     <>
+      <Modal
+        open={modalOpen}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div className="modal">
+            <button
+              className="modal__close-btn"
+              onClick={() => setModalOpen(false)}
+            >
+              &#9587;
+            </button>
+            <div className="modal__title">Reject and Send Remark</div>
+            <div className="input__container">
+              <label htmlFor="remark">Remark :</label>
+              <input
+                type="text-box"
+                name="remark"
+                id="remark"
+                value={remark}
+                onChange={(e) => setRemark(e.target.value)}
+                placeholder="Enter Remark"
+              />
+            </div>
+          </div>
+          <div className="input__container">
+            <button
+              className="registration__submit ml-0"
+              onClick={handleSendRemark}
+              disabled={isLoading}
+            >
+              {isLoading ? <Spinner size={25} color="white" /> : "Send"}
+            </button>
+          </div>
+        </Box>
+      </Modal>
       <Snackbar
         open={open}
         autoHideDuration={3000}

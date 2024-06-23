@@ -1,0 +1,17 @@
+{
+  "acceptancePending": true,
+  "forms": [
+    {
+      "filled": true,
+      "canEdit": true,
+      "canView" : true,
+      "name": "Application form"
+    },
+    {
+      "filled": false,
+      "canEdit": false,
+      "canView" : true,
+      "name": "Quotation form"
+    }
+  ]
+}

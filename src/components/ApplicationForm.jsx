@@ -29,6 +29,23 @@ import Alert from "@mui/material/Alert";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
+const certificationSchemes = [
+  "ISO 9001",
+  "ISO 14001",
+  "ISO 45001",
+  "IMS(9,14,45)",
+  "IMS(9,14)",
+  "IMS(9,45)",
+  "IMS(14,45)",
+];
+
+const certificationType = [
+  "Initial Certification",
+  "Surveillance Certification",
+  "Recertification",
+  "Transfer Certification",
+];
+
 const ApplicationForm = () => {
   const checkboxKeys = Object.keys(initialValues.CertificationScheme);
   const legalStatusKeys = Object.keys(initialValues.LegalStatus);
@@ -47,6 +64,30 @@ const ApplicationForm = () => {
 
   const [initialForm, setInitialForm] = useState(initialValues);
 
+  const getAutoFillData = async () => {
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${state.token}` },
+      };
+      const res = await axios.get(
+        BASE_URL + `/api/application_form/get_autofill_data/${id}`,
+        config
+      );
+      const autoFilledData = {
+        ...initialValues,
+        ApplicationForm: { ...initialValues.ApplicationForm, ...res?.data },
+      };
+      setInitialForm(autoFilledData);
+      // state.role === "Client" ? setFormDisabled(true) : null;
+      // initialForm.Status === "Application Rejected"
+      //   ? setFormDisabled(false)
+      //   : null;
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+    }
+    setFormLoading(false);
+  };
+
   const getFormDetails = async () => {
     try {
       const config = {
@@ -63,6 +104,7 @@ const ApplicationForm = () => {
         ? setFormDisabled(false)
         : null;
     } catch (error) {
+      getAutoFillData();
       console.log(error?.response?.data?.msg);
     }
     setFormLoading(false);
@@ -100,9 +142,6 @@ const ApplicationForm = () => {
           ? changedDivisions(initialForm, values)
           : values;
 
-      const config = {
-        headers: { Authorization: `Bearer ${state.token}` },
-      };
       try {
         const response = await axios({
           method:
@@ -117,7 +156,7 @@ const ApplicationForm = () => {
               initialForm?.Status === "Application Rejected"
                 ? "partial_update"
                 : state.role === "Client"
-                ? "create"
+                ? "create_application"
                 : "partial_update"
             }/${id}`,
           data: formValues,
@@ -178,6 +217,48 @@ const ApplicationForm = () => {
                   <h2 className="form-sub-title">Application Form</h2>
 
                   <div className="input__container">
+                    <label htmlFor="standard">
+                      Select Certification Type :
+                    </label>
+                    <div className="custom-select" id="standard">
+                      <select
+                        name={`ApplicationForm.certification_type`}
+                        id={`ApplicationForm.certification_type`}
+                        value={values.certification_type}
+                        onChange={handleChange}
+                      >
+                        {[1, 2, 3, 4].map((scheme) => {
+                          return (
+                            <option value={scheme} key={scheme}>
+                              {certificationType[scheme - 1]}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="input__container">
+                    <label htmlFor="standard">
+                      Select Certification Scheme :
+                    </label>
+                    <div className="custom-select" id="standard">
+                      <select
+                        name={`ApplicationForm.certification_scheme`}
+                        id={`ApplicationForm.certification_scheme`}
+                        value={values.certification_scheme}
+                        onChange={handleChange}
+                      >
+                        {certificationSchemes.map((scheme) => {
+                          return (
+                            <option value={scheme} key={scheme}>
+                              {scheme}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="input__container">
                     <label htmlFor="ApplicationForm.date_of_app">
                       Date of application :
                     </label>
@@ -198,7 +279,6 @@ const ApplicationForm = () => {
                       ) : null}
                     </div>
                   </div>
-
                   {Object.keys(ApplicationFormInputs).map((key) => (
                     <div className="input__container" key={key}>
                       <label htmlFor={`ApplicationForm.${key}`}>
@@ -223,9 +303,7 @@ const ApplicationForm = () => {
                       </div>
                     </div>
                   ))}
-
                   <h2 className="form-sub-title">Details of employees</h2>
-
                   <div className="input__container">
                     <table className="table-form">
                       <thead>
