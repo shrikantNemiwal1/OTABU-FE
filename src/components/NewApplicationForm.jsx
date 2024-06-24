@@ -42,7 +42,7 @@ const inputs = {
   email: "Email",
   phone_number: "Phone Number",
   contact_person_name: "Contact Person Name",
-  contact_person_design: "Contact Person Design",
+  contact_person_design: "Contact Person Designation",
 };
 
 const NewApplicationForm = () => {

@@ -51,6 +51,30 @@ const ApplicationForm = () => {
 
   const [initialForm, setInitialForm] = useState(initialValues);
 
+  const getAutoFillData = async () => {
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${state.token}` },
+      };
+      const res = await axios.get(
+        BASE_URL + `/api/application_form/get_autofill_data/${id}`,
+        config
+      );
+      const autoFilledData = {
+        ...initialValues,
+        ApplicationReview: { ...initialValues.ApplicationReview, ...res?.data },
+      };
+      setInitialForm(autoFilledData);
+      // state.role === "Client" ? setFormDisabled(true) : null;
+      // initialForm.Status === "Application Rejected"
+      //   ? setFormDisabled(false)
+      //   : null;
+    } catch (error) {
+      console.log(error?.response?.data?.msg);
+    }
+    setFormLoading(false);
+  };
+
   const getFormDetails = async () => {
     try {
       const config = {
@@ -64,6 +88,8 @@ const ApplicationForm = () => {
       setInitialForm(res?.data);
       setFormDisabled(true);
     } catch (error) {
+      // if (error?.response?.data?.msg === "Application Review Does not Exist")
+      //   getAutoFillData();
       console.log(error?.response?.data?.msg);
     }
     setFormLoading(false);
@@ -1086,7 +1112,7 @@ const ApplicationForm = () => {
                     Review Conducted by (AO/TM) :
                   </label>
                   <input
-                    type="file"
+                    type="text"
                     name="OtabuOffSignDate.review_conducted_AO_TM"
                     id="OtabuOffSignDate.review_conducted_AO_TM"
                     value={values?.OtabuOffSignDate?.review_conducted_AO_TM}
@@ -1122,22 +1148,33 @@ const ApplicationForm = () => {
                   </div>
                 </div>
                 <div className="input__container">
-                  <label htmlFor="OtabuOffSignDate.tech_support_code_TE_LA">
-                    Technical Support from Code Approved TE or LA :
+                  <label htmlFor="standard">
+                    Select Technical Support from Code Approved TE or LA :
                   </label>
-                  <input
-                    type="file"
-                    name="OtabuOffSignDate.tech_support_code_TE_LA"
-                    id="OtabuOffSignDate.tech_support_code_TE_LA"
-                    value={values?.OtabuOffSignDate?.tech_support_code_TE_LA}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
+                  <div className="custom-select" id="standard">
+                    <select
+                      name={`OtabuOffSignDate.tech_support_code_TE_LA`}
+                      id={`OtabuOffSignDate.tech_support_code_TE_LA`}
+                      value={values?.OtabuOffSignDate?.tech_support_code_TE_LA}
+                      onChange={handleChange}
+                    >
+                      <option value="" disabled hidden>
+                        Select an option
+                      </option>
+                      {data?.data.map((auditor) => {
+                        return (
+                          <option value={auditor.id} key={auditor.id}>
+                            {auditor.auditor_name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
                   <div className="input__error-container">
-                    {errors.OtabuOffSignDate?.tech_support_code_TE_LA &&
-                    touched.OtabuOffSignDate?.tech_support_code_TE_LA ? (
+                    {errors?.OtabuOffSignDate?.tech_support_code_TE_LA &&
+                    touched?.OtabuOffSignDate?.tech_support_code_TE_LA ? (
                       <p className="input__error">
-                        {errors.OtabuOffSignDate.tech_support_code_TE_LA}
+                        {errors?.OtabuOffSignDate?.tech_support_code_TE_LA}
                       </p>
                     ) : null}
                   </div>
@@ -1166,7 +1203,7 @@ const ApplicationForm = () => {
                     Approved by DTO/MD :
                   </label>
                   <input
-                    type="file"
+                    type="text"
                     name="OtabuOffSignDate.approved_by_DTO_MD"
                     id="OtabuOffSignDate.approved_by_DTO_MD"
                     value={values?.OtabuOffSignDate?.approved_by_DTO_MD}

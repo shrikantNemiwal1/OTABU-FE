@@ -50,7 +50,9 @@ const DashboardClient = () => {
   const [alertType, setAlertType] = useState("success");
   const [isLoading, setIsLoading] = useState(false);
   const { state } = useContext(AuthContext);
-  const [certification_type, setCertiScheme] = useState(1);
+  const [certification_type, setCertiScheme] = useState(
+    "Initial Certification"
+  );
 
   const handleSubmitSurveillance = async () => {
     setIsLoading(true);
@@ -60,7 +62,7 @@ const DashboardClient = () => {
       };
       const res = await axios.post(
         BASE_URL + "/api/application_form/create_basic_application_form",
-        { certification_type: String(certification_type), ...initialValues },
+        { certification_type: certification_type, ...initialValues },
         config
       );
       console.log(res);
@@ -145,8 +147,8 @@ const DashboardClient = () => {
         <label className="card" htmlFor="radio1">
           <input
             name="plan"
-            checked={certification_type == 1}
-            onChange={() => setCertiScheme(1)}
+            checked={certification_type == "Initial Certification"}
+            onChange={() => setCertiScheme("Initial Certification")}
             className="radio"
             type="radio"
             id="radio1"
@@ -158,8 +160,8 @@ const DashboardClient = () => {
         <label className="card" htmlFor="radio2">
           <input
             name="plan"
-            checked={certification_type == 2}
-            onChange={() => setCertiScheme(2)}
+            checked={certification_type == "Surveillance Certification"}
+            onChange={() => setCertiScheme("Surveillance Certification")}
             className="radio"
             type="radio"
             id="radio2"
@@ -171,8 +173,8 @@ const DashboardClient = () => {
         <label className="card" htmlFor="radio3">
           <input
             name="plan"
-            checked={certification_type == 3}
-            onChange={() => setCertiScheme(3)}
+            checked={certification_type == "Recertification"}
+            onChange={() => setCertiScheme("Recertification")}
             className="radio"
             type="radio"
             id="radio3"
@@ -184,8 +186,8 @@ const DashboardClient = () => {
         <label className="card" htmlFor="radio4">
           <input
             name="plan"
-            checked={certification_type == 4}
-            onChange={() => setCertiScheme(4)}
+            checked={certification_type == "Transfer Certification"}
+            onChange={() => setCertiScheme("Transfer Certification")}
             className="radio"
             type="radio"
             id="radio4"
@@ -211,7 +213,7 @@ const DashboardClient = () => {
           </Alert>
         </Snackbar>
         <form onSubmit={handleSubmit}>
-          {certification_type !== 2 ? (
+          {certification_type !== "Surveillance Certification" ? (
             <div className="registration__form">
               <fieldset
                 disabled={

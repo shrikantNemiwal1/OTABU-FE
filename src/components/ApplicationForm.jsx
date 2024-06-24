@@ -28,6 +28,7 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import Restricted from "./Restricted";
 
 const certificationSchemes = [
   "ISO 9001",
@@ -104,7 +105,10 @@ const ApplicationForm = () => {
         ? setFormDisabled(false)
         : null;
     } catch (error) {
-      getAutoFillData();
+      if (
+        error?.response?.data?.msg === "Complete Application Form not Submitted"
+      )
+        getAutoFillData();
       console.log(error?.response?.data?.msg);
     }
     setFormLoading(false);
@@ -227,10 +231,10 @@ const ApplicationForm = () => {
                         value={values.certification_type}
                         onChange={handleChange}
                       >
-                        {[1, 2, 3, 4].map((scheme) => {
+                        {certificationType.map((scheme) => {
                           return (
                             <option value={scheme} key={scheme}>
-                              {certificationType[scheme - 1]}
+                              {scheme}
                             </option>
                           );
                         })}
@@ -315,7 +319,7 @@ const ApplicationForm = () => {
                             </th>
                           ))}
                         </tr>
-                      </thead>
+                      </thead> 
                       <tbody>
                         {rowKeys.map((rowKey) => (
                           <tr key={rowKey} className="table-row">
@@ -1248,15 +1252,11 @@ const ApplicationForm = () => {
                       ) : null}
                     </div>
                   </div>
-                </>
-                {/* Otabu Official Use */}
-                <>
                   <h3 className="form-sub-title">
                     DECLARATION: The above information is true to the best of my
                     knowledge and belief and I am authorized to provide such
                     information on behalf of the company
                   </h3>
-
                   <div className="input__container">
                     <label htmlFor="OtabuOffUse.name_otabu">Name :</label>
                     <input
@@ -1318,7 +1318,10 @@ const ApplicationForm = () => {
                       ) : null}
                     </div>
                   </div>
+                </>
 
+                {/* Otabu Official Use */}
+                <Restricted to="Admin Auditor">
                   <h2 className="form-sub-title">OTABU Official Use</h2>
 
                   <div className="input__container checkbox-container">
@@ -1424,7 +1427,7 @@ const ApplicationForm = () => {
                       ) : null}
                     </div>
                   </div>
-                </>
+                </Restricted>
                 {/* Submit */}
 
                 <div className="input__container">

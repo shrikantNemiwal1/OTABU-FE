@@ -857,7 +857,7 @@ export const agreementFormSchema = Yup.object({
 
 export const remarkFormSchema = Yup.object({
   remark: Yup.string(),
-  acceptance_choice: Yup.string().required("Please choose an option"),
+  acceptance_choice: Yup.string(),
 });
 
 export const quotationFormSchema = Yup.object().shape({
@@ -1064,11 +1064,11 @@ export const applicationReviewFormSchema = Yup.object().shape({
   }),
 
   OtabuOffSignDate: Yup.object().shape({
-    review_conducted_AO_TM: Yup.string(),
+    review_conducted_AO_TM: Yup.string().required("This field is required"),
     date_1: Yup.string(),
-    tech_support_code_TE_LA: Yup.string(),
+    tech_support_code_TE_LA: Yup.string().required("This field is required"),
     date_2: Yup.string(),
-    approved_by_DTO_MD: Yup.string(),
+    approved_by_DTO_MD: Yup.string().required("This field is required"),
     date_3: Yup.string(),
   }),
 });

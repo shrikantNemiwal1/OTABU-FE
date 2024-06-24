@@ -6,7 +6,6 @@ import "./styles/application.scss";
 import Navbar from "../components/Navbar";
 import { NavLink, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import Restricted from "./Restricted";
 import { Box, Modal } from "@mui/material";
 import axios from "axios";
 import { useFormik } from "formik";
@@ -18,7 +17,7 @@ import Spinner from "./Spinner";
 
 const initialValues = {
   remark: "",
-  acceptance_choice: "",
+  acceptance_choice: "1",
 };
 
 const ApplicationInfo = () => {
@@ -60,7 +59,6 @@ const ApplicationInfo = () => {
         BASE_URL + `/api/app_stage/forms_filled/${id}`,
         config
       );
-      // console.log(res?.data);
       setApplicationStatus(res?.data);
     } catch (error) {
       console.log(error?.response?.data?.msg);
@@ -149,18 +147,20 @@ const ApplicationInfo = () => {
                       "Audit Plan 2 Acceptance Pending"
                     )
                   ? "audit_plan_2/send_remark"
+                  : applicationStatus.includes("Fill Quotation Choice")
+                  ? "quotation/send_quotation_choice"
                   : "app_review/send_remark"
               }/${id}`,
             data: confModalOpen
-              ? { acceptance_status: values.acceptance_choice }
-              : values,
+              ? { quotation_choice: values.acceptance_choice }
+              : { remark: values.remark },
             headers: {
               Authorization: `Bearer ${state.token}`,
             },
           });
           console.log(values);
           setAlertType("success");
-          setAlertMsg(response?.data?.message);
+          setAlertMsg(response?.data?.message || response?.data?.msg);
           setOpen(true);
           setModalOpen(false);
           setConfModalOpen(false);
@@ -199,7 +199,7 @@ const ApplicationInfo = () => {
                 ? "Audit Plan 2 Acceptance"
                 : "Send Remark"}
             </div>
-            <div className="input__container checkbox-container">
+            {/* <div className="input__container checkbox-container">
               <label>
                 {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
                   ? "Accept/Reject Audit Plan 1"
@@ -236,7 +236,7 @@ const ApplicationInfo = () => {
                   <p className="input__error">{errors.acceptance_choice}</p>
                 ) : null}
               </div>
-            </div>
+            </div> */}
             <div className="input__container">
               <label htmlFor="remark">Remark :</label>
               <input
@@ -281,18 +281,21 @@ const ApplicationInfo = () => {
               &#9587;
             </button>
             <div className="modal__title">
-              {applicationStatus.includes("Non Confirmities Accepted") ||
-              applicationStatus.includes("Closure Pending")
+              {applicationStatus.includes("Fill Quotation Choice")
+                ? "Quotaion Choice"
+                : applicationStatus.includes("Non Confirmities Accepted") ||
+                  applicationStatus.includes("Closure Pending")
                 ? "Closure"
                 : "Non conformity"}
             </div>
             <div className="input__container checkbox-container">
               <label>
-                Accept/Reject{" "}
-                {applicationStatus.includes("Non Confirmities Accepted") ||
-                applicationStatus.includes("Closure Pending")
-                  ? "Closure"
-                  : "Non conformity"}
+                {applicationStatus.includes("Fill Quotation Choice")
+                  ? "Send quotation to Client (Yes/No)"
+                  : applicationStatus.includes("Non Confirmities Accepted") ||
+                    applicationStatus.includes("Closure Pending")
+                  ? "Accept/Reject Closure"
+                  : "Accept/Reject Non conformity"}
               </label>
               <label className="checkbox-label">
                 <input
@@ -303,7 +306,11 @@ const ApplicationInfo = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
-                <p>Accept</p>
+                <p>
+                  {applicationStatus.includes("Fill Quotation Choice")
+                    ? "Yes"
+                    : "Accept"}
+                </p>
               </label>
               <label className="checkbox-label">
                 <input
@@ -314,7 +321,11 @@ const ApplicationInfo = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
-                <p>Reject</p>
+                <p>
+                  {applicationStatus.includes("Fill Quotation Choice")
+                    ? "No"
+                    : "Reject"}
+                </p>
               </label>
               <div className="input__error-container">
                 {errors.acceptance_choice || touched.acceptance_choice ? (
@@ -350,7 +361,6 @@ const ApplicationInfo = () => {
         </Alert>
       </Snackbar>
       <Navbar title={"Application"} />
-      {/* <SubNavbar /> */}
       {dataLoading ? (
         <div className="center">
           <Spinner size={50} />
@@ -362,7 +372,9 @@ const ApplicationInfo = () => {
             Refresh
           </button>
           {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Application Acceptance Pending")) ||
+            applicationStatus.includes(
+              "Application Reviewer Remarks Pending"
+            )) ||
             (state.role === "Client" &&
               (applicationStatus.includes("Audit Plan 1 Acceptance Pending") ||
                 applicationStatus.includes(
@@ -377,44 +389,67 @@ const ApplicationInfo = () => {
             </button>
           )}
 
-          {((state.role === "Client" &&
-            (applicationStatus.includes("Form 39B Prepared") ||
-              applicationStatus.includes("Closure Rejected"))) ||
-            (state.role === "Auditor" &&
-              (applicationStatus.includes("Non Confirmities Accepted") ||
-                applicationStatus.includes("Closure Pending")))) && (
-            <button className="add-btn" onClick={() => setConfModalOpen(true)}>
-              Accept{" "}
-              {applicationStatus.includes("Non Confirmities Accepted") ||
-              applicationStatus.includes("Closure Pending")
-                ? "Closure"
-                : "Non conformity"}
-            </button>
-          )}
+          {state.role === "Admin Auditor" &&
+            applicationStatus.includes("Fill Quotation Choice") && (
+              <button
+                className="add-btn"
+                onClick={() => setConfModalOpen(true)}
+              >
+                {applicationStatus.includes("Fill Quotation Choice")
+                  ? "Fill Quotation Choice"
+                  : applicationStatus.includes("Non Confirmities Accepted") ||
+                    applicationStatus.includes("Closure Pending")
+                  ? "Accept Closure"
+                  : "Accept Non conformity"}
+              </button>
+            )}
+
+          {/* BasicApplicationForm */}
+          {state.role !== "Auditor" &&
+            applicationStatus.includes("Application Form Incomplete") && (
+              <div className="application_info-section">
+                <NavLink to="application-form" className="link-without-style">
+                  <button className="application__btn">
+                    <img src={view} alt="view" />
+                    <p>{`${
+                      applicationStatus.includes("Application Rejected")
+                        ? "Update"
+                        : "View"
+                    } Basic Application Form`}</p>
+                  </button>
+                </NavLink>
+                <button className="application__btn application__btn--green">
+                  <img src={print} alt="print" />
+                  <p>Print Basic Application Form New</p>
+                </button>
+              </div>
+            )}
 
           {/* ApplicationForm */}
-          {state.role !== "Auditor" && (
-            <div className="application_info-section">
-              <NavLink to="application-form" className="link-without-style">
-                <button className="application__btn">
-                  <img src={view} alt="view" />
-                  <p>{`${
-                    applicationStatus.includes("Application Rejected")
-                      ? "Update"
-                      : "View"
-                  } Application Form`}</p>
+          {state.role !== "Auditor" &&
+            !applicationStatus.includes("Application Form Incomplete") && (
+              <div className="application_info-section">
+                <NavLink to="application-form" className="link-without-style">
+                  <button className="application__btn">
+                    <img src={view} alt="view" />
+                    <p>{`${
+                      applicationStatus.includes("Application Rejected")
+                        ? "Update"
+                        : "View"
+                    } Application Form`}</p>
+                  </button>
+                </NavLink>
+                <button className="application__btn application__btn--green">
+                  <img src={print} alt="print" />
+                  <p>Print Application Form New</p>
                 </button>
-              </NavLink>
-              <button className="application__btn application__btn--green">
-                <img src={print} alt="print" />
-                <p>Print Application Form New</p>
-              </button>
-            </div>
-          )}
+              </div>
+            )}
 
           {/* Application Review */}
           {state.role === "Admin Auditor" &&
-            applicationStatus.includes("Application Form") && (
+            (applicationStatus.includes("Application Review") ||
+              applicationStatus.includes("Application Review Pending")) && (
               <div className="application_info-section">
                 <NavLink
                   to="application-review-form"
@@ -423,14 +458,14 @@ const ApplicationInfo = () => {
                   <button className="application__btn">
                     <img
                       src={
-                        applicationStatus.includes("Remarks Available")
+                        applicationStatus.includes("Application Review")
                           ? view
                           : request
                       }
                       alt="view"
                     />
                     <p>{`${
-                      applicationStatus.includes("Remarks Available")
+                      applicationStatus.includes("Application Review")
                         ? "View"
                         : applicationStatus.includes(
                             "Application Review Rejected"
@@ -449,44 +484,34 @@ const ApplicationInfo = () => {
             )}
 
           {/* Quotation Form */}
-          {(applicationStatus.includes("Application Review") ||
-            (state.role === "Client" &&
-              applicationStatus.includes("Quotation"))) &&
-            !applicationStatus.includes("Application Acceptance Pending") &&
-            !applicationStatus.includes("Application Rejected") && (
-              <div className="application_info-section">
-                <NavLink to="quotation-form" className="link-without-style">
-                  <button className="application__btn">
-                    <img
-                      src={
-                        applicationStatus.includes("Quotation Sent") ||
-                        applicationStatus.includes(
-                          "Quotation Accepted by Client"
-                        ) ||
-                        applicationStatus.includes("Client Agreement and Rules")
-                          ? view
-                          : request
-                      }
-                      alt="view"
-                    />
-                    <p>{`${
-                      applicationStatus.includes("Quotation Sent") ||
-                      applicationStatus.includes(
-                        "Quotation Accepted by Client"
-                      ) ||
-                      applicationStatus.includes("Client Agreement and Rules")
-                        ? "View"
-                        : "Fill"
-                    } Quotation Form`}</p>
-                  </button>
-                </NavLink>
-
-                <button className="application__btn application__btn--green">
-                  <img src={print} alt="print" />
-                  <p>Print Quotation Form</p>
+          {((state.role === "Client" &&
+            (applicationStatus.includes("Fill Quotation") ||
+              applicationStatus.includes("Quotation Accepted by Client") ||
+              applicationStatus.includes("Quotation"))) ||
+            (state.role === "Admin Auditor" &&
+              (applicationStatus.includes("Fill Quotation") ||
+                applicationStatus.includes("Quotation")))) && (
+            <div className="application_info-section">
+              <NavLink to="quotation-form" className="link-without-style">
+                <button className="application__btn">
+                  <img
+                    src={
+                      applicationStatus.includes("Quotation") ? view : request
+                    }
+                    alt="view"
+                  />
+                  <p>{`${
+                    applicationStatus.includes("Quotation") ? "View" : "Fill"
+                  } Quotation Form`}</p>
                 </button>
-              </div>
-            )}
+              </NavLink>
+
+              <button className="application__btn application__btn--green">
+                <img src={print} alt="print" />
+                <p>Print Quotation Form</p>
+              </button>
+            </div>
+          )}
 
           {/* Client Agreement and rules */}
           {((state.role === "Client" &&

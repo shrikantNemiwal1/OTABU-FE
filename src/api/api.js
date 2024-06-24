@@ -17,7 +17,7 @@ const url = {
   allActiveClients: "/api/application_form/get_application_details",
   allActiveCertifications:
     "/api/application_form/get_client_application_details",
-  allAuditors: "api/select_auditor/get_auditors_list",
+  allAuditors: "api/assign_auditor/get_auditors_list",
   allAssignedApplications: "api/select_auditor/get_assigned_applications",
   allPendingAssignedApplications:
     "/api/select_auditor/get_assigned_pending_applications",

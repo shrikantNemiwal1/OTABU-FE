@@ -289,7 +289,7 @@ const AgreementAndRules = () => {
       );
       console.log(res?.data);
       setInitialForm(res?.data);
-      setFormDisabled(true);
+      if (state.role !== "Admin Auditor") setFormDisabled(true);
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
@@ -401,7 +401,7 @@ const AgreementAndRules = () => {
         & Rules without prior notification.
       </p>
       <form onSubmit={handleSubmit} className="agreement">
-        <fieldset disabled={state.role !== "Client" || formDisabled}>
+        <fieldset disabled={formDisabled}>
           <div className="input__container">
             <label htmlFor="client_approval_date">
               Client Approval on Dated :{" "}
