@@ -449,7 +449,8 @@ const ApplicationInfo = () => {
           {/* Application Review */}
           {state.role === "Admin Auditor" &&
             (applicationStatus.includes("Application Review") ||
-              applicationStatus.includes("Application Review Pending")) && (
+              applicationStatus.includes("Application Review Pending") ||
+              applicationStatus.includes("Fill Application Review")) && (
               <div className="application_info-section">
                 <NavLink
                   to="application-review-form"
