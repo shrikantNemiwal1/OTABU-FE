@@ -518,7 +518,7 @@ const ApplicationInfo = () => {
           {((state.role === "Client" &&
             (applicationStatus.includes("Quotation Accepted by Client") ||
               applicationStatus.includes("Client Agreement and Rules") ||
-              applicationStatus.includes("Fill Client Agreement"))) ||
+              applicationStatus.includes("Fill Client Agreement and Rules"))) ||
             (state.role === "Admin Auditor" &&
               applicationStatus.includes("Client Agreement and Rules"))) && (
             <div className="application_info-section">
