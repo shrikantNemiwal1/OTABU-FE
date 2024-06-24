@@ -65,7 +65,7 @@ const Table = ({
           //   },
           // }}
           columns={columns}
-          data={data?.reverse() || []}
+          data={data || []}
           muiTableContainerProps={{
             sx: {
               height: `calc(${height})`,
