@@ -516,8 +516,11 @@ const ApplicationInfo = () => {
 
           {/* Client Agreement and rules */}
           {((state.role === "Client" &&
-            applicationStatus.includes("Quotation Accepted by Client")) ||
-            applicationStatus.includes("Client Agreement and Rules")) && (
+            (applicationStatus.includes("Quotation Accepted by Client") ||
+              applicationStatus.includes("Client Agreement and Rules") ||
+              applicationStatus.includes("Fill Client Agreement"))) ||
+            (state.role === "Admin Auditor" &&
+              applicationStatus.includes("Client Agreement and Rules"))) && (
             <div className="application_info-section">
               <NavLink to="agreement-and-rules" className="link-without-style">
                 <button className="application__btn">
