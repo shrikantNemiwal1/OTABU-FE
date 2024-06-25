@@ -23,14 +23,15 @@ const initialValues = {
 };
 
 const Login = () => {
-  const [open, setOpen] = useState(false);
-  const [alertMsg, setAlertMsg] = useState("");
   const [email, setEmail] = useState("");
   const [passwordHidden, setPasswordHidden] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [formStage, setFormStage] = useState(0);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [alertType, setAlertType] = useState("success");
+  const [alertMsg, setAlertMsg] = useState("");
   const { state } = useContext(AuthContext);
 
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
@@ -47,7 +48,14 @@ const Login = () => {
           });
           console.log(res);
           setEmail(values.email);
-          navigate("/login", { replace: true });
+
+          setAlertType("success");
+          setAlertMsg("Password Changed Successfully");
+          setOpen(true);
+
+          setTimeout(() => {
+            navigate("/login", { replace: true });
+          }, 2000);
         } catch (error) {
           setAlertMsg(error?.response?.data?.msg);
           setOpen(true);
@@ -93,16 +101,12 @@ const Login = () => {
       console.log(res);
       setFormStage(2);
     } catch (error) {
+      setAlertType("error");
       setAlertMsg(error?.response?.data?.msg);
       setOpen(true);
       console.log(error?.response?.data?.msg);
     }
     setIsLoading(false);
-  };
-
-  const handleCloseAlert = (event, reason) => {
-    if (reason === "clickaway") return;
-    setOpen(false);
   };
 
   useEffect(() => {
@@ -113,11 +117,15 @@ const Login = () => {
 
   return (
     <>
-      <Snackbar open={open} autoHideDuration={3000} onClose={handleCloseAlert}>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={() => setOpen(false)}
+      >
         <Alert
           variant="filled"
           onClose={() => setOpen(false)}
-          severity="error"
+          severity={alertType}
           sx={{ width: "100%" }}
         >
           {alertMsg}

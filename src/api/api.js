@@ -18,9 +18,8 @@ const url = {
   allActiveCertifications:
     "/api/application_form/get_client_application_details",
   allAuditors: "api/assign_auditor/get_auditors_list",
-  allAssignedApplications: "api/select_auditor/get_assigned_applications",
-  allPendingAssignedApplications:
-    "/api/select_auditor/get_assigned_pending_applications",
+  allAssignedApplications: "api/assign_auditor/get_assigned_applications",
+  allPendingAssignedApplications: "/api/get_assigned_pending_applications",
   allActiveAuditors: "/api/select_auditor/get_auditors_list",
 };
 

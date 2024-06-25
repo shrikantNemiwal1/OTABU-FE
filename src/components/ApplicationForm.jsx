@@ -210,9 +210,9 @@ const ApplicationForm = () => {
           <form onSubmit={handleSubmit}>
             <fieldset
               disabled={
-                initialForm?.Status === "Application Rejected"
+                (initialForm?.Status === "Application Rejected"
                   ? false
-                  : formDisabled
+                  : formDisabled) || state.role === "Auditor"
               }
             >
               <div className="registration__form">
@@ -319,7 +319,7 @@ const ApplicationForm = () => {
                             </th>
                           ))}
                         </tr>
-                      </thead> 
+                      </thead>
                       <tbody>
                         {rowKeys.map((rowKey) => (
                           <tr key={rowKey} className="table-row">

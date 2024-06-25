@@ -372,14 +372,14 @@ const ApplicationInfo = () => {
             Refresh
           </button>
           {((state.role === "Admin Auditor" &&
-            applicationStatus.includes(
-              "Application Reviewer Remarks Pending"
-            )) ||
+            applicationStatus.includes("Applicatiaehaerharhaeherah")) ||
             (state.role === "Client" &&
               (applicationStatus.includes("Audit Plan 1 Acceptance Pending") ||
                 applicationStatus.includes(
                   "Audit Plan 2 Acceptance Pending"
-                )))) && (
+                ))) ||
+            (state.role === "Auditor" &&
+              applicationStatus.includes("Fill App Review Remarks"))) && (
             <button className="add-btn" onClick={() => setModalOpen(true)}>
               {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
                 ? "Accept Audit Plan 1"
@@ -426,63 +426,64 @@ const ApplicationInfo = () => {
             )}
 
           {/* ApplicationForm */}
-          {state.role !== "Auditor" &&
-            !applicationStatus.includes("Application Form Incomplete") && (
-              <div className="application_info-section">
-                <NavLink to="application-form" className="link-without-style">
-                  <button className="application__btn">
-                    <img src={view} alt="view" />
-                    <p>{`${
-                      applicationStatus.includes("Application Rejected")
-                        ? "Update"
-                        : "View"
-                    } Application Form`}</p>
-                  </button>
-                </NavLink>
-                <button className="application__btn application__btn--green">
-                  <img src={print} alt="print" />
-                  <p>Print Application Form New</p>
+          {!applicationStatus.includes("Application Form Incomplete") && (
+            <div className="application_info-section">
+              <NavLink to="application-form" className="link-without-style">
+                <button className="application__btn">
+                  <img src={view} alt="view" />
+                  <p>{`${
+                    applicationStatus.includes("Application Rejected")
+                      ? "Update"
+                      : "View"
+                  } Application Form`}</p>
                 </button>
-              </div>
-            )}
+              </NavLink>
+              <button className="application__btn application__btn--green">
+                <img src={print} alt="print" />
+                <p>Print Application Form New</p>
+              </button>
+            </div>
+          )}
 
           {/* Application Review */}
-          {state.role === "Admin Auditor" &&
+          {((state.role === "Admin Auditor" &&
             (applicationStatus.includes("Application Review") ||
               applicationStatus.includes("Application Review Pending") ||
-              applicationStatus.includes("Fill Application Review")) && (
-              <div className="application_info-section">
-                <NavLink
-                  to="application-review-form"
-                  className="link-without-style"
-                >
-                  <button className="application__btn">
-                    <img
-                      src={
-                        applicationStatus.includes("Application Review")
-                          ? view
-                          : request
-                      }
-                      alt="view"
-                    />
-                    <p>{`${
+              applicationStatus.includes("Fill Application Review"))) ||
+            (state.role === "Auditor" &&
+              applicationStatus.includes("Application Review"))) && (
+            <div className="application_info-section">
+              <NavLink
+                to="application-review-form"
+                className="link-without-style"
+              >
+                <button className="application__btn">
+                  <img
+                    src={
                       applicationStatus.includes("Application Review")
-                        ? "View"
-                        : applicationStatus.includes(
-                            "Application Review Rejected"
-                          )
-                        ? "Update"
-                        : "Fill"
-                    } Application Review Form`}</p>
-                  </button>
-                </NavLink>
-
-                <button className="application__btn application__btn--green">
-                  <img src={print} alt="print" />
-                  <p>Print Application Review Form</p>
+                        ? view
+                        : request
+                    }
+                    alt="view"
+                  />
+                  <p>{`${
+                    applicationStatus.includes("Application Review")
+                      ? "View"
+                      : applicationStatus.includes(
+                          "Application Review Rejected"
+                        )
+                      ? "Update"
+                      : "Fill"
+                  } Application Review Form`}</p>
                 </button>
-              </div>
-            )}
+              </NavLink>
+
+              <button className="application__btn application__btn--green">
+                <img src={print} alt="print" />
+                <p>Print Application Review Form</p>
+              </button>
+            </div>
+          )}
 
           {/* Quotation Form */}
           {((state.role === "Client" &&

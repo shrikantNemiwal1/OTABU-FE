@@ -56,16 +56,8 @@ const Table = ({
     <>
       <div className="table__container">
         <MaterialReactTable
-          // displayColumnDefOptions={{
-          //   "mrt-row-actions": {
-          //     muiTableHeadCellProps: {
-          //       align: "center",
-          //     },
-          //     size: 120,
-          //   },
-          // }}
           columns={columns}
-          data={data || []}
+          data={data?.slice()?.reverse() || []}
           muiTableContainerProps={{
             sx: {
               height: `calc(${height})`,

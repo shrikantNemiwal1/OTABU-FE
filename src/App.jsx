@@ -125,7 +125,7 @@ function App() {
                 state.role === "Admin Auditor" ? (
                   <Navigate to="/dashboard/pending-clients" replace={true} />
                 ) : state.role === "Auditor" ? (
-                  <Navigate to="/dashboard/assigned-pending" replace={true} />
+                  <Navigate to="/dashboard/assigned-active" replace={true} />
                 ) : (
                   <Navigate to="/dashboard/new-application" replace={true} />
                 )

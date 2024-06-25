@@ -1,4 +1,3 @@
-import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import logoDull from "../assets/images/logo-dull.png";
 import dashboard from "../assets/icons/dashboard.svg";
@@ -67,7 +66,7 @@ const Sidebar = () => {
           </li>
         </Restricted>
         <Restricted to={"Auditor"}>
-          <li className="sidebar__links-item">
+          {/* <li className="sidebar__links-item">
             <NavLink
               className={
                 pathname === "/dashboard/assigned-pending"
@@ -79,7 +78,7 @@ const Sidebar = () => {
               <img src={dashboard} alt="dashboard" />
               <div>Assigned Pending Applications</div>
             </NavLink>
-          </li>
+          </li> */}
           <li className="sidebar__links-item">
             <NavLink
               className={
