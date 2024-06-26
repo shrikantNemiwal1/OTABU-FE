@@ -20,7 +20,7 @@ const url = {
   allAuditors: "api/assign_auditor/get_auditors_list",
   allAssignedApplications: "api/assign_auditor/get_assigned_applications",
   allPendingAssignedApplications: "/api/get_assigned_pending_applications",
-  allActiveAuditors: "/api/select_auditor/get_auditors_list",
+  allActiveAuditors: "/api/assign_auditor/get_auditors_list",
 };
 
 export function API(method, endpoint, payload, token) {

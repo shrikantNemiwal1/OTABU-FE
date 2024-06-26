@@ -30,7 +30,7 @@
     }
   }
 
-  &--basic-form{
+  &--basic-form {
     height: calc(100vh - 11rem);
   }
 }
@@ -135,7 +135,7 @@ select {
   -webkit-appearance: none;
   /* other styles for aesthetics */
   width: 100%;
-  font-size: .9rem;
+  font-size: 0.9rem;
   padding: 1rem;
   background-color: #fff;
   border: 1px solid #cccccc;
@@ -175,11 +175,30 @@ select {
 
 .table-row .row-head {
   max-width: 20rem;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+.checkbox-table {
+  border-collapse: collapse;
+}
+
+.checkbox-table td:not(:last-child),
+.checkbox-table th:not(:last-child) {
+  border-right: 1px solid rgb(209, 193, 193);
+}
+
+.table-row {
+  border-top: 1px solid rgb(209, 193, 193);
+}
+
+.checkbox-table .table-row td {
+  width: 3rem;
 }
 
 .row-head-large {
-  max-width: 50rem;
-  text-align: start;
+  width: 50rem;
+  text-align: -internal-start;
 }
 
 .row-head-xlarge {
@@ -197,6 +216,15 @@ select {
 
 .ml-0 {
   margin: 0;
+}
+
+.table-form td {
+  height: 3rem;
+}
+
+.column-head {
+  height: 3rem;
+  width: 4rem;
 }
 
 .column-head-small {

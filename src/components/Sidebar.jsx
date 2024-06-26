@@ -25,7 +25,7 @@ const Sidebar = () => {
               <div>Request New Application</div>
             </NavLink>
           </li>
-          <li className="sidebar__links-item">
+          {/* <li className="sidebar__links-item">
             <NavLink
               className={
                 pathname === "/dashboard/applied-certifications"
@@ -37,7 +37,7 @@ const Sidebar = () => {
               <img src={client} alt="client" />
               <div>Applied Certifications</div>
             </NavLink>
-          </li>
+          </li> */}
           <li className="sidebar__links-item">
             <NavLink
               className={

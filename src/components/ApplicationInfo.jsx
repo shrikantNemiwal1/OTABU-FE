@@ -379,7 +379,7 @@ const ApplicationInfo = () => {
                   "Audit Plan 2 Acceptance Pending"
                 ))) ||
             (state.role === "Auditor" &&
-              applicationStatus.includes("Fill App Review Remarks"))) && (
+              applicationStatus.includes("Fill Remarks for App Review"))) && (
             <button className="add-btn" onClick={() => setModalOpen(true)}>
               {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
                 ? "Accept Audit Plan 1"

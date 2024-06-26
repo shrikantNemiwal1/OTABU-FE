@@ -782,61 +782,61 @@ export const auditProgramFormSchema = Yup.object({
     technical_expert: Yup.string(),
   }),
 
-  TopManagePolicyImprove: Yup.object().shape({
-    stage1: Yup.string(),
-    stage2: Yup.string(),
-    sa1: Yup.string(),
-    sa2: Yup.string(),
-    renewal: Yup.string(),
-  }),
+  // TopManagePolicyImprove: Yup.object().shape({
+  //   stage1: Yup.string(),
+  //   stage2: Yup.string(),
+  //   sa1: Yup.string(),
+  //   sa2: Yup.string(),
+  //   renewal: Yup.string(),
+  // }),
 
-  QMSDocConOrgRiskIntMRM: Yup.object().shape({
-    stage1: Yup.string(),
-    stage2: Yup.string(),
-    sa1: Yup.string(),
-    sa2: Yup.string(),
-    renewal: Yup.string(),
-  }),
+  // QMSDocConOrgRiskIntMRM: Yup.object().shape({
+  //   stage1: Yup.string(),
+  //   stage2: Yup.string(),
+  //   sa1: Yup.string(),
+  //   sa2: Yup.string(),
+  //   renewal: Yup.string(),
+  // }),
 
-  HRTrainWork: Yup.object().shape({
-    stage1: Yup.string(),
-    stage2: Yup.string(),
-    sa1: Yup.string(),
-    sa2: Yup.string(),
-    renewal: Yup.string(),
-  }),
+  // HRTrainWork: Yup.object().shape({
+  //   stage1: Yup.string(),
+  //   stage2: Yup.string(),
+  //   sa1: Yup.string(),
+  //   sa2: Yup.string(),
+  //   renewal: Yup.string(),
+  // }),
 
-  MarketCustReqFeedback: Yup.object().shape({
-    stage1: Yup.string(),
-    stage2: Yup.string(),
-    sa1: Yup.string(),
-    sa2: Yup.string(),
-    renewal: Yup.string(),
-  }),
+  // MarketCustReqFeedback: Yup.object().shape({
+  //   stage1: Yup.string(),
+  //   stage2: Yup.string(),
+  //   sa1: Yup.string(),
+  //   sa2: Yup.string(),
+  //   renewal: Yup.string(),
+  // }),
 
-  ProductionQAMaintAnalyCA: Yup.object().shape({
-    stage1: Yup.string(),
-    stage2: Yup.string(),
-    sa1: Yup.string(),
-    sa2: Yup.string(),
-    renewal: Yup.string(),
-  }),
+  // ProductionQAMaintAnalyCA: Yup.object().shape({
+  //   stage1: Yup.string(),
+  //   stage2: Yup.string(),
+  //   sa1: Yup.string(),
+  //   sa2: Yup.string(),
+  //   renewal: Yup.string(),
+  // }),
 
-  PurchaseStoresDispatch: Yup.object().shape({
-    stage1: Yup.string(),
-    stage2: Yup.string(),
-    sa1: Yup.string(),
-    sa2: Yup.string(),
-    renewal: Yup.string(),
-  }),
+  // PurchaseStoresDispatch: Yup.object().shape({
+  //   stage1: Yup.string(),
+  //   stage2: Yup.string(),
+  //   sa1: Yup.string(),
+  //   sa2: Yup.string(),
+  //   renewal: Yup.string(),
+  // }),
 
-  UseOfLogo: Yup.object().shape({
-    stage1: Yup.string(),
-    stage2: Yup.string(),
-    sa1: Yup.string(),
-    sa2: Yup.string(),
-    renewal: Yup.string(),
-  }),
+  // UseOfLogo: Yup.object().shape({
+  //   stage1: Yup.string(),
+  //   stage2: Yup.string(),
+  //   sa1: Yup.string(),
+  //   sa2: Yup.string(),
+  //   renewal: Yup.string(),
+  // }),
 });
 
 export const agreementFormSchema = Yup.object({

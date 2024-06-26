@@ -23,7 +23,7 @@ const certificationSchemes = [
 ];
 
 const initialValues = {
-  certification_scheme: certificationSchemes[0],
+  certification_scheme: 1,
   name_of_company: "",
   scope_of_certification: "",
   address: "",
@@ -273,9 +273,9 @@ const NewApplicationForm = () => {
                           value={values.certification_scheme}
                           onChange={handleChange}
                         >
-                          {certificationSchemes.map((scheme) => {
+                          {certificationSchemes.map((scheme, index) => {
                             return (
-                              <option value={scheme} key={scheme}>
+                              <option value={index + 1} key={scheme}>
                                 {scheme}
                               </option>
                             );

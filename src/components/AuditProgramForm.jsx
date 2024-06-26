@@ -46,18 +46,146 @@ const colKeys = {
   renewal: "Renewal",
 };
 
+const colInitialValues = {
+  stage1: "No",
+  stage2: "No",
+  sa1: "No",
+  sa2: "No",
+  renewal: "No",
+};
+
 const rowKeys = {
-  TopManagePolicyImprove:
-    "Top Management Policy & Objectives Continual Improvement",
-  QMSDocConOrgRiskIntMRM:
-    "QMS Documentation, Context of Organization, Risk, Internal Audit & MRM",
-  HRTrainWork: "HR & Training Competence, & Work",
-  MarketCustReqFeedback:
-    "Marketing Customer Requirements, Feedback/ Complaint/ Satisfaction",
-  ProductionQAMaintAnalyCA:
-    "Production, QA & Maintenance Calibration, Data Analysis & CA",
-  PurchaseStoresDispatch: "Purchase, Stores & Dispatch",
-  UseOfLogo: "Use of Logo",
+  9: [
+    "Performance of Last 03 Years",
+    "Top Management- Internal Audit, MRM, Control of Documented Information",
+    "Top Management / Management System Co-Ordinator - Top Management Commitment, Regulatory and Statutory Requirement of the Product, Scope of QMS, its applicability, Planning of Changes, Customer Focus and Quality Policy & Quality objectives and planning to achieve them",
+    "Top Management - Sequence and Interaction of Processes and its expected Inputs and Output., internal external issues, needs & expectation of interested parties, Scope of certification & its applicability, Quality Management Processes",
+    "Marketing / Business Development – Customer communication, Determining the requirements for products and services, Review of the requirements for products and services, Changes to requirements for products and services, Feedback, Customer Satisfaction, Customer complaint handling.",
+    "HR - Roles and Responsibility, Competence Training and Awareness.",
+    "Maintenance – Preventive / Breakdown Maintenance, Work Environment.",
+    "Top Management - Risk & Opportunity considering the internal external issues, needs & expectation of interested parties",
+    "Management System Co-Ordinator - Organizational Knowledge, Continual Improvement.",
+    "Production- Production Planning & Control, control of service provision, Work Instruction, Process Flow Chart, Product identification and traceability, Product preservation, Customer property, Post delivery activities",
+    "Quality Control – inprocess inspection, Final inspection Control of Non Conformance of the product, Control of Non Conformance of the product, Control of Monitoring and Measuring resources (Calibration), Analysis and evaluation",
+    "Purchase - Control of Externally Provided Process - No. of approved Supplier, Supplier Evaluation records, Supplier Rating, Supplier Purchase order and  Incoming Inspection report",
+    "a) internal audits and management review;\nb) a review of actions taken on nonconformities identified during the previous audit; \nc) complaints handling; \nd) effectiveness of the management system with regard to achieving the certified client’s objectives and the intended results of the respective management system (s); \ne) progress of planned activities aimed at continual improvement; \nf) continuing operational control; \ng) review of any changes;",
+    "use of marks and/or any other reference to certification."
+  ],
+  14: [
+    "Performance of Last 03 Years.",
+    "Top Management - Internal audit, Management Review Meeting, Leadership and commitment, Environmental policy, Environmental objectives and planning to achieve them",
+    "Top Management - Context of the organization, internal & external issues, Understanding the needs and expectations of interested parties, Determining the scope of the environmental management system, Environmental management system",
+    "Operations – Risk and Opportunities considering the Context of the organization, internal & external issues, Understanding the needs and expectations of interested parties, environmental aspects & its impacts",
+    "Operations- environmental aspects & its impacts, and Operational Control considering the Context of the organization, internal & external issues, Understanding the needs and expectations of interested parties, environmental aspects & its impacts",
+    "Quality - Monitoring Disposal of Hazardous waste, Monitoring and Measurement of Electricity Consumption, Monitoring and Measurement of Dieseal Consumption, Monitoring and Measurement of Water Consumption, E-Wastages for Disposal, Stack Emission test report, Noise level Test Report, Ambient Air Quality Test report, Verification Legal Compliances",
+    "Admin – Emergency Preparedness & Response, Compliance Obligation, Compliance Evaluation.",
+    "Human Resource - Organizational roles, responsibilities and authorities, Environment for the operation of processes,  ",
+    "Human Resource - Competence, Awareness, Communication",
+    "Quality -  Control of nonconforming outputs, improvements, continual improvements, corrective action.",
+    "Management Representative - documented information’s, Creating and updating,  Control of documented information",
+    "Admin – Compliance obligations, Evaluation of compliances",
+    "a) internal audits and management review;\nb) a review of actions taken on nonconformities identified during the previous audit;\nc) complaints handling;\nd) effectiveness of the management system with regard to achieving the certified client’s objectives and the intended results of the respective management system (s); \ne) progress of planned activities aimed at continual improvement; \nf) continuing operational control;\ng) review of any changes;",
+    "use of marks and/or any other reference to certification.",
+  ],
+  45: [
+    "Review of Last 03 Years Performance",
+    "RTop Management – Internal Audit, Management Review Meeting,",
+    "Management Representative – Documented information,  Creating and updating,  Control of documented information",
+    "Top Management – Understanding the organization and its context,  Understanding the needs and expectations of workers and other interested parties,  Determining the scope of the OH&S management system,  OH&S management system",
+    "Top Management – Leadership and commitment,  OH&S policy,  OH&S objectives,  Planning to achieve OH&S objectives",
+    "Operations - Hazard identification and assessment of risks and opportunities, Assessment of OH&S risks and other risks to the OH&S management system, Assessment of OH&S opportunities and other opportunities for the OH&S management system",
+    "Top Management - Actions to address risks and opportunities considering Understanding the organization and its context, Understanding the needs and expectations of workers and other interested parties",
+    "Human Resource - Organizational roles, responsibilities and authorities, Consultation and participation of workers",
+    "Operations - Operational planning and control, Understanding the organization and its context, Understanding the needs and expectations of workers and other interested parties, Hazard identification and assessment of risks and opportunities, eliminating hazards and reducing OH&S risks, Management of change",
+    "Admin - Determination of legal requirements and other requirements, Evaluation of Compliances",
+    "Human Resource – Competence, Awareness & Communication.",
+    "Purchase - Procurement, Contractors, Outsourcing",
+    "Quality – Performance evaluation, Monitoring, measurement, analysis and performance evaluation related to accident report, Work Permit, Environmental testing, Incident, nonconformity and corrective action, Improvement, Continual improvement",
+    "a) internal audits and management review;\nb) a review of actions taken on nonconformities identified during the previous audit;\nc) complaints handling;\nd) effectiveness of the management system with regard to achieving the certified client’s objectives and the intended results of the respective management system (s);\ne) progress of planned activities aimed at continual improvement;\nf) continuing operational control;\ng) review of any changes;",
+  ],
+  914: [
+    "Performance of Last 03 Years.",
+    "Management Representative – Internal Audit & Management Review Meeting",
+    "Top Management – Leadership and commitment,  Customer Focus,  Establishing the IMS Policy,  Communicating the IMS policy, IMS Objectives & Planning to achieve them",
+    "Top Management -  Understanding the organization and its context,  Understanding the needs and expectations of interested parties related to IMS",
+    "Top Management -   Determining the scope of the integrated management system, Exclusion and Justification, integrated management system and its processes related to IMS",
+    "Human Resource - Organizational roles, responsibilities and authorities related to IMS",
+    "Top Management - Actions to address risks and opportunities related to IMS",
+    "Admin - Emergency preparedness and response.",
+    "Admin -  Compliance obligations, Evaluation of Compliances",
+    "Human Resource – infracture, people, resources,  Environment for the operation of processes, Competence , Awareness",
+    "Operations - Environmental Aspects",
+    "Operations - Resource Planning, Machine Plan, Quality Plan, Control Plan, Assembly Planning, Dispatch Plan, Preventive/Breakdown Maintenance plan, Control of production and service provision,  Identification and traceability,  Property belonging to customers or external providers.,  Preservation,  Post-delivery activities,  Control of changes process",
+    "Marketing -  Customer communication,  Determining the requirements for products and services,  Review of the requirements for products and services,  Changes to requirements for products and services related to  scope of certification, Customer satisfaction, customer complaints, ",
+    "Quality - Monitoring, measurement, analysis and evaluation related to  Electricity Monthly Basis, Monitoring of Stack Emission, Monitoring Ambient Air Quality Monitoring Report, Ambient Noise Level Monitoring Report, STP water Report,",
+    "Purchase -  Control of externally provided processes, products and services, Type and extent of control,  Information for external providers, outsourcing, contracting.",
+    "Quality - Final inspection, In process & Testing   related to scope of certification, Analysis and evaluation",
+    "Quality - Control of nonconforming outputs, Corrective Action, incident investigation, Improvement, Continual improvements",
+    "a) internal audits and management review;\nb) a review of actions taken on nonconformities identified during the previous audit;\nc) complaints handling;\nd) effectiveness of the management system with regard to achieving the certified client’s objectives and the intended results of the respective management system (s);\ne) progress of planned activities aimed at continual improvement;\nf) continuing operational control;\ng) review of any changes;",
+    "use of marks and/or any other reference to certification.",
+  ],
+  945: [
+    "Performance of Last 03 Years.",
+    "Management Representative – Internal Audit & Management Review Meeting",
+    "Top Management – Leadership and commitment,  Customer Focus,  Establishing the IMS Policy,  Communicating the IMS policy, IMS Objectives & Planning to achieve them",
+    "Top Management -  Understanding the organization and its context,  Understanding the needs and expectations of interested parties related to IMS",
+    "Top Management -   Determining the scope of the integrated management system, Exclusion and justification,  integrated management system and its processes related to IMS",
+    "Human Resource - Organizational roles, responsibilities and authorities related to IMS",
+    "Top Management - Actions to address risks and opportunities related to IMS",
+    "Admin - Consultation and participation of workers, Emergency preparedness and response.",
+    "Operations – Hazard identification and risk Assessment, Assessment of OH&S risks and other risks to the OH&S management system, Assessment of OH&S opportunities and other opportunities for the OH&S management system  ",
+    "Admin -  Compliance obligations, Evaluation of Compliances",
+    "Human Resource – infracture, people, resources,  Environment for the operation of processes, Competence , Awareness",
+    "Operations - Resource Planning, Machine Plan, Quality Plan, Control Plan, Assembly Planning, Dispatch Plan, Preventive/Breakdown Maintenance plan, Control of production and service provision,  Identification and traceability,  Property belonging to customers or external providers.,  Preservation,  Post-delivery activities,  Control of changes process",
+    "Marketing -  Customer communication,  Determining the requirements for products and services,  Review of the requirements for products and services,  Changes to requirements for products and services related to  scope of certification, Customer satisfaction, customer complaints, ",
+    "Quality - Accident incident records, Medical Health Examination, Work Permit, HIRA Monitoring, First Aid Box inspection, Inspection report of Fire Alarm System, Monitoring of legal compliances,  ",
+    "Purchase - Control of externally provided processes, products and services, Type and extent of control, Information for external providers, outsourcing, contracting.",
+    "Purchase - Control of externally provided processes, products and services, Type and extent of control, Information for external providers, outsourcing, contracting.",
+    "Quality - Control of nonconforming outputs, Corrective Action, incident investigation, Improvement, Continual improvements",
+    "a) internal audits and management review;\nb) a review of actions taken on nonconformities identified during the previous audit;\nc) complaints handling;\nd) effectiveness of the management system with regard to achieving the certified client’s objectives and the intended results of the respective management system (s);\ne) progress of planned activities aimed at continual improvement;\nf) continuing operational control;\ng) review of any changes;",
+    "use of marks and/or any other reference to certification.",
+  ],
+  1445: [
+    "Performance of Last 03 Years.",
+    "Management Representative – Internal Audit & Management Review Meeting",
+    "Top Management – Leadership and commitment,    Establishing the IMS Policy,  Communicating the IMS policy, IMS Objectives & Planning to achieve them",
+    "Top Management -  Understanding the organization and its context,  Understanding the needs and expectations of interested parties related to IMS",
+    "Top Management -   Determining the scope of the integrated management system,   integrated management system and its processes related to IMS",
+    "Human Resource - Organizational roles, responsibilities and authorities related to IMS",
+    "Top Management - Actions to address risks and opportunities related to IMS",
+    "Admin - Consultation and participation of workers, Emergency preparedness and response.",
+    "Operations – Hazard identification and risk Assessment, Assessment of OH&S risks and other risks to the OH&S management system, Assessment of OH&S opportunities and other opportunities for the OH&S management system  ",
+    "Admin -  Compliance obligations, Evaluation of Compliances",
+    "Human Resource – infracture, resources,  Environment for the operation of processes, Competence , Awareness",
+    "Operations - Environmental Aspects",
+    "Quality - Monitoring, measurement, analysis and evaluation related to  Electricity Monthly Basis, Monitoring of Stack Emission, Monitoring Ambient Air Quality Monitoring Report, Ambient Noise Level Monitoring Report, STP water Report, accident report, Work Permit, Monitoring identified haxards and its risk assessment, Disposal of wastages. ",
+    "Purchase -  outsourcing, contracting.",
+    "Quality - Control of nonconforming outputs, Corrective Action, incident investigation, Improvement, Continual improvements",
+    "a) internal audits and management review;\nb) a review of actions taken on nonconformities identified during the previous audit;\nc) complaints handling;\nd) effectiveness of the management system with regard to achieving the certified client’s objectives and the intended results of the respective management system (s);\ne) progress of planned activities aimed at continual improvement;\nf) continuing operational control;\ng) review of any changes;",
+    "use of marks and/or any other reference to certification.",
+  ],
+  91445: [
+    "Performance of Last 03 Years.",
+    "Performance of Last 03 Years.",
+    "Top Management – Leadership and commitment,  Customer Focus,  Establishing the IMS Policy,  Communicating the IMS policy, IMS Objectives & Planning to achieve them",
+    "Top Management - Understanding the organization and its context,  Understanding the needs and expectations of interested parties related to IMS",
+    "Top Management - Determining the scope of the integrated management system,   integrated management system and its processes related to IMS",
+    "Human Resource - Organizational roles, responsibilities and authorities related to IMS",
+    "Top Management - Actions to address risks and opportunities related to IMS",
+    "Admin - Consultation and participation of workers, Emergency preparedness and response.",
+    "Operations – Hazatrd identification and risk Assessment, Assessment of OH&S risks and other risks to the OH&S management system, Assessment of OH&S opportunities and other opportunities for the OH&S management system",
+    "Admin - Compliance obligations, Evaluation of Compliances",
+    "Human Resource – infracture, people, resources,  Environment for the operation of processes, Competence , Awareness",
+    "Operations - Environmental Aspects",
+    "Operations - Resource Planning, Machine Plan, Quality Plan, Control Plan, Assembly Planning, Dispatch Plan, Preventive/Breakdown Maintenance plan, Control of production and service provision,  Identification and traceability,  Property belonging to customers or external providers.,  Preservation,  Post-delivery activities,  Control of changes process",
+    "Marketing - Customer communication,  Determining the requirements for products and services,  Review of the requirements for products and services,  Changes to requirements for products and services related to  scope of certification, Customer satisfaction, customer complaints, ",
+    "Quality - Monitoring, measurement, analysis and evaluation related to  Electricity Monthly Basis, Monitoring of Stack Emission, Monitoring Ambient Air Quality Monitoring Report, Ambient Noise Level Monitoring Report, STP water Report,",
+    "Purchase - Control of externally provided processes, products and services, Type and extent of control,  Information for external providers, outsourcing, contracting.",
+    "Quality - Final inspection, In process & Testing   related to scope of certification, Analysis and evaluation",
+    "Quality - Control of nonconforming outputs, Corrective Action, incident investigation, Improvement, Continual improvements",
+    "a) internal audits and management review;\nb) a review of actions taken on nonconformities identified during the previous audit;\nc) complaints handling;\nd) effectiveness of the management system with regard to achieving the certified client’s objectives and the intended results of the respective management system (s); \ne) progress of planned activities aimed at continual improvement;\nf) continuing operational control;\ng) review of any changes;",
+    "use of marks and/or any other reference to certification.",
+  ],
 };
 
 const initialValues = {
@@ -111,61 +239,61 @@ const initialValues = {
     technical_expert: "",
   },
 
-  TopManagePolicyImprove: {
-    stage1: "No",
-    stage2: "No",
-    sa1: "No",
-    sa2: "No",
-    renewal: "No",
-  },
+  // TopManagePolicyImprove: {
+  //   stage1: "No",
+  //   stage2: "No",
+  //   sa1: "No",
+  //   sa2: "No",
+  //   renewal: "No",
+  // },
 
-  QMSDocConOrgRiskIntMRM: {
-    stage1: "No",
-    stage2: "No",
-    sa1: "No",
-    sa2: "No",
-    renewal: "No",
-  },
+  // QMSDocConOrgRiskIntMRM: {
+  //   stage1: "No",
+  //   stage2: "No",
+  //   sa1: "No",
+  //   sa2: "No",
+  //   renewal: "No",
+  // },
 
-  HRTrainWork: {
-    stage1: "No",
-    stage2: "No",
-    sa1: "No",
-    sa2: "No",
-    renewal: "No",
-  },
+  // HRTrainWork: {
+  //   stage1: "No",
+  //   stage2: "No",
+  //   sa1: "No",
+  //   sa2: "No",
+  //   renewal: "No",
+  // },
 
-  MarketCustReqFeedback: {
-    stage1: "No",
-    stage2: "No",
-    sa1: "No",
-    sa2: "No",
-    renewal: "No",
-  },
+  // MarketCustReqFeedback: {
+  //   stage1: "No",
+  //   stage2: "No",
+  //   sa1: "No",
+  //   sa2: "No",
+  //   renewal: "No",
+  // },
 
-  ProductionQAMaintAnalyCA: {
-    stage1: "No",
-    stage2: "No",
-    sa1: "No",
-    sa2: "No",
-    renewal: "No",
-  },
+  // ProductionQAMaintAnalyCA: {
+  //   stage1: "No",
+  //   stage2: "No",
+  //   sa1: "No",
+  //   sa2: "No",
+  //   renewal: "No",
+  // },
 
-  PurchaseStoresDispatch: {
-    stage1: "No",
-    stage2: "No",
-    sa1: "No",
-    sa2: "No",
-    renewal: "No",
-  },
+  // PurchaseStoresDispatch: {
+  //   stage1: "No",
+  //   stage2: "No",
+  //   sa1: "No",
+  //   sa2: "No",
+  //   renewal: "No",
+  // },
 
-  UseOfLogo: {
-    stage1: "No",
-    stage2: "No",
-    sa1: "No",
-    sa2: "No",
-    renewal: "No",
-  },
+  // UseOfLogo: {
+  //   stage1: "No",
+  //   stage2: "No",
+  //   sa1: "No",
+  //   sa2: "No",
+  //   renewal: "No",
+  // },
 };
 
 const AuditProgramForm = () => {
@@ -180,6 +308,9 @@ const AuditProgramForm = () => {
   const { state } = useContext(AuthContext);
   const id = pathname.slice(13).slice(0, -14);
   const [initialForm, setInitialForm] = useState(initialValues);
+  const [auditTable, setAuditTable] = useState(
+    Array.from({ length: 20 }, () => ({ ...colInitialValues }))
+  );
 
   const getFormDetails = async () => {
     try {
@@ -219,24 +350,28 @@ const AuditProgramForm = () => {
     enableReinitialize: true,
     onSubmit: async (values) => {
       console.log(values);
-      if (!dirty) {
-        console.log("form unchanged");
-        return;
-      }
       setIsLoading(true);
 
-      const formValues = formSubmitted
-        ? changedDivisions(initialForm, values)
-        : values;
+      const formValues = {
+        AuditProgram: values?.AuditProgram,
+        Array: [
+          values?.ProcessStage1,
+          values?.ProcessStage2,
+          values?.ProcessSurveillance1,
+          values?.ProcessSurveillance2,
+          values?.ProcessRenewal,
+          ...auditTable.slice(0, rowKeys[9].length),
+        ],
+      };
+
+      console.log(formValues);
 
       try {
         const response = await axios({
-          method: formSubmitted ? "patch" : "post",
+          method: formSubmitted ? "put" : "post",
           url:
             BASE_URL +
-            `/api/audit_program/${
-              formSubmitted ? "partial_update" : "create"
-            }/${id}`,
+            `/api/audit_program/${formSubmitted ? "update" : "create"}/${id}`,
           data: formValues,
           headers: {
             Authorization: `Bearer ${state.token}`,
@@ -384,23 +519,21 @@ const AuditProgramForm = () => {
                   <h3 className="form-sub-title"></h3>
 
                   <div className="input__container">
-                    <table className="table-form">
+                    <table className="table-form checkbox-table">
                       <thead>
                         <tr>
-                          <th className="row-head-big"></th>
+                          <th className="row-head-large"></th>
                           {Object.keys(colKeys).map((colKey) => (
-                            <th className="column-head-medium" key={colKey}>
+                            <th className="column-head" key={colKey}>
                               {colKeys[colKey]}
                             </th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
-                        {Object.keys(rowKeys).map((rowKey) => (
+                        {rowKeys["9"].map((rowKey, index) => (
                           <tr key={rowKey} className="table-row">
-                            <th className="row-head m-med">
-                              {rowKeys[rowKey]}
-                            </th>
+                            <th className="row-head m-med">{rowKey}</th>
                             {Object.keys(colKeys).map((colKey) => (
                               <td key={`${rowKey}-${colKey}`}>
                                 <label className="checkbox-label input-small">
@@ -408,21 +541,22 @@ const AuditProgramForm = () => {
                                     type="checkbox"
                                     name={`${rowKey}.${colKey}`}
                                     checked={
-                                      values?.[rowKey]?.[colKey] === "Yes"
+                                      auditTable?.[index]?.[colKey] === "Yes"
                                     }
                                     onChange={(e) =>
-                                      setFieldValue(
-                                        `${rowKey}.${colKey}`,
-                                        e.target.checked ? "Yes" : "No"
-                                      )
+                                      setAuditTable((prevState) => {
+                                        const newArray = [...prevState];
+                                        newArray[index] = {
+                                          ...newArray[index],
+                                          [colKey]: e.target.checked
+                                            ? "Yes"
+                                            : "No",
+                                        };
+                                        return newArray;
+                                      })
                                     }
-                                    onBlur={handleBlur}
                                   />
                                 </label>
-                                {touched?.[rowKey]?.[colKey] &&
-                                  errors?.[rowKey]?.[colKey] && (
-                                    <div>{errors[rowKey][colKey]}</div>
-                                  )}
                               </td>
                             ))}
                           </tr>
