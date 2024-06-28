@@ -80,6 +80,7 @@ function App() {
             <Route path="quotation-form" element={<QuotationForm />} />
             <Route path="agreement-and-rules" element={<AgreementAndRules />} />
             <Route path="audit-program" element={<AuditProgramForm />} />
+            <Route path="audit-program/:type" element={<AuditProgramForm />} />
             <Route path="intimation-letter-1" element={<IntimationLetter />} />
             <Route path="intimation-letter-2" element={<IntimationLetter />} />
             <Route path="assign-auditor" element={<AssignAuditor />} />

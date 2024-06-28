@@ -174,7 +174,7 @@ const ApplicationForm = () => {
         console.log(response);
         setTimeout(() => {
           navigate(-1);
-        }, 3000);
+        }, 2000);
       } catch (error) {
         setAlertType("error");
         setAlertMsg(error?.response?.data?.msg);
@@ -230,6 +230,7 @@ const ApplicationForm = () => {
                         id={`ApplicationForm.certification_type`}
                         value={values.certification_type}
                         onChange={handleChange}
+                        disabled={true}
                       >
                         {certificationType.map((scheme) => {
                           return (
@@ -249,12 +250,12 @@ const ApplicationForm = () => {
                       <select
                         name={`ApplicationForm.certification_scheme`}
                         id={`ApplicationForm.certification_scheme`}
-                        value={values.certification_scheme}
+                        value={values?.ApplicationForm?.certification_scheme}
                         onChange={handleChange}
                       >
-                        {certificationSchemes.map((scheme) => {
+                        {certificationSchemes.map((scheme, index) => {
                           return (
-                            <option value={scheme} key={scheme}>
+                            <option value={index + 1} key={index + 1}>
                               {scheme}
                             </option>
                           );

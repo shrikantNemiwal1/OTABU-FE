@@ -69,7 +69,7 @@ const rowKeys = {
     "Quality Control – inprocess inspection, Final inspection Control of Non Conformance of the product, Control of Non Conformance of the product, Control of Monitoring and Measuring resources (Calibration), Analysis and evaluation",
     "Purchase - Control of Externally Provided Process - No. of approved Supplier, Supplier Evaluation records, Supplier Rating, Supplier Purchase order and  Incoming Inspection report",
     "a) internal audits and management review;\nb) a review of actions taken on nonconformities identified during the previous audit; \nc) complaints handling; \nd) effectiveness of the management system with regard to achieving the certified client’s objectives and the intended results of the respective management system (s); \ne) progress of planned activities aimed at continual improvement; \nf) continuing operational control; \ng) review of any changes;",
-    "use of marks and/or any other reference to certification."
+    "use of marks and/or any other reference to certification.",
   ],
   14: [
     "Performance of Last 03 Years.",
@@ -102,6 +102,7 @@ const rowKeys = {
     "Purchase - Procurement, Contractors, Outsourcing",
     "Quality – Performance evaluation, Monitoring, measurement, analysis and performance evaluation related to accident report, Work Permit, Environmental testing, Incident, nonconformity and corrective action, Improvement, Continual improvement",
     "a) internal audits and management review;\nb) a review of actions taken on nonconformities identified during the previous audit;\nc) complaints handling;\nd) effectiveness of the management system with regard to achieving the certified client’s objectives and the intended results of the respective management system (s);\ne) progress of planned activities aimed at continual improvement;\nf) continuing operational control;\ng) review of any changes;",
+    "use of marks and/or any other reference to certification.",
   ],
   914: [
     "Performance of Last 03 Years.",
@@ -238,62 +239,6 @@ const initialValues = {
     auditor: "",
     technical_expert: "",
   },
-
-  // TopManagePolicyImprove: {
-  //   stage1: "No",
-  //   stage2: "No",
-  //   sa1: "No",
-  //   sa2: "No",
-  //   renewal: "No",
-  // },
-
-  // QMSDocConOrgRiskIntMRM: {
-  //   stage1: "No",
-  //   stage2: "No",
-  //   sa1: "No",
-  //   sa2: "No",
-  //   renewal: "No",
-  // },
-
-  // HRTrainWork: {
-  //   stage1: "No",
-  //   stage2: "No",
-  //   sa1: "No",
-  //   sa2: "No",
-  //   renewal: "No",
-  // },
-
-  // MarketCustReqFeedback: {
-  //   stage1: "No",
-  //   stage2: "No",
-  //   sa1: "No",
-  //   sa2: "No",
-  //   renewal: "No",
-  // },
-
-  // ProductionQAMaintAnalyCA: {
-  //   stage1: "No",
-  //   stage2: "No",
-  //   sa1: "No",
-  //   sa2: "No",
-  //   renewal: "No",
-  // },
-
-  // PurchaseStoresDispatch: {
-  //   stage1: "No",
-  //   stage2: "No",
-  //   sa1: "No",
-  //   sa2: "No",
-  //   renewal: "No",
-  // },
-
-  // UseOfLogo: {
-  //   stage1: "No",
-  //   stage2: "No",
-  //   sa1: "No",
-  //   sa2: "No",
-  //   renewal: "No",
-  // },
 };
 
 const AuditProgramForm = () => {
@@ -306,7 +251,9 @@ const AuditProgramForm = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { state } = useContext(AuthContext);
-  const id = pathname.slice(13).slice(0, -14);
+  const id = pathname.split("/")[2];
+  const certification_type = pathname.split("/")?.[4];
+  console.log(certification_type);
   const [initialForm, setInitialForm] = useState(initialValues);
   const [auditTable, setAuditTable] = useState(
     Array.from({ length: 20 }, () => ({ ...colInitialValues }))
@@ -322,7 +269,16 @@ const AuditProgramForm = () => {
         config
       );
       console.log(res?.data);
-      setInitialForm(res?.data);
+      const initialFormFormat = {
+        AuditProgram: res?.data?.AuditProgram,
+        ProcessStage1: res?.data?.Array[0],
+        ProcessStage2: res?.data?.Array[1],
+        ProcessSurveillance1: res?.data?.Array[2],
+        ProcessSurveillance2: res?.data?.Array[3],
+        ProcessRenewal: res?.data?.Array[4],
+      };
+      setInitialForm(initialFormFormat);
+      setAuditTable(res?.data?.Array.slice(5));
       setFormSubmitted(true);
     } catch (error) {
       console.log(error?.response?.data?.msg);
@@ -392,6 +348,7 @@ const AuditProgramForm = () => {
       setIsLoading(false);
     },
   });
+
   return (
     <>
       {formLoading ? (
@@ -531,7 +488,7 @@ const AuditProgramForm = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {rowKeys["9"].map((rowKey, index) => (
+                        {rowKeys[certification_type].map((rowKey, index) => (
                           <tr key={rowKey} className="table-row">
                             <th className="row-head m-med">{rowKey}</th>
                             {Object.keys(colKeys).map((colKey) => (

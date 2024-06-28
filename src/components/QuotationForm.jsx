@@ -164,8 +164,10 @@ const ApplicationForm = () => {
         setAlertMsg("Form Submitted Successfully");
         setOpen(true);
         setTimeout(() => {
-          navigate(-1);
-        }, 3000);
+          state.role === "Client"
+            ? navigate("/dashboard/active-certifications?refresh=true")
+            : navigate("/dashboard/active-clients?refresh=true");
+        }, 2000);
       } catch (error) {
         setAlertType("error");
         setAlertMsg(error?.response?.data?.msg);

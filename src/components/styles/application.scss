@@ -91,3 +91,13 @@ fieldset {
 .reason label:nth-child(5) {
   margin-bottom: 5rem !important;
 }
+
+.remarks-text{
+  background-color: #177369;
+  color: white;
+  display: inline-block;
+  padding: .5rem 1rem;
+  border-radius: .5rem;
+  margin-top: .8rem;
+  max-width: 50%;
+}

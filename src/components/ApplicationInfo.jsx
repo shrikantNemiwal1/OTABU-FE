@@ -30,7 +30,7 @@ const ApplicationInfo = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [confModalOpen, setConfModalOpen] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState([]);
-  const [remarks, setRemarks] = useState([]);
+  const [remarks, setRemarks] = useState();
   const [dataLoading, setDataLoading] = useState(true);
   const [assignedAuditor, setAssignedAuditor] = useState("");
   const id = pathname.slice(13);
@@ -60,6 +60,11 @@ const ApplicationInfo = () => {
         config
       );
       setApplicationStatus(res?.data);
+      if (
+        state.role === "Admin Auditor" &&
+        res?.data.includes("App Reviewer Remarks")
+      )
+        getRemarks();
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
@@ -75,7 +80,6 @@ const ApplicationInfo = () => {
         BASE_URL + `/api/app_review/get_app_review_remarks/${id}`,
         config
       );
-      console.log(res?.data);
       setRemarks(res?.data);
     } catch (error) {
       console.log(error?.response?.data?.msg);
@@ -102,16 +106,6 @@ const ApplicationInfo = () => {
   useEffect(() => {
     getApplicationDetails();
   }, []);
-
-  useEffect(() => {
-    //getRemarks();
-    if (
-      applicationStatus.includes("Auditor Assigned") ||
-      (applicationStatus.includes("Audit Plan Stage 1") &&
-        state.role === "Admin Auditor")
-    )
-      getAssignedAuditor();
-  }, [applicationStatus]);
 
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik({
@@ -176,6 +170,34 @@ const ApplicationInfo = () => {
         setIsLoading(false);
       },
     });
+
+  const checkAuditProgram = () => {
+    if (applicationStatus.includes("Audit Program Prepared")) {
+      if (applicationStatus.includes("Audit Program 14")) return "/14";
+      else if (applicationStatus.includes("Audit Program 9")) return "/9";
+      else if (applicationStatus.includes("Audit Program 45")) return "/45";
+      else if (applicationStatus.includes("Audit Program 914")) return "/914";
+      else if (applicationStatus.includes("Audit Program 1445")) return "/1445";
+      else if (applicationStatus.includes("Audit Program 945")) return "/945";
+      else if (applicationStatus.includes("Audit Program 91445"))
+        return "/91445";
+      else return "";
+    } else if (applicationStatus.includes("Application Review")) {
+      if (applicationStatus.includes("Fill Audit Program 14")) return "/14";
+      else if (applicationStatus.includes("Fill Audit Program 9")) return "/9";
+      else if (applicationStatus.includes("Fill Audit Program 45"))
+        return "/45";
+      else if (applicationStatus.includes("Fill Audit Program 914"))
+        return "/914";
+      else if (applicationStatus.includes("Fill Audit Program 1445"))
+        return "/1445";
+      else if (applicationStatus.includes("Fill Audit Program 945"))
+        return "/945";
+      else if (applicationStatus.includes("Fill Audit Program 91445"))
+        return "/91445";
+      else return "";
+    }
+  };
 
   return (
     <>
@@ -371,8 +393,8 @@ const ApplicationInfo = () => {
           <button className="add-btn" onClick={getApplicationDetails}>
             Refresh
           </button>
-          {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Applicatiaehaerharhaeherah")) ||
+          {((state.role === "Auditor" &&
+            applicationStatus.includes("Fill Remarks for App Review")) ||
             (state.role === "Client" &&
               (applicationStatus.includes("Audit Plan 1 Acceptance Pending") ||
                 applicationStatus.includes(
@@ -424,24 +446,25 @@ const ApplicationInfo = () => {
             )}
 
           {/* ApplicationForm */}
-          {!applicationStatus.includes("Application Form Incomplete") && (
-            <div className="application_info-section">
-              <NavLink to="application-form" className="link-without-style">
-                <button className="application__btn">
-                  <img src={view} alt="view" />
-                  <p>{`${
-                    applicationStatus.includes("Application Rejected")
-                      ? "Update"
-                      : "View"
-                  } Application Form`}</p>
+          {state.role !== "Auditor" &&
+            !applicationStatus.includes("Application Form Incomplete") && (
+              <div className="application_info-section">
+                <NavLink to="application-form" className="link-without-style">
+                  <button className="application__btn">
+                    <img src={view} alt="view" />
+                    <p>{`${
+                      applicationStatus.includes("Application Rejected")
+                        ? "Update"
+                        : "View"
+                    } Application Form`}</p>
+                  </button>
+                </NavLink>
+                <button className="application__btn application__btn--green">
+                  <img src={print} alt="print" />
+                  <p>Print Application Form New</p>
                 </button>
-              </NavLink>
-              <button className="application__btn application__btn--green">
-                <img src={print} alt="print" />
-                <p>Print Application Form New</p>
-              </button>
-            </div>
-          )}
+              </div>
+            )}
 
           {/* Application Review */}
           {((state.role === "Admin Auditor" &&
@@ -554,7 +577,10 @@ const ApplicationInfo = () => {
               applicationStatus.includes("Audit Program Prepared")) ||
             applicationStatus.includes("Audit Program")) && (
             <div className="application_info-section">
-              <NavLink to="audit-program" className="link-without-style">
+              <NavLink
+                to={`audit-program${checkAuditProgram()}`}
+                className="link-without-style"
+              >
                 <button className="application__btn">
                   <img
                     src={
@@ -618,34 +644,6 @@ const ApplicationInfo = () => {
               </button>
             </div>
           )}
-
-          {/* Assign Auditor */}
-          {/* {state.role === "Admin Auditor" &&
-            (applicationStatus.includes("Intimation Letter 1 Prepared") ||
-              applicationStatus.includes("Auditor Assigned") ||
-              applicationStatus.includes("Audit Plan Stage 1")) && (
-              <div className="application_info-section">
-                <NavLink to="assign-auditor" className="link-without-style">
-                  <button className="application__btn">
-                    <img
-                      src={
-                        applicationStatus.includes("Auditor Assigned") ||
-                        applicationStatus.includes("Audit Plan Stage 1")
-                          ? view
-                          : request
-                      }
-                      alt="view"
-                    />
-                    <p>Assign Auditor</p>
-                  </button>
-                </NavLink>
-
-                <button className="application__btn application__btn--green">
-                  <img src={view} alt="print" />
-                  <p>Assigned Auditor : {assignedAuditor || "None"}</p>
-                </button>
-              </div>
-            )} */}
 
           {/* Audit Plan 1 */}
           {((state.role === "Auditor" &&
@@ -971,6 +969,11 @@ const ApplicationInfo = () => {
                 </button>
               </div>
             )}
+          {remarks && (
+            <div className="remarks-text">
+              Remarks by Auditor : {remarks[0]?.remark}
+            </div>
+          )}
         </div>
       )}
     </>

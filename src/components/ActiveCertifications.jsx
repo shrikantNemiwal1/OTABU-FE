@@ -14,36 +14,39 @@ const DashboardAdmin = () => {
   const { state } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const columns = useMemo(() => [
-    {
-      accessorKey: "id",
-      header: "Application ID",
-      enableColumnOrdering: false,
-      enableEditing: false,
-      enableSorting: false,
-      size: 30,
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      size: 10,
-    },
-    // {
-    //   accessorFn: (row) => `${row.client_details.name}`,
-    //   header: "Client Name",
-    //   size: 30,
-    // },
-    // {
-    //   accessorFn: (row) => `${row.client_details.email}`,
-    //   header: "Client Email",
-    //   size: 30,
-    // },
-    // {
-    //   accessorKey: "acceptance_status",
-    //   header: "Status",
-    //   size: 10,
-    // },
-  ]);
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "id",
+        header: "Application ID",
+        enableColumnOrdering: false,
+        enableEditing: false,
+        enableSorting: false,
+        size: 30,
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
+        size: 10,
+      },
+      // {
+      //   accessorFn: (row) => `${row.client_details.name}`,
+      //   header: "Client Name",
+      //   size: 30,
+      // },
+      // {
+      //   accessorFn: (row) => `${row.client_details.email}`,
+      //   header: "Client Email",
+      //   size: 30,
+      // },
+      // {
+      //   accessorKey: "acceptance_status",
+      //   header: "Status",
+      //   size: 10,
+      // },
+    ],
+    []
+  );
 
   const { data, refetch, isFetching } = GetAllActiveCertifications(state.token);
 
@@ -72,6 +75,9 @@ const DashboardAdmin = () => {
       )}
     </>
   );
+
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get("refresh")) setTimeout(() => refetch(), 0);
 
   return (
     <>

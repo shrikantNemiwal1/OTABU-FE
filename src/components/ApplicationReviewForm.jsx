@@ -149,7 +149,7 @@ const ApplicationForm = () => {
         console.log(response);
         setTimeout(() => {
           navigate(-1);
-        }, 3000);
+        }, 2000);
       } catch (error) {
         setAlertType("error");
         setAlertMsg(error?.response?.data?.msg);

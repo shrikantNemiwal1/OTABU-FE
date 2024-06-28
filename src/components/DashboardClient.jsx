@@ -10,6 +10,7 @@ import Spinner from "./Spinner";
 import "./styles/radioCards.scss";
 import { useFormik } from "formik";
 import { basicApplicationFormSchema } from "../validation/formSchema";
+import { useNavigate } from "react-router-dom";
 
 const certificationSchemes = [
   "ISO 9001",
@@ -53,6 +54,7 @@ const DashboardClient = () => {
   const [certification_type, setCertiScheme] = useState(
     "Initial Certification"
   );
+  const navigate = useNavigate();
 
   const handleSubmitSurveillance = async () => {
     setIsLoading(true);
@@ -69,6 +71,7 @@ const DashboardClient = () => {
       setAlertType("success");
       setAlertMsg("Application form created Successfully");
       setOpen(true);
+      navigate("/dashboard/active-certifications?refresh=true");
     } catch (error) {
       setAlertType("error");
       setAlertMsg(error?.response?.data?.msg);
@@ -116,6 +119,7 @@ const DashboardClient = () => {
         console.log(response);
         setAlertType("success");
         setAlertMsg("Form Submitted Successfully");
+        navigate("/dashboard/active-certifications?refresh=true");
         setOpen(true);
       } catch (error) {
         setAlertType("error");
