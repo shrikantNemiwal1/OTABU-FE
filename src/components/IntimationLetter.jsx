@@ -55,7 +55,8 @@ const IntimationLetter = () => {
         headers: { Authorization: `Bearer ${state.token}` },
       };
       const res = await axios.get(
-        BASE_URL + `/api/intimation_letter/get_intimation_${stage}/${id}`,
+        BASE_URL +
+          `/api/intimation_letter_${stage}/get_intimation_${stage}/${id}`,
         config
       );
       console.log(res?.data);
@@ -100,7 +101,7 @@ const IntimationLetter = () => {
           method: formSubmitted ? "put" : "post",
           url:
             BASE_URL +
-            `/api/intimation_letter/${
+            `/api/intimation_letter_${stage}/${
               formSubmitted
                 ? `update_intimation_${stage}`
                 : `create_intimation_${stage}`

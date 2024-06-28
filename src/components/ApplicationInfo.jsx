@@ -171,6 +171,19 @@ const ApplicationInfo = () => {
       },
     });
 
+  const checkShowAudit = () => {
+    if (
+      applicationStatus.includes("Audit Program 14") ||
+      applicationStatus.includes("Audit Program 9") ||
+      applicationStatus.includes("Audit Program 45") ||
+      applicationStatus.includes("Audit Program 914") ||
+      applicationStatus.includes("Audit Program 1445") ||
+      applicationStatus.includes("Audit Program 945") ||
+      applicationStatus.includes("Audit Program 91445")
+    )
+      return true;
+  };
+
   const checkAuditProgram = () => {
     if (applicationStatus.includes("Audit Program Prepared")) {
       if (applicationStatus.includes("Audit Program 14")) return "/14";
@@ -570,33 +583,16 @@ const ApplicationInfo = () => {
           )}
 
           {/* Audit Program */}
-          {((state.role === "Admin Auditor" &&
-            (applicationStatus.includes("Client Agreement and Rules") ||
-              applicationStatus.includes("Audit Program Prepared"))) ||
-            (state.role === "Client" &&
-              applicationStatus.includes("Audit Program Prepared")) ||
-            applicationStatus.includes("Audit Program")) && (
+          {((state.role === "Admin Auditor" && checkAuditProgram() !== "") ||
+            checkShowAudit()) && (
             <div className="application_info-section">
               <NavLink
                 to={`audit-program${checkAuditProgram()}`}
                 className="link-without-style"
               >
                 <button className="application__btn">
-                  <img
-                    src={
-                      applicationStatus.includes("Audit Program Prepared") ||
-                      applicationStatus.includes("Audit Program")
-                        ? view
-                        : request
-                    }
-                    alt="view"
-                  />
-                  <p>{`${
-                    applicationStatus.includes("Audit Program Prepared") ||
-                    applicationStatus.includes("Audit Program")
-                      ? "View"
-                      : "Fill"
-                  } Audit Program`}</p>
+                  <img src={checkShowAudit() ? view : request} alt="view" />
+                  <p>{`${checkShowAudit() ? "View" : "Fill"} Audit Program`}</p>
                 </button>
               </NavLink>
               <button className="application__btn application__btn--green">
@@ -608,31 +604,21 @@ const ApplicationInfo = () => {
 
           {/* Intimation Letter 1 */}
           {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Audit Program Prepared")) ||
-            applicationStatus.includes("Intimation Letter 1 Prepared") ||
-            applicationStatus.includes("Audit Plan Stage 1") ||
-            applicationStatus.includes("Auditor Assigned")) && (
+            applicationStatus.includes("Fill Intimation Letter 1")) ||
+            applicationStatus.includes("Intimation Letter 1")) && (
             <div className="application_info-section">
               <NavLink to="intimation-letter-1" className="link-without-style">
                 <button className="application__btn">
                   <img
                     src={
-                      applicationStatus.includes(
-                        "Intimation Letter 1 Prepared"
-                      ) ||
-                      applicationStatus.includes("Audit Plan Stage 1") ||
-                      applicationStatus.includes("Auditor Assigned")
+                      applicationStatus.includes("Intimation Letter 1")
                         ? view
                         : request
                     }
                     alt="view"
                   />
                   <p>{`${
-                    applicationStatus.includes(
-                      "Intimation Letter 1 Prepared"
-                    ) ||
-                    applicationStatus.includes("Audit Plan Stage 1") ||
-                    applicationStatus.includes("Auditor Assigned")
+                    applicationStatus.includes("Intimation Letter 1")
                       ? "View"
                       : "Fill"
                   } Intimation Letter 1 Form`}</p>

@@ -316,7 +316,7 @@ const AuditProgramForm = () => {
           values?.ProcessSurveillance1,
           values?.ProcessSurveillance2,
           values?.ProcessRenewal,
-          ...auditTable.slice(0, rowKeys[9].length),
+          ...auditTable.slice(0, rowKeys[certification_type].length),
         ],
       };
 
