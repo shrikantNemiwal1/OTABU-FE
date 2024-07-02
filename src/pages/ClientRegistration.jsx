@@ -35,39 +35,46 @@ const Login = () => {
   const navigate = useNavigate();
   const { state, login } = useContext(AuthContext);
 
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue } =
-    useFormik({
-      initialValues,
-      validationSchema: clientRegistrationSchema,
-      onSubmit: async (values) => {
-        setIsLoading(true);
-        const body = { ...values, mobile: Number(values.mobile) };
-        //console.log(body);
-        try {
-          const response = await axios.post(
-            BASE_URL + "/api/user/register/client",
-            body
-          );
+  const {
+    values,
+    errors,
+    touched,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues,
+    validationSchema: clientRegistrationSchema,
+    onSubmit: async (values) => {
+      setIsLoading(true);
+      const body = { ...values, mobile: Number(values.mobile) };
+      //console.log(body);
+      try {
+        const response = await axios.post(
+          BASE_URL + "/api/user/register/client",
+          body
+        );
 
-          //console.log(response);
-          setFormSubmitted(true);
+        //console.log(response);
+        setFormSubmitted(true);
+        setEmail(values.email);
+      } catch (error) {
+        if (
+          error?.response?.data?.msg ===
+          "Email Registered. Verification Pending"
+        ) {
           setEmail(values.email);
-        } catch (error) {
-          if (
-            error?.response?.data?.msg ===
-            "Email Registered. Verification Pending"
-          ) {
-            setEmail(values.email);
-            setFormSubmitted(true);
-          }
-          setAlertMsg(error?.response?.data?.msg);
-          setOpen(true);
-          console.log(error);
+          setFormSubmitted(true);
         }
+        setAlertMsg(error?.response?.data?.msg);
+        setOpen(true);
+        console.log(error);
+      }
 
-        setIsLoading(false);
-      },
-    });
+      setIsLoading(false);
+    },
+  });
 
   const handleOtpSubmit = async (event) => {
     event.preventDefault();
@@ -176,7 +183,7 @@ const Login = () => {
               <div className="input-block">
                 <label htmlFor="mobile">Mobile Number</label>
                 <div className="input-block__input">
-                  <div className="country-code">+91</div>
+                  {/* <div className="country-code">+91</div> */}
                   <input
                     type="tel"
                     id="mobile"
@@ -185,7 +192,17 @@ const Login = () => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     disabled={isLoading}
-                    placeholder="10 digit Mobile Number"
+                    placeholder="Mobile Number"
+                    onKeyDown={(e) => {
+                      const key = e.key;
+                      if (
+                        !/^\d$/.test(key) &&
+                        key !== "Backspace" &&
+                        key !== "Delete"
+                      ) {
+                        e.preventDefault();
+                      }
+                    }}
                   />
                 </div>
                 <p className="input-block__error">

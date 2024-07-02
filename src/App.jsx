@@ -36,6 +36,7 @@ import TechnicalCommitteeReportForm from "./components/TechnicalCommitteeReportF
 import CertificationIssueChecklistForm from "./components/CertificationIssueChecklistForm";
 import CorrectiveActionReport2 from "./components/CorrectiveActionReport2.jsx";
 import NewApplicationForm from "./components/NewApplicationForm.jsx";
+import ClientPendingApplications from "./components/ClientPendingApplications.jsx";
 
 function App() {
   const { state, dispatch } = useContext(AuthContext);
@@ -134,6 +135,10 @@ function App() {
             />
             <Route path="new-application" element={<DashboardClient />} />
             <Route path="pending-clients" element={<DashboardAdmin />} />
+            <Route
+              path="pending-applications"
+              element={<ClientPendingApplications />}
+            />
             <Route path="active-auditors" element={<ActiveAuditors />} />
             <Route path="active-clients" element={<ActiveClients />} />
             <Route

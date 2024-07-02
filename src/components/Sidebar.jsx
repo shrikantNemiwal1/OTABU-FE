@@ -25,19 +25,19 @@ const Sidebar = () => {
               <div>Request New Application</div>
             </NavLink>
           </li>
-          {/* <li className="sidebar__links-item">
+          <li className="sidebar__links-item">
             <NavLink
               className={
-                pathname === "/dashboard/applied-certifications"
+                pathname === "/dashboard/pending-applications"
                   ? "sidebar__link sidebar__link--active"
                   : "sidebar__link"
               }
-              to="/dashboard/applied-certifications"
+              to="/dashboard/pending-applications"
             >
               <img src={client} alt="client" />
-              <div>Applied Certifications</div>
+              <div>Pending Applications</div>
             </NavLink>
-          </li> */}
+          </li>
           <li className="sidebar__links-item">
             <NavLink
               className={

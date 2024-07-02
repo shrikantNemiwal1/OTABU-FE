@@ -119,7 +119,7 @@ const DashboardClient = () => {
         console.log(response);
         setAlertType("success");
         setAlertMsg("Form Submitted Successfully");
-        navigate("/dashboard/active-certifications?refresh=true");
+        navigate("/dashboard/pending-applications?refresh=true");
         setOpen(true);
       } catch (error) {
         setAlertType("error");

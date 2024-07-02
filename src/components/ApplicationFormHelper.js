@@ -236,7 +236,7 @@ export const initialValues = {
     admini: "",
     storage_warehouse: "",
     other: "",
-    tot_emp: "",
+    tot_emp: "0",
   },
   WorkFromHome: {
     top_manage: "",
@@ -245,7 +245,7 @@ export const initialValues = {
     admini: "",
     storage_warehouse: "",
     other: "",
-    tot_emp: "",
+    tot_emp: "0",
   },
   ContractEmployee: {
     top_manage: "",
@@ -254,7 +254,7 @@ export const initialValues = {
     admini: "",
     storage_warehouse: "",
     other: "",
-    tot_emp: "",
+    tot_emp: "0",
   },
   ParttimeEmployee: {
     top_manage: "",
@@ -263,7 +263,7 @@ export const initialValues = {
     admini: "",
     storage_warehouse: "",
     other: "",
-    tot_emp: "",
+    tot_emp: "0",
   },
   EmployeeTempSite: {
     top_manage: "",
@@ -272,7 +272,7 @@ export const initialValues = {
     admini: "",
     storage_warehouse: "",
     other: "",
-    tot_emp: "",
+    tot_emp: "0",
   },
   Shifts: {
     top_manage: "",
@@ -281,7 +281,7 @@ export const initialValues = {
     admini: "",
     storage_warehouse: "",
     other: "",
-    tot_emp: "",
+    tot_emp: "0",
   },
   NonPermanentEmployee: {
     top_manage: "",
@@ -290,7 +290,7 @@ export const initialValues = {
     admini: "",
     storage_warehouse: "",
     other: "",
-    tot_emp: "",
+    tot_emp: "0",
   },
   AwayClient: {
     top_manage: "",
@@ -299,7 +299,7 @@ export const initialValues = {
     admini: "",
     storage_warehouse: "",
     other: "",
-    tot_emp: "",
+    tot_emp: "0",
   },
   IntegratedCerti: {
     ims_integrated_doc: "",

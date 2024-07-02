@@ -1,7 +1,9 @@
-import React, { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import view from "../assets/icons/view.svg";
 import request from "../assets/icons/request.svg";
 import print from "../assets/icons/print.svg";
+import upload from "../assets/icons/upload.svg";
+import download from "../assets/icons/download.svg";
 import "./styles/application.scss";
 import Navbar from "../components/Navbar";
 import { NavLink, useLocation } from "react-router-dom";
@@ -29,10 +31,14 @@ const ApplicationInfo = () => {
   const { state } = useContext(AuthContext);
   const [modalOpen, setModalOpen] = useState(false);
   const [confModalOpen, setConfModalOpen] = useState(false);
+  const [fullModalOpen, setFullModalOpen] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState([]);
   const [remarks, setRemarks] = useState();
   const [dataLoading, setDataLoading] = useState(true);
-  const [assignedAuditor, setAssignedAuditor] = useState("");
+  const [auditPlan1, setAuditPlan1] = useState("");
+  const [auditPlan2, setAuditPlan2] = useState("");
+  const [uploading, setUploading] = useState(false);
+  console.log(auditPlan1);
   const id = pathname.slice(13);
   const style = {
     position: "absolute",
@@ -60,11 +66,6 @@ const ApplicationInfo = () => {
         config
       );
       setApplicationStatus(res?.data);
-      if (
-        state.role === "Admin Auditor" &&
-        res?.data.includes("App Reviewer Remarks")
-      )
-        getRemarks();
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
@@ -77,7 +78,12 @@ const ApplicationInfo = () => {
         headers: { Authorization: `Bearer ${state.token}` },
       };
       const res = await axios.get(
-        BASE_URL + `/api/app_review/get_app_review_remarks/${id}`,
+        BASE_URL +
+          `/api/${
+            applicationStatus.includes("Intimation Letter Remarks")
+              ? "intimation_letter_1/get_intimartion_1_remarks"
+              : "app_review/get_app_review_remarks"
+          }/${id}`,
         config
       );
       setRemarks(res?.data);
@@ -87,89 +93,160 @@ const ApplicationInfo = () => {
     //setDataLoading(false);
   };
 
-  const getAssignedAuditor = async () => {
-    try {
-      const config = {
-        headers: { Authorization: `Bearer ${state.token}` },
-      };
-      const res = await axios.get(
-        BASE_URL + `/api/select_auditor/get_assigned_auditor/${id}`,
-        config
-      );
-      console.log(res?.data?.auditor_name);
-      setAssignedAuditor(res?.data?.auditor_name);
-    } catch (error) {
-      console.log(error?.response?.data?.msg);
-    }
-  };
-
   useEffect(() => {
     getApplicationDetails();
   }, []);
 
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
-    useFormik({
-      initialValues,
-      validationSchema: remarkFormSchema,
-      enableReinitialize: true,
-      onSubmit: async (values) => {
+  const {
+    values,
+    errors,
+    touched,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+    setErrors,
+  } = useFormik({
+    initialValues,
+    validationSchema: remarkFormSchema,
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+      if (
+        (applicationStatus.includes("Fill Intimation Letter 1 Remarks") ||
+          applicationStatus.includes("Fill Audit Plan 1 Remarks")) &&
+        values?.remark.trim() === ""
+      ) {
+        setErrors({ remark: "This field is required" });
+        return;
+      }
+      setIsLoading(true);
+      try {
         console.log(values);
-        setIsLoading(true);
-
-        try {
-          console.log(values);
-          const response = await axios({
-            method: "post",
-            url:
-              BASE_URL +
-              `/api/${
-                applicationStatus.includes("Non Confirmities Accepted") ||
-                applicationStatus.includes("Closure Pending")
-                  ? applicationStatus.includes("Audit Plan Stage 2")
-                    ? "audit_report_2/closure_acceptance"
-                    : "audit_report_1/closure_acceptance"
-                  : applicationStatus.includes("Form 39B Prepared") ||
-                    applicationStatus.includes("Closure Rejected")
-                  ? applicationStatus.includes("Audit Plan Stage 2")
-                    ? "audit_report_2/non_confirmity_acceptance"
-                    : "audit_report_1/non_confirmity_acceptance"
-                  : applicationStatus.includes(
-                      "Audit Plan 1 Acceptance Pending"
-                    )
-                  ? "audit_plan/send_remark"
-                  : applicationStatus.includes(
-                      "Audit Plan 2 Acceptance Pending"
-                    )
-                  ? "audit_plan_2/send_remark"
-                  : applicationStatus.includes("Fill Quotation Choice")
-                  ? "quotation/send_quotation_choice"
-                  : "app_review/send_remark"
-              }/${id}`,
-            data: confModalOpen
+        const response = await axios({
+          method: "post",
+          url:
+            BASE_URL +
+            `/api/${
+              applicationStatus.includes("Non Confirmities Accepted") ||
+              applicationStatus.includes("Closure Pending")
+                ? applicationStatus.includes("Audit Plan Stage 2")
+                  ? "audit_report_2/closure_acceptance"
+                  : "audit_report_1/closure_acceptance"
+                : applicationStatus.includes("Form 39B Prepared") ||
+                  applicationStatus.includes("Closure Rejected")
+                ? applicationStatus.includes("Audit Plan Stage 2")
+                  ? "audit_report_2/non_confirmity_acceptance"
+                  : "audit_report_1/non_confirmity_acceptance"
+                : applicationStatus.includes("Fill Audit Plan 1 Remarks")
+                ? "audit_plan_1/send_remark"
+                : applicationStatus.includes("Audit Plan 2 Acceptance Pending")
+                ? "audit_plan_2/send_remark"
+                : applicationStatus.includes("Fill Quotation Choice")
+                ? "quotation/send_quotation_choice"
+                : applicationStatus.includes("Fill Intimation Letter 1 Remarks")
+                ? "intimation_letter_1/send_remark"
+                : "app_review/send_remark"
+            }/${id}`,
+          data:
+            applicationStatus.includes("Fill Intimation Letter 1 Remarks") ||
+            applicationStatus.includes("Fill Audit Plan 1 Remarks")
+              ? values
+              : confModalOpen
               ? { quotation_choice: values.acceptance_choice }
               : { remark: values.remark },
-            headers: {
-              Authorization: `Bearer ${state.token}`,
-            },
-          });
-          console.log(values);
-          setAlertType("success");
-          setAlertMsg(response?.data?.message || response?.data?.msg);
-          setOpen(true);
-          setModalOpen(false);
-          setConfModalOpen(false);
-          console.log(response);
-          getApplicationDetails();
-        } catch (error) {
-          setAlertType("error");
-          setAlertMsg(error?.response?.data?.msg);
-          setOpen(true);
-          console.log(error?.response?.data?.msg);
-          setModalOpen(false);
+          headers: {
+            Authorization: `Bearer ${state.token}`,
+          },
+        });
+        console.log(values);
+        setAlertType("success");
+        setAlertMsg(response?.data?.message || response?.data?.msg);
+        setOpen(true);
+        setModalOpen(false);
+        setFullModalOpen(false);
+        setConfModalOpen(false);
+        console.log(response);
+        getApplicationDetails();
+      } catch (error) {
+        setAlertType("error");
+        setAlertMsg(error?.response?.data?.msg);
+        setOpen(true);
+        console.log(error?.response?.data?.msg);
+        setModalOpen(false);
+      }
+      setIsLoading(false);
+    },
+  });
+
+  const uploadFile = async () => {
+    if (!auditPlan1) return;
+
+    const formData = new FormData();
+    formData.append("audit_plan_url", auditPlan1);
+
+    try {
+      setUploading(true);
+      const response = await axios({
+        method: applicationStatus.includes("Audit Plan 1") ? "put" : "post",
+        url:
+          BASE_URL +
+          `/api/audit_plan_1/${
+            applicationStatus.includes("Audit Plan 1") ? "update" : "create"
+          }/${id}`,
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${state.token}`,
+        },
+      });
+      setAlertType("success");
+      setAlertMsg(response?.data?.message || response?.data?.msg);
+      getApplicationDetails();
+    } catch (error) {
+      setAlertType("error");
+      setAlertMsg(error?.response?.data?.msg);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDownload = async () => {
+    try {
+      const fileUrlResponse = await axios.get(
+        BASE_URL + `/api/audit_plan_1/get/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${state.token}`,
+          },
         }
-        setIsLoading(false);
-      },
-    });
+      );
+
+      const fileUrl = fileUrlResponse.data?.audit_plan_url;
+      const fileName = fileUrl.split("/").pop();
+
+      const response = await axios.get(fileUrl, {
+        responseType: "blob",
+        headers: {
+          Authorization: `Bearer ${state.token}`,
+        },
+      });
+
+      const contentType =
+        response.headers["content-type"] || "application/octet-stream";
+
+      const url = window.URL.createObjectURL(
+        new Blob([response.data], { type: contentType })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    }
+  };
 
   const checkShowAudit = () => {
     if (
@@ -185,7 +262,7 @@ const ApplicationInfo = () => {
   };
 
   const checkAuditProgram = () => {
-    if (applicationStatus.includes("Audit Program Prepared")) {
+    if (checkShowAudit()) {
       if (applicationStatus.includes("Audit Program 14")) return "/14";
       else if (applicationStatus.includes("Audit Program 9")) return "/9";
       else if (applicationStatus.includes("Audit Program 45")) return "/45";
@@ -210,6 +287,7 @@ const ApplicationInfo = () => {
         return "/91445";
       else return "";
     }
+    return "";
   };
 
   return (
@@ -381,6 +459,98 @@ const ApplicationInfo = () => {
           </div>
         </Box>
       </Modal>
+      <Modal
+        open={fullModalOpen}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div className="modal">
+            <button
+              className="modal__close-btn"
+              onClick={() => setFullModalOpen(false)}
+            >
+              &#9587;
+            </button>
+            <div className="modal__title">
+              {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
+                ? "Audit Plan 1 Acceptance"
+                : applicationStatus.includes("Audit Plan 2 Acceptance Pending")
+                ? "Audit Plan 2 Acceptance"
+                : "Send Remark"}
+            </div>
+            <div className="input__container checkbox-container">
+              <label>
+                {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
+                  ? "Accept/Reject Audit Plan 1"
+                  : applicationStatus.includes(
+                      "Audit Plan 2 Acceptance Pending"
+                    )
+                  ? "Accept/Reject Audit Plan 2"
+                  : applicationStatus.includes(
+                      "Fill Intimation Letter 1 Remarks"
+                    )
+                  ? "Accept/Reject Audit Program"
+                  : "Accept/Reject Application"}
+              </label>
+              <label className="checkbox-label">
+                <input
+                  type="radio"
+                  name="acceptance_choice"
+                  value="1"
+                  checked={values.acceptance_choice === "1"}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                <p>Accept</p>
+              </label>
+              <label className="checkbox-label">
+                <input
+                  type="radio"
+                  name="acceptance_choice"
+                  value="0"
+                  checked={values.acceptance_choice === "0"}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                <p>Reject</p>
+              </label>
+              <div className="input__error-container">
+                {errors.acceptance_choice || touched.acceptance_choice ? (
+                  <p className="input__error">{errors.acceptance_choice}</p>
+                ) : null}
+              </div>
+            </div>
+            <div className="input__container">
+              <label htmlFor="remark">Remark :</label>
+              <input
+                type="text-box"
+                name="remark"
+                id="remark"
+                value={values.remark}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Enter Remark"
+              />
+              <div className="input__error-container">
+                {errors.remark && touched.remark ? (
+                  <p className="input__error">{errors.remark}</p>
+                ) : null}
+              </div>
+            </div>
+          </div>
+          <div className="input__container">
+            <button
+              className="registration__submit ml-0"
+              type="submit"
+              onClick={handleSubmit}
+              disabled={isLoading}
+            >
+              {isLoading ? <Spinner size={25} color="white" /> : "Send"}
+            </button>
+          </div>
+        </Box>
+      </Modal>
       <Snackbar
         open={open}
         autoHideDuration={3000}
@@ -406,21 +576,18 @@ const ApplicationInfo = () => {
           <button className="add-btn" onClick={getApplicationDetails}>
             Refresh
           </button>
-          {((state.role === "Auditor" &&
-            applicationStatus.includes("Fill Remarks for App Review")) ||
-            (state.role === "Client" &&
-              (applicationStatus.includes("Audit Plan 1 Acceptance Pending") ||
-                applicationStatus.includes(
-                  "Audit Plan 2 Acceptance Pending"
-                )))) && (
-            <button className="add-btn" onClick={() => setModalOpen(true)}>
-              {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
-                ? "Accept Audit Plan 1"
-                : applicationStatus.includes("Audit Plan 2 Acceptance Pending")
-                ? "Accept Audit Plan 2"
-                : "Send Remark"}
-            </button>
-          )}
+          {state.role === "Auditor" &&
+            applicationStatus.includes("Fill Remarks for App Review") && (
+              <button className="add-btn" onClick={() => setModalOpen(true)}>
+                {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
+                  ? "Accept Audit Plan 1"
+                  : applicationStatus.includes(
+                      "Audit Plan 2 Acceptance Pending"
+                    )
+                  ? "Accept Audit Plan 2"
+                  : "Send Remark"}
+              </button>
+            )}
 
           {state.role === "Admin Auditor" &&
             applicationStatus.includes("Fill Quotation Choice") && (
@@ -436,6 +603,16 @@ const ApplicationInfo = () => {
                   : "Accept Non conformity"}
               </button>
             )}
+
+          {(applicationStatus.includes("Fill Intimation Letter 1 Remarks") ||
+            applicationStatus.includes("Fill Audit Plan 1 Remarks")) && (
+            <button className="add-btn" onClick={() => setFullModalOpen(true)}>
+              {applicationStatus.includes("Fill Intimation Letter 1 Remarks") ||
+              applicationStatus.includes("Fill Audit Plan 1 Remarks")
+                ? "Send Remarks"
+                : ""}
+            </button>
+          )}
 
           {/* BasicApplicationForm */}
           {state.role !== "Auditor" &&
@@ -592,7 +769,9 @@ const ApplicationInfo = () => {
               >
                 <button className="application__btn">
                   <img src={checkShowAudit() ? view : request} alt="view" />
-                  <p>{`${checkShowAudit() ? "View" : "Fill"} Audit Program`}</p>
+                  <p>{`${
+                    checkShowAudit() ? "View" : "Fill"
+                  } Audit Program Form`}</p>
                 </button>
               </NavLink>
               <button className="application__btn application__btn--green">
@@ -611,14 +790,23 @@ const ApplicationInfo = () => {
                 <button className="application__btn">
                   <img
                     src={
-                      applicationStatus.includes("Intimation Letter 1")
+                      applicationStatus.includes("Intimation Letter 1") &&
+                      !(
+                        state.role === "Admin Auditor" &&
+                        applicationStatus.includes(
+                          "Intimation Letter 1 Rejected"
+                        )
+                      )
                         ? view
                         : request
                     }
                     alt="view"
                   />
                   <p>{`${
-                    applicationStatus.includes("Intimation Letter 1")
+                    state.role === "Admin Auditor" &&
+                    applicationStatus.includes("Intimation Letter 1 Rejected")
+                      ? "Update"
+                      : applicationStatus.includes("Intimation Letter 1")
                       ? "View"
                       : "Fill"
                   } Intimation Letter 1 Form`}</p>
@@ -631,9 +819,56 @@ const ApplicationInfo = () => {
             </div>
           )}
 
+          {((state.role === "Admin Auditor" &&
+            applicationStatus.includes("Audit Plan 1")) ||
+            (state.role === "Auditor" &&
+              (applicationStatus.includes("Fill Audit Plan 1") ||
+                applicationStatus.includes("Audit Plan 1 Rejected")))) && (
+            <div>Upload Audit Plan 1</div>
+          )}
+          <div className="application_info-section">
+            {((state.role === "Admin Auditor" &&
+              applicationStatus.includes("Audit Plan 1")) ||
+              (state.role === "Auditor" &&
+                (applicationStatus.includes("Fill Audit Plan 1") ||
+                  applicationStatus.includes("Audit Plan 1 Rejected")))) && (
+              <label className="application__btn" htmlFor="audit-plan-1-file">
+                <img src={upload} alt="view" />
+                <input
+                  type="file"
+                  id="audit-plan-1-file"
+                  onChange={(e) => setAuditPlan1(e.target.files[0])}
+                />
+              </label>
+            )}
+            {applicationStatus.includes("Audit Plan 1") && (
+              <button
+                className="application__btn application__btn--green"
+                onClick={handleDownload}
+              >
+                <img src={download} alt="print" />
+                <p>Download Audit Plan stage 1 Form</p>
+              </button>
+            )}
+          </div>
+          {(state.role === "Admin Auditor" ||
+            (state.role === "Auditor" &&
+              (applicationStatus.includes("Fill Audit Plan 1") ||
+                applicationStatus.includes("Audit Plan 1 Rejected")))) && (
+            <div>
+              <button
+                className="remarks-text add-btn pt-0"
+                disabled={!auditPlan1}
+                onClick={uploadFile}
+              >
+                Upload
+              </button>
+            </div>
+          )}
+
           {/* Audit Plan 1 */}
-          {((state.role === "Auditor" &&
-            applicationStatus.includes("Intimation Letter 1 Prepared")) ||
+          {/* {((state.role === "Admin Auditor" &&
+            applicationStatus.includes("Intimation Letter 1")) ||
             applicationStatus.includes("Auditor Assigned") ||
             applicationStatus.includes("Audit Plan Stage 1")) && (
             <div className="application_info-section">
@@ -659,7 +894,7 @@ const ApplicationInfo = () => {
                 <p>Print Audit Plan stage 1 Form</p>
               </button>
             </div>
-          )}
+          )} */}
 
           {/* Audit Report 1 */}
           {((state.role === "Auditor" &&
@@ -955,11 +1190,13 @@ const ApplicationInfo = () => {
                 </button>
               </div>
             )}
-          {remarks && (
-            <div className="remarks-text">
-              Remarks by Auditor : {remarks[0]?.remark}
-            </div>
-          )}
+          {state.role === "Admin Auditor" &&
+            (applicationStatus.includes("App Reviewer Remarks") ||
+              applicationStatus.includes("Intimation Letter Remarks")) && (
+              <button className="remarks-text add-btn" onClick={getRemarks}>
+                Show Remarks
+              </button>
+            )}
         </div>
       )}
     </>

@@ -20,6 +20,8 @@ const url = {
   allAuditors: "api/assign_auditor/get_auditors_list",
   allAssignedApplications: "api/assign_auditor/get_assigned_applications",
   allPendingAssignedApplications: "/api/get_assigned_pending_applications",
+  allClientPendingApplications:
+    "/api/app_form_approval/get_pending_applicationform",
   allActiveAuditors: "/api/assign_auditor/get_auditors_list",
 };
 
@@ -73,6 +75,22 @@ export function GetAllPendingAssignedApplications(token) {
   const queryKey = "allPendingAssignedApplications";
   const queryFn = () =>
     API("get", url.allPendingAssignedApplications, {}, token);
+  const { refetch, ...queryResult } = useQuery(
+    [queryKey],
+    queryFn,
+    queryConfig
+  );
+  return {
+    refetch: () => {
+      refetch();
+    },
+    ...queryResult,
+  };
+}
+
+export function GetAllClientPendingApplications(token) {
+  const queryKey = "allClientPendingApplications";
+  const queryFn = () => API("get", url.allClientPendingApplications, {}, token);
   const { refetch, ...queryResult } = useQuery(
     [queryKey],
     queryFn,

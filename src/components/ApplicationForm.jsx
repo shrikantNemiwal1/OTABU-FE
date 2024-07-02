@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { applicationFormSchema } from "../validation/formSchema";
 import { useFormik } from "formik";
 import "./styles/registration.scss";
@@ -185,6 +185,15 @@ const ApplicationForm = () => {
     },
   });
 
+  // useEffect(() => {
+  //   columnKeys.map((column) => {
+  //     setFieldValue(
+  //       values?.[column]?.tot_emp,
+  //       Object.values(values?.[column]).reduce((acc, curr) => Number(acc) + Number(curr), 0)
+  //     );
+  //   });
+  // }, [values]);
+
   return (
     <>
       {formLoading ? (
@@ -322,7 +331,7 @@ const ApplicationForm = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {rowKeys.map((rowKey) => (
+                        {rowKeys.map((rowKey, index) => (
                           <tr key={rowKey} className="table-row">
                             <th
                               className={`row-head${
@@ -337,7 +346,19 @@ const ApplicationForm = () => {
                                   type="tel"
                                   name={`${columnKey}.${rowKey}`}
                                   value={values?.[columnKey]?.[rowKey]}
-                                  onChange={handleChange}
+                                  onChange={(e) => {
+                                    handleChange(e);
+                                    let sum = Object.values(
+                                      values?.[columnKey]
+                                    ).reduce(
+                                      (sum, num) => Number(sum) + Number(num)
+                                    );
+                                    sum +=
+                                      Number(e.target.value) -
+                                      Number(values?.[columnKey]?.[rowKey]) -
+                                      Number(values?.[columnKey]?.tot_emp);
+                                    setFieldValue(`${columnKey}.tot_emp`, sum);
+                                  }}
                                   onBlur={handleBlur}
                                   onKeyDown={(e) => {
                                     const key = e.key;
@@ -349,6 +370,7 @@ const ApplicationForm = () => {
                                       e.preventDefault();
                                     }
                                   }}
+                                  disabled={index === rowKeys.length - 1}
                                 />
                                 {touched[columnKey]?.[rowKey] &&
                                   errors[columnKey]?.[rowKey] && (

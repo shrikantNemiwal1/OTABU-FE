@@ -10,6 +10,69 @@ export const loginSchema = Yup.object({
   rememberMe: Yup.bool(),
 });
 
+export const auditorRegistrationSchema = Yup.object({
+  email: Yup.string()
+    .email("Enter a valid email id")
+    .required("Please enter your email"),
+  name: Yup.string().required("Please enter your name"),
+  password: Yup.string()
+    .min(9, "Password must be atleast 9 characters")
+    .matches(
+      /^(?=.*[a-z])/,
+      "Password must contain at least 1 lower case letter"
+    )
+    .matches(
+      /^(?=.*[A-Z])/,
+      "Password must contain at least 1 upper case letter"
+    )
+    .matches(/^(?=.*[0-9])/, "Password must contain at least 1 number")
+    .matches(
+      /^(?=.*[!@#\$%\^&\*])/,
+      "Password must contain at least 1 special case character"
+    )
+    .required("Please enter a password"),
+  confirm_password: Yup.string()
+    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .required("Please enter confirm password"),
+});
+
+// .matches(/^[0-9]\d{9}$/, {
+//   message: "Please enter a valid 10 digit number.",
+//   excludeEmptyString: false,
+// })
+
+export const clientRegistrationSchema = Yup.object({
+  email: Yup.string().email().required("Please enter your email"),
+  mobile: Yup.string().required("Please enter your mobile number"),
+  organization_name: Yup.string().required(
+    "Please enter your organization name"
+  ),
+  director_name: Yup.string().required("Please enter director name"),
+  password: Yup.string()
+    .min(9, "Password must be atleast 9 characters")
+    .matches(
+      /^(?=.*[a-z])/,
+      "Password must contain at least 1 lower case letter"
+    )
+    .matches(
+      /^(?=.*[A-Z])/,
+      "Password must contain at least 1 upper case letter"
+    )
+    .matches(/^(?=.*[0-9])/, "Password must contain at least 1 number")
+    .matches(
+      /^(?=.*[!@#\$%\^&\*])/,
+      "Password must contain at least 1 special case character"
+    )
+    .required("Please enter a password"),
+  confirm_password: Yup.string()
+    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .required("Please enter confirm password"),
+});
+
+// .matches(phoneRegExp, "Phone number is not valid")
+// .min(10, "Phone number is too short")
+// .max(10, "Phone number is too long"),
+
 export const basicApplicationFormSchema = Yup.object({
   certification_type: Yup.string(),
   name_of_company: Yup.string().required("This field is required"),
@@ -17,11 +80,7 @@ export const basicApplicationFormSchema = Yup.object({
   address: Yup.string(),
   Website: Yup.string().url(),
   email: Yup.string().email().required("This field is required"),
-  phone_number: Yup.string()
-    .required("This field is required")
-    .matches(phoneRegExp, "Phone number is not valid")
-    .min(10, "Phone number is too short")
-    .max(10, "Phone number is too long"),
+  phone_number: Yup.string().required("This field is required"),
   contact_person_name: Yup.string(),
   contact_person_design: Yup.string(),
 });
@@ -47,63 +106,6 @@ export const correctiveActionReportFormSchema = Yup.object({
   verifi_onsite: Yup.string(),
   assessed_by_2: Yup.string(),
   date_2: Yup.string(),
-});
-
-export const auditorRegistrationSchema = Yup.object({
-  email: Yup.string().email().required("Please enter your email"),
-  name: Yup.string().required("Please enter your name"),
-  password: Yup.string()
-    .min(9, "Password must be atleast 9 characters")
-    .matches(
-      /^(?=.*[a-z])/,
-      "Password must contain at least 1 lower case letter"
-    )
-    .matches(
-      /^(?=.*[A-Z])/,
-      "Password must contain at least 1 upper case letter"
-    )
-    .matches(/^(?=.*[0-9])/, "Password must contain at least 1 number")
-    .matches(
-      /^(?=.*[!@#\$%\^&\*])/,
-      "Password must contain at least 1 special case character"
-    )
-    .required("Please enter a password"),
-  confirm_password: Yup.string()
-    .oneOf([Yup.ref("password"), null], "Passwords must match")
-    .required("Please enter confirm password"),
-});
-
-export const clientRegistrationSchema = Yup.object({
-  email: Yup.string().email().required("Please enter your email"),
-  mobile: Yup.string()
-    .matches(/^[0-9]\d{9}$/, {
-      message: "Please enter a valid 10 digit number.",
-      excludeEmptyString: false,
-    })
-    .required("Please enter your mobile number"),
-  organization_name: Yup.string().required(
-    "Please enter your organization name"
-  ),
-  director_name: Yup.string().required("Please enter director name"),
-  password: Yup.string()
-    .min(9, "Password must be atleast 9 characters")
-    .matches(
-      /^(?=.*[a-z])/,
-      "Password must contain at least 1 lower case letter"
-    )
-    .matches(
-      /^(?=.*[A-Z])/,
-      "Password must contain at least 1 upper case letter"
-    )
-    .matches(/^(?=.*[0-9])/, "Password must contain at least 1 number")
-    .matches(
-      /^(?=.*[!@#\$%\^&\*])/,
-      "Password must contain at least 1 special case character"
-    )
-    .required("Please enter a password"),
-  confirm_password: Yup.string()
-    .oneOf([Yup.ref("password"), null], "Passwords must match")
-    .required("Please enter confirm password"),
 });
 
 export const forgotPasswordSchema = Yup.object({
@@ -781,62 +783,6 @@ export const auditProgramFormSchema = Yup.object({
     auditor: Yup.string(),
     technical_expert: Yup.string(),
   }),
-
-  // TopManagePolicyImprove: Yup.object().shape({
-  //   stage1: Yup.string(),
-  //   stage2: Yup.string(),
-  //   sa1: Yup.string(),
-  //   sa2: Yup.string(),
-  //   renewal: Yup.string(),
-  // }),
-
-  // QMSDocConOrgRiskIntMRM: Yup.object().shape({
-  //   stage1: Yup.string(),
-  //   stage2: Yup.string(),
-  //   sa1: Yup.string(),
-  //   sa2: Yup.string(),
-  //   renewal: Yup.string(),
-  // }),
-
-  // HRTrainWork: Yup.object().shape({
-  //   stage1: Yup.string(),
-  //   stage2: Yup.string(),
-  //   sa1: Yup.string(),
-  //   sa2: Yup.string(),
-  //   renewal: Yup.string(),
-  // }),
-
-  // MarketCustReqFeedback: Yup.object().shape({
-  //   stage1: Yup.string(),
-  //   stage2: Yup.string(),
-  //   sa1: Yup.string(),
-  //   sa2: Yup.string(),
-  //   renewal: Yup.string(),
-  // }),
-
-  // ProductionQAMaintAnalyCA: Yup.object().shape({
-  //   stage1: Yup.string(),
-  //   stage2: Yup.string(),
-  //   sa1: Yup.string(),
-  //   sa2: Yup.string(),
-  //   renewal: Yup.string(),
-  // }),
-
-  // PurchaseStoresDispatch: Yup.object().shape({
-  //   stage1: Yup.string(),
-  //   stage2: Yup.string(),
-  //   sa1: Yup.string(),
-  //   sa2: Yup.string(),
-  //   renewal: Yup.string(),
-  // }),
-
-  // UseOfLogo: Yup.object().shape({
-  //   stage1: Yup.string(),
-  //   stage2: Yup.string(),
-  //   sa1: Yup.string(),
-  //   sa2: Yup.string(),
-  //   renewal: Yup.string(),
-  // }),
 });
 
 export const agreementFormSchema = Yup.object({
