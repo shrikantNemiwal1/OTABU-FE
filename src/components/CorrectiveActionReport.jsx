@@ -78,7 +78,7 @@ const CorrectiveActionReport = () => {
         headers: { Authorization: `Bearer ${state.token}` },
       };
       const res = await axios.get(
-        BASE_URL + `/api/audit_report_1/get_non_confirmity/${id}`,
+        BASE_URL + `/api/audit_report_1/get_non_conformity/${id}`,
         config
       );
       console.log(res?.data);
@@ -125,10 +125,10 @@ const CorrectiveActionReport = () => {
             BASE_URL +
             `/api/audit_report_1/${
               formSubmitted
-                ? `update_non_confirmity`
+                ? `update_non_conformity`
                 : state.role === "Auditor"
-                ? `create_non_confirmity_auditor`
-                : "create_non_confirmity_client"
+                ? `create_non_conformity_auditor`
+                : "create_non_conformity_client"
             }/${id}`,
           data: formValues,
           headers: {

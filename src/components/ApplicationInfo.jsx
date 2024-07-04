@@ -131,18 +131,12 @@ const ApplicationInfo = () => {
           url:
             BASE_URL +
             `/api/${
-              applicationStatus.includes("Fill Non Confirmity Remarks")
-                ? "audit_report_1/send_if_non_confirmity_auditor"
-                : applicationStatus.includes("Non Confirmities Accepted") ||
-                  applicationStatus.includes("Closure Pending")
-                ? applicationStatus.includes("Audit Plan Stage 2")
-                  ? "audit_report_2/closure_acceptance"
-                  : "audit_report_1/closure_acceptance"
-                : applicationStatus.includes("Form 39B Prepared") ||
-                  applicationStatus.includes("Closure Rejected")
-                ? applicationStatus.includes("Audit Plan Stage 2")
-                  ? "audit_report_2/non_confirmity_acceptance"
-                  : "audit_report_1/non_confirmity_acceptance"
+              applicationStatus.includes("Fill Non conformity Remarks")
+                ? "audit_report_1/send_if_non_conformity_auditor"
+                : applicationStatus.includes("Fill Non conforimity Acceptance")
+                ? "audit_report_1/non_conformity_acceptance_client"
+                : applicationStatus.includes("Fill Closure Acceptance")
+                ? "audit_report_1/closure_acceptance"
                 : applicationStatus.includes("Fill Audit Plan 1 Remarks")
                 ? "audit_plan_1/send_remark"
                 : applicationStatus.includes("Fill Audit Plan 2 Remarks")
@@ -157,9 +151,15 @@ const ApplicationInfo = () => {
             applicationStatus.includes("Fill Intimation Letter 1 Remarks") ||
             applicationStatus.includes("Fill Audit Plan 1 Remarks")
               ? values
-              : applicationStatus.includes("Fill Non Confirmity Remarks")
+              : applicationStatus.includes("Fill Non conforimity Acceptance") ||
+                applicationStatus.includes("Fill Closure Acceptance")
               ? {
-                  non_conformity: values.acceptance_choice === "1" ? "0" : "1",
+                  acceptance_status: values.acceptance_choice,
+                }
+              : applicationStatus.includes("Fill Non conformity Remarks")
+              ? {
+                  acceptance_status:
+                    values.acceptance_choice === "1" ? "0" : "1",
                 }
               : confModalOpen
               ? { quotation_choice: values.acceptance_choice }
@@ -439,8 +439,12 @@ const ApplicationInfo = () => {
               <label>
                 {applicationStatus.includes("Fill Quotation Choice")
                   ? "Send quotation to Client (Yes/No)"
-                  : applicationStatus.includes("Fill Non Confirmity Remarks")
+                  : applicationStatus.includes("Fill Non conformity Remarks")
                   ? "Create Non conformity"
+                  : applicationStatus.includes(
+                      "Fill Non conforimity Acceptance"
+                    )
+                  ? "Accept/Reject Non conformity"
                   : "Accept/Reject Closure"}
               </label>
               <label className="checkbox-label">
@@ -454,7 +458,7 @@ const ApplicationInfo = () => {
                 />
                 <p>
                   {applicationStatus.includes("Fill Quotation Choice") ||
-                  applicationStatus.includes("Fill Non Confirmity Remarks")
+                  applicationStatus.includes("Fill Non conformity Remarks")
                     ? "Yes"
                     : "Accept"}
                 </p>
@@ -470,7 +474,7 @@ const ApplicationInfo = () => {
                 />
                 <p>
                   {applicationStatus.includes("Fill Quotation Choice") ||
-                  applicationStatus.includes("Fill Non Confirmity Remarks")
+                  applicationStatus.includes("Fill Non conformity Remarks")
                     ? "No"
                     : "Reject"}
                 </p>
@@ -638,12 +642,21 @@ const ApplicationInfo = () => {
           {((state.role === "Admin Auditor" &&
             applicationStatus.includes("Fill Quotation Choice")) ||
             (state.role === "Auditor" &&
-              applicationStatus.includes("Fill Non Confirmity Remarks"))) && (
+              (applicationStatus.includes("Fill Non conformity Remarks") ||
+                applicationStatus.includes("Fill Closure Acceptance"))) ||
+            (state.role === "Client" &&
+              applicationStatus.includes(
+                "Fill Non conforimity Acceptance"
+              ))) && (
             <button className="add-btn" onClick={() => setConfModalOpen(true)}>
-              {applicationStatus.includes("Fill Quotation Choice")
+              {applicationStatus.includes("Fill Non conforimity Acceptance")
+                ? "Fill Non conforimity Acceptance"
+                : applicationStatus.includes("Fill Quotation Choice")
                 ? "Fill Quotation Choice"
-                : applicationStatus.includes("Fill Non Confirmity Remarks")
+                : applicationStatus.includes("Fill Non conformity Remarks")
                 ? "Fill Non Conformity Choice"
+                : applicationStatus.includes("Fill Closure Acceptance")
+                ? "Fill Closure Acceptance"
                 : "Fill Choice"}
             </button>
           )}
@@ -1046,14 +1059,9 @@ const ApplicationInfo = () => {
           )} */}
 
           {/* Non confirmities 1 */}
-          {((state.role === "Auditor" &&
-            applicationStatus.includes("Non Confirmities Raised")) ||
-            applicationStatus.includes("Non Confirmities Rejected") ||
-            applicationStatus.includes("Form 39B Prepared") ||
-            applicationStatus.includes("Closure Pending") ||
-            applicationStatus.includes("Closure Rejected") ||
-            applicationStatus.includes("Non Confirmities Accepted")) &&
-            !applicationStatus.includes("Audit Plan Stage 2") && (
+          {(state.role === "Auditor" || state.role === "Client") &&
+            (applicationStatus.includes("Fill Form 39B") ||
+              applicationStatus.includes("Update Form 39B")) && (
               <div className="application_info-section">
                 <NavLink
                   to="corrective-action-report"
@@ -1062,14 +1070,16 @@ const ApplicationInfo = () => {
                   <button className="application__btn">
                     <img
                       src={
-                        !applicationStatus.includes("Non Confirmities Raised")
+                        !applicationStatus.includes("Fill Form 39B") &&
+                        !applicationStatus.includes("Update Form 39B")
                           ? view
                           : request
                       }
                       alt="view"
                     />
                     <p>{`${
-                      !applicationStatus.includes("Non Confirmities Raised")
+                      !applicationStatus.includes("Fill Form 39B") &&
+                      !applicationStatus.includes("Update Form 39B")
                         ? "View"
                         : "Fill"
                     } Corrective Action Report Form`}</p>
