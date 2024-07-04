@@ -75,12 +75,12 @@ export const clientRegistrationSchema = Yup.object({
 
 export const basicApplicationFormSchema = Yup.object({
   certification_type: Yup.string(),
-  name_of_company: Yup.string().required("This field is required"),
+  name_of_company: Yup.string(),
   scope_of_certification: Yup.string(),
   address: Yup.string(),
   Website: Yup.string().url(),
-  email: Yup.string().email().required("This field is required"),
-  phone_number: Yup.string().required("This field is required"),
+  email: Yup.string().email(),
+  phone_number: Yup.string(),
   contact_person_name: Yup.string(),
   contact_person_design: Yup.string(),
 });
@@ -884,8 +884,8 @@ export const applicationReviewFormSchema = Yup.object().shape({
     stage_2: Yup.string(),
     surveil_freq: Yup.string(),
     recerti_mandays: Yup.string(),
-    lead_auditor: Yup.string().required("This field is required"),
-    auditor_1: Yup.string().required("This field is required"),
+    auditor_tl: Yup.string().required("This field is required"),
+    tech_auditor: Yup.string().required("This field is required"),
     auditor_2: Yup.string().required("This field is required"),
   }),
 
@@ -1010,17 +1010,18 @@ export const applicationReviewFormSchema = Yup.object().shape({
   }),
 
   OtabuOffSignDate: Yup.object().shape({
-    review_conducted_AO_TM: Yup.string().required("This field is required"),
+    review_conducted_AO_TM: Yup.string(),
     date_1: Yup.string(),
-    tech_support_code_TE_LA: Yup.string().required("This field is required"),
+    tech_support_code_TE_LA: Yup.string(),
     date_2: Yup.string(),
-    approved_by_DTO_MD: Yup.string().required("This field is required"),
+    approved_by_DTO_MD: Yup.string(),
     date_3: Yup.string(),
   }),
 });
 
 export const applicationFormSchema = Yup.object().shape({
   ApplicationForm: Yup.object().shape({
+    app_ref_id: Yup.mixed(),
     date_of_app: Yup.string(),
     name_of_company: Yup.string(),
     address: Yup.string(),
@@ -1049,20 +1050,8 @@ export const applicationFormSchema = Yup.object().shape({
     external_consultant_experience: Yup.string(),
     hear_otabu: Yup.string(),
   }),
-  LegalStatus: Yup.object().test(
-    "atLeastOneCheckbox",
-    "Please select at least one legal status",
-    (obj) => {
-      return Object.values(obj).some((value) => value === "Yes");
-    }
-  ),
-  CertificationScheme: Yup.object().test(
-    "atLeastOneCheckbox",
-    "Please select at least one certification",
-    (obj) => {
-      return Object.values(obj).some((value) => value === "Yes");
-    }
-  ),
+  LegalStatus: Yup.object(),
+  CertificationScheme: Yup.object(),
   PermanentEmployee: Yup.object().shape({
     top_manage: Yup.string(),
     manu_ser_area: Yup.string(),

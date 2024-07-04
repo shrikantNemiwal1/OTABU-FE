@@ -30,9 +30,9 @@ import { AuthContext } from "../context/AuthContext";
 import { GetAllAuditors } from "../api/api";
 
 const auditorInputs = {
-  lead_auditor: "Lead Auditor/Team Leader",
-  auditor_1: "Auditor 1",
-  auditor_2: "Auditor 2/Technical Expert",
+  auditor_tl: "Lead Auditor/Team Leader",
+  tech_auditor: "Auditor 1/Technical Expert",
+  auditor_2: "Auditor 2",
 };
 
 const ApplicationForm = () => {
@@ -159,6 +159,22 @@ const ApplicationForm = () => {
       setIsLoading(false);
     },
   });
+  console.log([
+    values?.TotEmplMandaysTeam?.auditor_tl,
+    values?.TotEmplMandaysTeam?.tech_auditor,
+    values?.TotEmplMandaysTeam?.auditor_2,
+  ]);
+  const filteredAuditors = data?.data?.filter(
+    (auditor) =>
+      ![
+        values?.TotEmplMandaysTeam?.auditor_tl,
+        values?.TotEmplMandaysTeam?.tech_auditor,
+        values?.TotEmplMandaysTeam?.auditor_2,
+        values?.OtabuOffSignDate?.tech_support_code_TE_LA,
+      ].includes(String(auditor?.id))
+  );
+
+  console.log(filteredAuditors);
 
   return (
     <>
@@ -685,16 +701,40 @@ const ApplicationForm = () => {
                         value={values?.TotEmplMandaysTeam?.[key]}
                         onChange={handleChange}
                       >
-                        <option value="" disabled hidden>
-                          Select an option
-                        </option>
-                        {data?.data.map((auditor) => {
+                        <option value="">Select an option</option>
+                        {filteredAuditors?.map((auditor) => {
                           return (
                             <option value={auditor.id} key={auditor.id}>
                               {auditor.auditor_name}
                             </option>
                           );
                         })}
+                        {values?.TotEmplMandaysTeam?.[key] !== "" && (
+                          <option
+                            value={
+                              data?.data?.find(
+                                (auditor) =>
+                                  String(auditor?.id) ==
+                                  values?.TotEmplMandaysTeam?.[key]
+                              )?.id
+                            }
+                            key={
+                              data?.data?.find(
+                                (auditor) =>
+                                  String(auditor?.id) ==
+                                  values?.TotEmplMandaysTeam?.[key]
+                              )?.id
+                            }
+                          >
+                            {
+                              data?.data?.find(
+                                (auditor) =>
+                                  String(auditor?.id) ==
+                                  values?.TotEmplMandaysTeam?.[key]
+                              )?.auditor_name
+                            }
+                          </option>
+                        )}
                       </select>
                     </div>
                     <div className="input__error-container">
@@ -712,8 +752,8 @@ const ApplicationForm = () => {
                   <label htmlFor="standard">Select :</label>
                   <div className="custom-select" id="standard">
                     <select
-                      name="TotEmplMandaysTeam.auditor_1"
-                      value={values.TotEmplMandaysTeam.auditor_1}
+                      name="TotEmplMandaysTeam.tech_auditor"
+                      value={values.TotEmplMandaysTeam.tech_auditor}
                       onChange={handleChange}
                     >
                       <option value="" disabled hidden>
@@ -1158,16 +1198,41 @@ const ApplicationForm = () => {
                       value={values?.OtabuOffSignDate?.tech_support_code_TE_LA}
                       onChange={handleChange}
                     >
-                      <option value="" disabled hidden>
-                        Select an option
-                      </option>
-                      {data?.data.map((auditor) => {
+                      <option value="">Select an option</option>
+                      {filteredAuditors?.map((auditor) => {
                         return (
                           <option value={auditor.id} key={auditor.id}>
                             {auditor.auditor_name}
                           </option>
                         );
                       })}
+                      {values?.OtabuOffSignDate.tech_support_code_TE_LA !==
+                        "" && (
+                        <option
+                          value={
+                            data?.data?.find(
+                              (auditor) =>
+                                String(auditor?.id) ==
+                                values?.OtabuOffSignDate.tech_support_code_TE_LA
+                            )?.id
+                          }
+                          key={
+                            data?.data?.find(
+                              (auditor) =>
+                                String(auditor?.id) ==
+                                values?.OtabuOffSignDate.tech_support_code_TE_LA
+                            )?.id
+                          }
+                        >
+                          {
+                            data?.data?.find(
+                              (auditor) =>
+                                String(auditor?.id) ==
+                                values?.OtabuOffSignDate.tech_support_code_TE_LA
+                            )?.auditor_name
+                          }
+                        </option>
+                      )}
                     </select>
                   </div>
                   <div className="input__error-container">

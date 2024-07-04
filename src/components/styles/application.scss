@@ -102,6 +102,29 @@ fieldset {
   max-width: 50%;
 }
 
+.remarks-head{
+  margin-top: 1rem;
+  margin-left: .3rem;
+}
+
+.remarks-list{
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap: .4rem;
+  margin: .3rem;
+  margin-top: .5rem;
+}
+
+.remarks-remark{
+  background-color: #fff5cc;
+  list-style-type: none;
+  display: inline;
+  margin-right: auto;
+  padding: .3rem .6rem;
+  border-radius: .4rem;
+}
+
 .pt-0{
   margin-top: 0;
 }

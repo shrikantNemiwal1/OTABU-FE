@@ -36,7 +36,9 @@ const ApplicationInfo = () => {
   const [remarks, setRemarks] = useState();
   const [dataLoading, setDataLoading] = useState(true);
   const [auditPlan1, setAuditPlan1] = useState("");
+  const [auditReport1, setAuditReport1] = useState("");
   const [auditPlan2, setAuditPlan2] = useState("");
+  const [auditReport2, setAuditReport2] = useState("");
   const [uploading, setUploading] = useState(false);
   console.log(auditPlan1);
   const id = pathname.slice(13);
@@ -80,7 +82,10 @@ const ApplicationInfo = () => {
       const res = await axios.get(
         BASE_URL +
           `/api/${
-            applicationStatus.includes("Intimation Letter Remarks")
+            applicationStatus.includes("Audit Plan 1 Remarks")
+              ? "audit_plan_1/get_audit_plan_1_remarks"
+              : applicationStatus.includes("Intimation Letter Remarks") ||
+                applicationStatus.includes("Fill Intimation Letter Remarks")
               ? "intimation_letter_1/get_intimartion_1_remarks"
               : "app_review/get_app_review_remarks"
           }/${id}`,
@@ -126,8 +131,10 @@ const ApplicationInfo = () => {
           url:
             BASE_URL +
             `/api/${
-              applicationStatus.includes("Non Confirmities Accepted") ||
-              applicationStatus.includes("Closure Pending")
+              applicationStatus.includes("Fill Non Confirmity Remarks")
+                ? "audit_report_1/send_if_non_confirmity_auditor"
+                : applicationStatus.includes("Non Confirmities Accepted") ||
+                  applicationStatus.includes("Closure Pending")
                 ? applicationStatus.includes("Audit Plan Stage 2")
                   ? "audit_report_2/closure_acceptance"
                   : "audit_report_1/closure_acceptance"
@@ -138,7 +145,7 @@ const ApplicationInfo = () => {
                   : "audit_report_1/non_confirmity_acceptance"
                 : applicationStatus.includes("Fill Audit Plan 1 Remarks")
                 ? "audit_plan_1/send_remark"
-                : applicationStatus.includes("Audit Plan 2 Acceptance Pending")
+                : applicationStatus.includes("Fill Audit Plan 2 Remarks")
                 ? "audit_plan_2/send_remark"
                 : applicationStatus.includes("Fill Quotation Choice")
                 ? "quotation/send_quotation_choice"
@@ -150,6 +157,10 @@ const ApplicationInfo = () => {
             applicationStatus.includes("Fill Intimation Letter 1 Remarks") ||
             applicationStatus.includes("Fill Audit Plan 1 Remarks")
               ? values
+              : applicationStatus.includes("Fill Non Confirmity Remarks")
+              ? {
+                  non_conformity: values.acceptance_choice === "1" ? "0" : "1",
+                }
               : confModalOpen
               ? { quotation_choice: values.acceptance_choice }
               : { remark: values.remark },
@@ -166,6 +177,7 @@ const ApplicationInfo = () => {
         setConfModalOpen(false);
         console.log(response);
         getApplicationDetails();
+        setRemarks(null);
       } catch (error) {
         setAlertType("error");
         setAlertMsg(error?.response?.data?.msg);
@@ -177,20 +189,38 @@ const ApplicationInfo = () => {
     },
   });
 
-  const uploadFile = async () => {
-    if (!auditPlan1) return;
+  const uploadFile = async (fileName) => {
+    if (
+      (fileName === "plan1" && !auditPlan1) ||
+      (fileName === "report1" && !auditReport1)
+    )
+      return;
 
     const formData = new FormData();
-    formData.append("audit_plan_url", auditPlan1);
+    formData.append(
+      fileName === "plan1" ? "audit_plan_url" : "audit_report_url",
+      fileName === "plan1" ? auditPlan1 : auditReport1
+    );
 
     try {
       setUploading(true);
       const response = await axios({
-        method: applicationStatus.includes("Audit Plan 1") ? "put" : "post",
+        method:
+          (fileName === "plan1" &&
+            applicationStatus.includes("Audit Plan 1")) ||
+          (fileName === "report1" &&
+            applicationStatus.includes("Audit Report 1"))
+            ? "put"
+            : "post",
         url:
           BASE_URL +
-          `/api/audit_plan_1/${
-            applicationStatus.includes("Audit Plan 1") ? "update" : "create"
+          `/api/${fileName === "plan1" ? "audit_plan_1" : "audit_report_1"}/${
+            (fileName === "plan1" &&
+              applicationStatus.includes("Audit Plan 1")) ||
+            (fileName === "report1" &&
+              applicationStatus.includes("Audit Report 1"))
+              ? "update"
+              : "create"
           }/${id}`,
         data: formData,
         headers: {
@@ -198,8 +228,12 @@ const ApplicationInfo = () => {
           Authorization: `Bearer ${state.token}`,
         },
       });
+      console.log(response);
       setAlertType("success");
-      setAlertMsg(response?.data?.message || response?.data?.msg);
+      setAlertMsg(
+        response?.data?.msg ? response?.data?.msg : response?.data?.message
+      );
+      setOpen(true);
       getApplicationDetails();
     } catch (error) {
       setAlertType("error");
@@ -405,10 +439,9 @@ const ApplicationInfo = () => {
               <label>
                 {applicationStatus.includes("Fill Quotation Choice")
                   ? "Send quotation to Client (Yes/No)"
-                  : applicationStatus.includes("Non Confirmities Accepted") ||
-                    applicationStatus.includes("Closure Pending")
-                  ? "Accept/Reject Closure"
-                  : "Accept/Reject Non conformity"}
+                  : applicationStatus.includes("Fill Non Confirmity Remarks")
+                  ? "Create Non conformity"
+                  : "Accept/Reject Closure"}
               </label>
               <label className="checkbox-label">
                 <input
@@ -420,7 +453,8 @@ const ApplicationInfo = () => {
                   onBlur={handleBlur}
                 />
                 <p>
-                  {applicationStatus.includes("Fill Quotation Choice")
+                  {applicationStatus.includes("Fill Quotation Choice") ||
+                  applicationStatus.includes("Fill Non Confirmity Remarks")
                     ? "Yes"
                     : "Accept"}
                 </p>
@@ -435,7 +469,8 @@ const ApplicationInfo = () => {
                   onBlur={handleBlur}
                 />
                 <p>
-                  {applicationStatus.includes("Fill Quotation Choice")
+                  {applicationStatus.includes("Fill Quotation Choice") ||
+                  applicationStatus.includes("Fill Non Confirmity Remarks")
                     ? "No"
                     : "Reject"}
                 </p>
@@ -573,9 +608,17 @@ const ApplicationInfo = () => {
       ) : (
         <div className="application__info">
           <h2>Application (ID : {id})</h2>
-          <button className="add-btn" onClick={getApplicationDetails}>
+          <button
+            className="add-btn"
+            onClick={() => {
+              getApplicationDetails();
+              setRemarks(null);
+            }}
+          >
             Refresh
           </button>
+
+          {/* Remark only modal */}
           {state.role === "Auditor" &&
             applicationStatus.includes("Fill Remarks for App Review") && (
               <button className="add-btn" onClick={() => setModalOpen(true)}>
@@ -585,32 +628,35 @@ const ApplicationInfo = () => {
                       "Audit Plan 2 Acceptance Pending"
                     )
                   ? "Accept Audit Plan 2"
+                  : applicationStatus.includes("Fill Remarks for App Review")
+                  ? "Fill Remarks for App Review"
                   : "Send Remark"}
               </button>
             )}
 
-          {state.role === "Admin Auditor" &&
-            applicationStatus.includes("Fill Quotation Choice") && (
-              <button
-                className="add-btn"
-                onClick={() => setConfModalOpen(true)}
-              >
-                {applicationStatus.includes("Fill Quotation Choice")
-                  ? "Fill Quotation Choice"
-                  : applicationStatus.includes("Non Confirmities Accepted") ||
-                    applicationStatus.includes("Closure Pending")
-                  ? "Accept Closure"
-                  : "Accept Non conformity"}
-              </button>
-            )}
+          {/* Yes/No modal */}
+          {((state.role === "Admin Auditor" &&
+            applicationStatus.includes("Fill Quotation Choice")) ||
+            (state.role === "Auditor" &&
+              applicationStatus.includes("Fill Non Confirmity Remarks"))) && (
+            <button className="add-btn" onClick={() => setConfModalOpen(true)}>
+              {applicationStatus.includes("Fill Quotation Choice")
+                ? "Fill Quotation Choice"
+                : applicationStatus.includes("Fill Non Confirmity Remarks")
+                ? "Fill Non Conformity Choice"
+                : "Fill Choice"}
+            </button>
+          )}
 
+          {/* Full Modal */}
           {(applicationStatus.includes("Fill Intimation Letter 1 Remarks") ||
             applicationStatus.includes("Fill Audit Plan 1 Remarks")) && (
             <button className="add-btn" onClick={() => setFullModalOpen(true)}>
-              {applicationStatus.includes("Fill Intimation Letter 1 Remarks") ||
-              applicationStatus.includes("Fill Audit Plan 1 Remarks")
-                ? "Send Remarks"
-                : ""}
+              {applicationStatus.includes("Fill Intimation Letter 1 Remarks")
+                ? "Fill Intimation letter 1 Remarks"
+                : applicationStatus.includes("Fill Audit Plan 1 Remarks")
+                ? "Fill Audit Plan 1 Remarks"
+                : "Send Remarks"}
             </button>
           )}
 
@@ -641,12 +687,25 @@ const ApplicationInfo = () => {
               <div className="application_info-section">
                 <NavLink to="application-form" className="link-without-style">
                   <button className="application__btn">
-                    <img src={view} alt="view" />
-                    <p>{`${
-                      applicationStatus.includes("Application Rejected")
-                        ? "Update"
-                        : "View"
-                    } Application Form`}</p>
+                    <img
+                      src={
+                        state.role === "Admin Auditor" &&
+                        applicationStatus.length == 1
+                          ? request
+                          : view
+                      }
+                      alt="view"
+                    />
+                    <p>
+                      {state.role === "Admin Auditor" &&
+                      applicationStatus.length == 1
+                        ? "Fill Application Ref ID"
+                        : `${
+                            applicationStatus.includes("Application Rejected")
+                              ? "Update"
+                              : "View"
+                          } Application Form`}
+                    </p>
                   </button>
                 </NavLink>
                 <button className="application__btn application__btn--green">
@@ -819,12 +878,16 @@ const ApplicationInfo = () => {
             </div>
           )}
 
+          {/* Audit Plan 1 */}
           {((state.role === "Admin Auditor" &&
             applicationStatus.includes("Audit Plan 1")) ||
             (state.role === "Auditor" &&
               (applicationStatus.includes("Fill Audit Plan 1") ||
                 applicationStatus.includes("Audit Plan 1 Rejected")))) && (
-            <div>Upload Audit Plan 1</div>
+            <div>
+              {applicationStatus.includes("Audit Plan 1") ? "Update" : "Upload"}{" "}
+              Audit Plan 1
+            </div>
           )}
           <div className="application_info-section">
             {((state.role === "Admin Auditor" &&
@@ -838,6 +901,7 @@ const ApplicationInfo = () => {
                   type="file"
                   id="audit-plan-1-file"
                   onChange={(e) => setAuditPlan1(e.target.files[0])}
+                  accept="application/msword, application/pdf, .docx"
                 />
               </label>
             )}
@@ -851,7 +915,8 @@ const ApplicationInfo = () => {
               </button>
             )}
           </div>
-          {(state.role === "Admin Auditor" ||
+          {((state.role === "Admin Auditor" &&
+            applicationStatus.includes("Audit Plan 1")) ||
             (state.role === "Auditor" &&
               (applicationStatus.includes("Fill Audit Plan 1") ||
                 applicationStatus.includes("Audit Plan 1 Rejected")))) && (
@@ -859,14 +924,68 @@ const ApplicationInfo = () => {
               <button
                 className="remarks-text add-btn pt-0"
                 disabled={!auditPlan1}
-                onClick={uploadFile}
+                onClick={() => uploadFile("plan1")}
               >
                 Upload
               </button>
             </div>
           )}
 
-          {/* Audit Plan 1 */}
+          {/* Audit Report 1 */}
+          {((state.role === "Admin Auditor" &&
+            applicationStatus.includes("Audit Report 1")) ||
+            (state.role === "Auditor" &&
+              (applicationStatus.includes("Fill Audit Report 1") ||
+                applicationStatus.includes("Audit Report 1 Rejected")))) && (
+            <div>
+              {applicationStatus.includes("Audit Report 1")
+                ? "Update"
+                : "Upload"}{" "}
+              Audit Report 1
+            </div>
+          )}
+          <div className="application_info-section">
+            {((state.role === "Admin Auditor" &&
+              applicationStatus.includes("Audit Report 1")) ||
+              (state.role === "Auditor" &&
+                (applicationStatus.includes("Fill Audit Report 1") ||
+                  applicationStatus.includes("Audit Report 1 Rejected")))) && (
+              <label className="application__btn" htmlFor="audit-report-1-file">
+                <img src={upload} alt="view" />
+                <input
+                  type="file"
+                  id="audit-report-1-file"
+                  onChange={(e) => setAuditReport1(e.target.files[0])}
+                  accept="application/msword, application/pdf, .docx"
+                />
+              </label>
+            )}
+            {applicationStatus.includes("Audit Report 1") && (
+              <button
+                className="application__btn application__btn--green"
+                onClick={handleDownload}
+              >
+                <img src={download} alt="print" />
+                <p>Download Audit Report stage 1 Form</p>
+              </button>
+            )}
+          </div>
+          {((state.role === "Admin Auditor" &&
+            applicationStatus.includes("Audit Report 1")) ||
+            (state.role === "Auditor" &&
+              (applicationStatus.includes("Fill Audit Report 1") ||
+                applicationStatus.includes("Audit Report 1 Rejected")))) && (
+            <div>
+              <button
+                className="remarks-text add-btn pt-0"
+                disabled={!auditReport1}
+                onClick={() => uploadFile("report1")}
+              >
+                Upload
+              </button>
+            </div>
+          )}
+
           {/* {((state.role === "Admin Auditor" &&
             applicationStatus.includes("Intimation Letter 1")) ||
             applicationStatus.includes("Auditor Assigned") ||
@@ -896,8 +1015,7 @@ const ApplicationInfo = () => {
             </div>
           )} */}
 
-          {/* Audit Report 1 */}
-          {((state.role === "Auditor" &&
+          {/* {((state.role === "Auditor" &&
             applicationStatus.includes("Audit Plan 1 Accepted")) ||
             applicationStatus.includes("Audit Report 1")) && (
             <div className="application_info-section">
@@ -925,7 +1043,7 @@ const ApplicationInfo = () => {
                 <p>Print Audit Program 1 Form</p>
               </button>
             </div>
-          )}
+          )} */}
 
           {/* Non confirmities 1 */}
           {((state.role === "Auditor" &&
@@ -1190,13 +1308,36 @@ const ApplicationInfo = () => {
                 </button>
               </div>
             )}
-          {state.role === "Admin Auditor" &&
-            (applicationStatus.includes("App Reviewer Remarks") ||
-              applicationStatus.includes("Intimation Letter Remarks")) && (
+
+          {!remarks &&
+            ((state.role === "Admin Auditor" &&
+              ((applicationStatus.includes("App Reviewer Remarks") &&
+                !applicationStatus.includes("Intimation Letter 1")) ||
+                applicationStatus.includes("Intimation Letter Remarks") ||
+                applicationStatus.includes("Audit Plan 1 Remarks"))) ||
+              (state.role === "Auditor" &&
+                applicationStatus.includes("Audit Plan 1 Remarks"))) && (
               <button className="remarks-text add-btn" onClick={getRemarks}>
                 Show Remarks
               </button>
             )}
+          {remarks?.length > 0 && (
+            <>
+              <h3 className="remarks-head">Remarks</h3>
+              <ul className="remarks-list">
+                {remarks.map((remark) => (
+                  <li className="remarks-remark" key={remark.id}>
+                    Remark : {remark?.remark} &nbsp; | &nbsp; Sender :{" "}
+                    {remark?.sender_name
+                      ? remark?.sender_name
+                      : applicationStatus.includes("Audit Plan 1 Remarks")
+                      ? "Client"
+                      : "Auditor"}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
       )}
     </>

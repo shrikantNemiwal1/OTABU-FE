@@ -171,6 +171,7 @@ export const acciStatRowkeys = {
 
 export const initialValues = {
   ApplicationForm: {
+    app_ref_id: "",
     date_of_app: "",
     certification_type: "Initial Certification",
     certification_scheme: "ISO 9001",

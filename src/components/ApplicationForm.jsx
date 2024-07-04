@@ -228,7 +228,30 @@ const ApplicationForm = () => {
                 {/* ApplicationForm */}
                 <>
                   <h2 className="form-sub-title">Application Form</h2>
-
+                  {state.role === "Admin Auditor" && (
+                    <div className="input__container">
+                      <label htmlFor={`ApplicationForm.app_ref_id`}>
+                        Application Ref ID :
+                      </label>
+                      <input
+                        type="text"
+                        name={`ApplicationForm.app_ref_id`}
+                        id={`ApplicationForm.app_ref_id`}
+                        value={values.ApplicationForm.app_ref_id}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        placeholder={`Enter Application Ref ID `}
+                      />
+                      <div className="input__error-container">
+                        {errors.ApplicationForm?.app_ref_id ||
+                        touched.ApplicationForm?.app_ref_id ? (
+                          <p className="input__error">
+                            {errors.ApplicationForm?.app_ref_id}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  )}
                   <div className="input__container">
                     <label htmlFor="standard">
                       Select Certification Type :
