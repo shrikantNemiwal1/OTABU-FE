@@ -81,7 +81,11 @@ const ApplicationInfo = () => {
       const res = await axios.get(
         BASE_URL +
           `/api/${
-            applicationStatus.includes("Audit Plan 1 Remarks")
+            applicationStatus.includes(
+              "Audit Report 1 Remarks by Application Reviewer"
+            )
+              ? "audit_report_1/get_audit_report_1_remarks"
+              : applicationStatus.includes("Audit Plan 1 Remarks")
               ? "audit_plan_1/get_audit_plan_1_remarks"
               : applicationStatus.includes("Intimation Letter Remarks") ||
                 applicationStatus.includes("Fill Intimation Letter Remarks")
@@ -1293,9 +1297,15 @@ const ApplicationInfo = () => {
               ((applicationStatus.includes("App Reviewer Remarks") &&
                 !applicationStatus.includes("Intimation Letter 1")) ||
                 applicationStatus.includes("Intimation Letter Remarks") ||
-                applicationStatus.includes("Audit Plan 1 Remarks"))) ||
+                applicationStatus.includes("Audit Plan 1 Remarks") ||
+                applicationStatus.includes(
+                  "Audit Report 1 Remarks by Application Reviewer"
+                ))) ||
               (state.role === "Auditor" &&
-                applicationStatus.includes("Audit Plan 1 Remarks"))) && (
+                (applicationStatus.includes("Audit Plan 1 Remarks") ||
+                  applicationStatus.includes(
+                    "Audit Report 1 Remarks by Application Reviewer"
+                  )))) && (
               <button className="remarks-text add-btn" onClick={getRemarks}>
                 Show Remarks
               </button>
