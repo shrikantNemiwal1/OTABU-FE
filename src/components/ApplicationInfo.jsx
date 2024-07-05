@@ -40,7 +40,6 @@ const ApplicationInfo = () => {
   const [auditPlan2, setAuditPlan2] = useState("");
   const [auditReport2, setAuditReport2] = useState("");
   const [uploading, setUploading] = useState(false);
-  console.log(auditPlan1);
   const id = pathname.slice(13);
   const style = {
     position: "absolute",
@@ -1061,7 +1060,8 @@ const ApplicationInfo = () => {
           {/* Non confirmities 1 */}
           {(state.role === "Auditor" || state.role === "Client") &&
             (applicationStatus.includes("Fill Form 39B") ||
-              applicationStatus.includes("Update Form 39B")) && (
+              applicationStatus.includes("Update Form 39B") ||
+              applicationStatus.includes("Form 39B")) && (
               <div className="application_info-section">
                 <NavLink
                   to="corrective-action-report"
