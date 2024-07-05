@@ -130,7 +130,9 @@ const ApplicationInfo = () => {
           url:
             BASE_URL +
             `/api/${
-              applicationStatus.includes("Fill Non conformity Remarks")
+              applicationStatus.includes("Fill Audit Report 1 Remarks")
+                ? "audit_report_1/send_remark"
+                : applicationStatus.includes("Fill Non conformity Remarks")
                 ? "audit_report_1/send_if_non_conformity_auditor"
                 : applicationStatus.includes("Fill Non conforimity Acceptance")
                 ? "audit_report_1/non_conformity_acceptance_client"
@@ -345,44 +347,6 @@ const ApplicationInfo = () => {
                 ? "Audit Plan 2 Acceptance"
                 : "Send Remark"}
             </div>
-            {/* <div className="input__container checkbox-container">
-              <label>
-                {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
-                  ? "Accept/Reject Audit Plan 1"
-                  : applicationStatus.includes(
-                      "Audit Plan 2 Acceptance Pending"
-                    )
-                  ? "Accept/Reject Audit Plan 2"
-                  : "Accept/Reject Application"}
-              </label>
-              <label className="checkbox-label">
-                <input
-                  type="radio"
-                  name="acceptance_choice"
-                  value="1"
-                  checked={values.acceptance_choice === "1"}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                <p>Accept</p>
-              </label>
-              <label className="checkbox-label">
-                <input
-                  type="radio"
-                  name="acceptance_choice"
-                  value="0"
-                  checked={values.acceptance_choice === "0"}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                <p>Reject</p>
-              </label>
-              <div className="input__error-container">
-                {errors.acceptance_choice || touched.acceptance_choice ? (
-                  <p className="input__error">{errors.acceptance_choice}</p>
-                ) : null}
-              </div>
-            </div> */}
             <div className="input__container">
               <label htmlFor="remark">Remark :</label>
               <input
@@ -623,9 +587,14 @@ const ApplicationInfo = () => {
 
           {/* Remark only modal */}
           {state.role === "Auditor" &&
-            applicationStatus.includes("Fill Remarks for App Review") && (
+            (applicationStatus.includes("Fill Remarks for App Review") ||
+              applicationStatus.includes("Fill Audit Report 1 Remarks")) && (
               <button className="add-btn" onClick={() => setModalOpen(true)}>
-                {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
+                {applicationStatus.includes("Fill Audit Report 1 Remarks")
+                  ? "Fill Audit Report 1 Remarks"
+                  : applicationStatus.includes(
+                      "Audit Plan 1 Acceptance Pending"
+                    )
                   ? "Accept Audit Plan 1"
                   : applicationStatus.includes(
                       "Audit Plan 2 Acceptance Pending"
