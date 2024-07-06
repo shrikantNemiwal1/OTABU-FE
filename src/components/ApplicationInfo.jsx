@@ -82,13 +82,32 @@ const ApplicationInfo = () => {
         BASE_URL +
           `/api/${
             applicationStatus.includes(
-              "Audit Report 1 Remarks by Application Reviewer"
+              "Audit Report Stage 2 Remarks by Application Reviewer"
             )
+              ? "audit_report_2/get_audit_report_2_remarks"
+              : applicationStatus.includes("Audit Plan Stage 2 Remarks")
+              ? "audit_plan_2/get_audit_plan_2_remarks"
+              : applicationStatus.includes(
+                  "Intimation Letter Stage 2 Remarks"
+                ) ||
+                applicationStatus.includes(
+                  "Fill Intimation Letter Stage 2 Remarks"
+                ) ||
+                applicationStatus.includes("Intimation letter 2 rejected")
+              ? "intimation_letter_2/get_intimartion_2_remarks"
+              : applicationStatus.includes(
+                  "Audit Report Stage 1 Remarks by Application Reviewer"
+                )
               ? "audit_report_1/get_audit_report_1_remarks"
-              : applicationStatus.includes("Audit Plan 1 Remarks")
+              : applicationStatus.includes("Audit Plan Stage 1 Remarks")
               ? "audit_plan_1/get_audit_plan_1_remarks"
-              : applicationStatus.includes("Intimation Letter Remarks") ||
-                applicationStatus.includes("Fill Intimation Letter Remarks")
+              : applicationStatus.includes(
+                  "Intimation Letter Stage 1 Remarks"
+                ) ||
+                applicationStatus.includes(
+                  "Fill Intimation Letter Stage 1 Remarks"
+                ) ||
+                applicationStatus.includes("Intimation letter 1 rejected")
               ? "intimation_letter_1/get_intimartion_1_remarks"
               : "app_review/get_app_review_remarks"
           }/${id}`,
@@ -119,8 +138,12 @@ const ApplicationInfo = () => {
     enableReinitialize: true,
     onSubmit: async (values) => {
       if (
-        (applicationStatus.includes("Fill Intimation Letter 1 Remarks") ||
-          applicationStatus.includes("Fill Audit Plan 1 Remarks")) &&
+        (applicationStatus.includes("Fill Intimation Letter Stage 1 Remarks") ||
+          applicationStatus.includes("Fill Audit Plan Stage 1 Remarks") ||
+          applicationStatus.includes(
+            "Fill Intimation Letter Stage 2 Remarks"
+          ) ||
+          applicationStatus.includes("Fill Audit Plan Stage 2 Remarks")) &&
         values?.remark.trim() === ""
       ) {
         setErrors({ remark: "This field is required" });
@@ -128,40 +151,70 @@ const ApplicationInfo = () => {
       }
       setIsLoading(true);
       try {
-        console.log(values);
         const response = await axios({
           method: "post",
           url:
             BASE_URL +
             `/api/${
-              applicationStatus.includes("Fill Audit Report 1 Remarks")
+              applicationStatus.includes("Fill Audit Report Stage 1 Remarks")
                 ? "audit_report_1/send_remark"
-                : applicationStatus.includes("Fill Non conformity Remarks")
+                : applicationStatus.includes(
+                    "Fill Audit Report Stage 2 Remarks"
+                  )
+                ? "audit_report_2/send_remark"
+                : applicationStatus.includes(
+                    "Fill Non conformity Remarks Stage 1"
+                  )
                 ? "audit_report_1/send_if_non_conformity_auditor"
-                : applicationStatus.includes("Fill Non conforimity Acceptance")
+                : applicationStatus.includes(
+                    "Fill Non conforimity Acceptance Stage 1"
+                  )
                 ? "audit_report_1/non_conformity_acceptance_client"
-                : applicationStatus.includes("Fill Closure Acceptance")
+                : applicationStatus.includes("Fill Closure Acceptance Stage 1")
                 ? "audit_report_1/closure_acceptance"
-                : applicationStatus.includes("Fill Audit Plan 1 Remarks")
+                : applicationStatus.includes("Fill Audit Plan Stage 1 Remarks")
                 ? "audit_plan_1/send_remark"
-                : applicationStatus.includes("Fill Audit Plan 2 Remarks")
+                : applicationStatus.includes("Fill Audit Plan Stage 2 Remarks")
                 ? "audit_plan_2/send_remark"
                 : applicationStatus.includes("Fill Quotation Choice")
                 ? "quotation/send_quotation_choice"
-                : applicationStatus.includes("Fill Intimation Letter 1 Remarks")
+                : applicationStatus.includes(
+                    "Fill Intimation Letter Stage 1 Remarks"
+                  )
                 ? "intimation_letter_1/send_remark"
+                : applicationStatus.includes(
+                    "Fill Intimation Letter Stage 2 Remarks"
+                  )
+                ? "intimation_letter_2/send_remark"
                 : "app_review/send_remark"
             }/${id}`,
           data:
-            applicationStatus.includes("Fill Intimation Letter 1 Remarks") ||
-            applicationStatus.includes("Fill Audit Plan 1 Remarks")
+            applicationStatus.includes(
+              "Fill Intimation Letter Stage 1 Remarks"
+            ) ||
+            applicationStatus.includes("Fill Audit Plan Stage 1 Remarks") ||
+            applicationStatus.includes(
+              "Fill Intimation Letter Stage 2 Remarks"
+            ) ||
+            applicationStatus.includes("Fill Audit Plan Stage 2 Remarks")
               ? values
-              : applicationStatus.includes("Fill Non conforimity Acceptance") ||
-                applicationStatus.includes("Fill Closure Acceptance")
+              : applicationStatus.includes(
+                  "Fill Non conforimity Acceptance Stage 1"
+                ) ||
+                applicationStatus.includes("Fill Closure Acceptance Stage 1") ||
+                applicationStatus.includes(
+                  "Fill Non conforimity Acceptance Stage 2"
+                ) ||
+                applicationStatus.includes("Fill Closure Acceptance Stage 2")
               ? {
                   acceptance_status: values.acceptance_choice,
                 }
-              : applicationStatus.includes("Fill Non conformity Remarks")
+              : applicationStatus.includes(
+                  "Fill Non conformity Remarks Stage 1"
+                ) ||
+                applicationStatus.includes(
+                  "Fill Non conformity Remarks Stage 2"
+                )
               ? {
                   acceptance_status:
                     values.acceptance_choice === "1" ? "0" : "1",
@@ -197,14 +250,28 @@ const ApplicationInfo = () => {
   const uploadFile = async (fileName) => {
     if (
       (fileName === "plan1" && !auditPlan1) ||
-      (fileName === "report1" && !auditReport1)
+      (fileName === "report1" && !auditReport1) ||
+      (fileName === "plan2" && !auditPlan2) ||
+      (fileName === "report2" && !auditReport2)
     )
       return;
 
     const formData = new FormData();
     formData.append(
-      fileName === "plan1" ? "audit_plan_url" : "audit_report_url",
-      fileName === "plan1" ? auditPlan1 : auditReport1
+      fileName === "plan1"
+        ? "audit_plan_url"
+        : fileName === "plan2"
+        ? "audit_plan_2_url"
+        : fileName === "report1"
+        ? "audit_report_url"
+        : "audit_report_2_url",
+      fileName === "plan1"
+        ? auditPlan1
+        : fileName === "plan2"
+        ? auditPlan2
+        : fileName === "report1"
+        ? auditReport1
+        : auditReport2
     );
 
     try {
@@ -212,18 +279,34 @@ const ApplicationInfo = () => {
       const response = await axios({
         method:
           (fileName === "plan1" &&
-            applicationStatus.includes("Audit Plan 1")) ||
+            applicationStatus.includes("Audit Plan Stage 1")) ||
           (fileName === "report1" &&
-            applicationStatus.includes("Audit Report 1"))
+            applicationStatus.includes("Audit Report Stage 1")) ||
+          (fileName === "plan2" &&
+            applicationStatus.includes("Audit Plan Stage 2")) ||
+          (fileName === "report2" &&
+            applicationStatus.includes("Audit Report Stage 2"))
             ? "put"
             : "post",
         url:
           BASE_URL +
-          `/api/${fileName === "plan1" ? "audit_plan_1" : "audit_report_1"}/${
+          `/api/${
+            fileName === "plan1"
+              ? "audit_plan_1"
+              : fileName === "plan2"
+              ? "audit_plan_2"
+              : fileName === "report1"
+              ? "audit_report_1"
+              : "audit_report_2"
+          }/${
             (fileName === "plan1" &&
-              applicationStatus.includes("Audit Plan 1")) ||
+              applicationStatus.includes("Audit Plan Stage 1")) ||
             (fileName === "report1" &&
-              applicationStatus.includes("Audit Report 1"))
+              applicationStatus.includes("Audit Report Stage 1")) ||
+            (fileName === "plan2" &&
+              applicationStatus.includes("Audit Plan Stage 2")) ||
+            (fileName === "report2" &&
+              applicationStatus.includes("Audit Report Stage 2"))
               ? "update"
               : "create"
           }/${id}`,
@@ -345,8 +428,10 @@ const ApplicationInfo = () => {
               &#9587;
             </button>
             <div className="modal__title">
-              {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
-                ? "Audit Plan 1 Acceptance"
+              {applicationStatus.includes(
+                "Audit Plan Stage 1 Acceptance Pending"
+              )
+                ? "Audit Plan Stage 1 Acceptance"
                 : applicationStatus.includes("Audit Plan 2 Acceptance Pending")
                 ? "Audit Plan 2 Acceptance"
                 : "Send Remark"}
@@ -406,10 +491,12 @@ const ApplicationInfo = () => {
               <label>
                 {applicationStatus.includes("Fill Quotation Choice")
                   ? "Send quotation to Client (Yes/No)"
-                  : applicationStatus.includes("Fill Non conformity Remarks")
+                  : applicationStatus.includes(
+                      "Fill Non conformity Remarks Stage 1"
+                    )
                   ? "Create Non conformity"
                   : applicationStatus.includes(
-                      "Fill Non conforimity Acceptance"
+                      "Fill Non conforimity Acceptance Stage 1"
                     )
                   ? "Accept/Reject Non conformity"
                   : "Accept/Reject Closure"}
@@ -425,7 +512,9 @@ const ApplicationInfo = () => {
                 />
                 <p>
                   {applicationStatus.includes("Fill Quotation Choice") ||
-                  applicationStatus.includes("Fill Non conformity Remarks")
+                  applicationStatus.includes(
+                    "Fill Non conformity Remarks Stage 1"
+                  )
                     ? "Yes"
                     : "Accept"}
                 </p>
@@ -441,7 +530,9 @@ const ApplicationInfo = () => {
                 />
                 <p>
                   {applicationStatus.includes("Fill Quotation Choice") ||
-                  applicationStatus.includes("Fill Non conformity Remarks")
+                  applicationStatus.includes(
+                    "Fill Non conformity Remarks Stage 1"
+                  )
                     ? "No"
                     : "Reject"}
                 </p>
@@ -479,24 +570,32 @@ const ApplicationInfo = () => {
               &#9587;
             </button>
             <div className="modal__title">
-              {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
-                ? "Audit Plan 1 Acceptance"
+              {applicationStatus.includes(
+                "Audit Plan Stage 1 Acceptance Pending"
+              )
+                ? "Audit Plan Stage 1 Acceptance"
                 : applicationStatus.includes("Audit Plan 2 Acceptance Pending")
-                ? "Audit Plan 2 Acceptance"
+                ? "Audit Plan Stage 2 Acceptance"
                 : "Send Remark"}
             </div>
             <div className="input__container checkbox-container">
               <label>
-                {applicationStatus.includes("Audit Plan 1 Acceptance Pending")
-                  ? "Accept/Reject Audit Plan 1"
+                {applicationStatus.includes(
+                  "Audit Plan Stage 1 Acceptance Pending"
+                )
+                  ? "Accept/Reject Audit Plan Stage 1"
                   : applicationStatus.includes(
                       "Audit Plan 2 Acceptance Pending"
                     )
                   ? "Accept/Reject Audit Plan 2"
                   : applicationStatus.includes(
-                      "Fill Intimation Letter 1 Remarks"
+                      "Fill Intimation Letter Stage 1 Remarks"
                     )
-                  ? "Accept/Reject Audit Program"
+                  ? "Accept/Reject Intimation Letter Stage 1"
+                  : applicationStatus.includes(
+                      "Fill Intimation Letter Stage 2 Remarks"
+                    )
+                  ? "Accept/Reject Intimation Letter Stage 2"
                   : "Accept/Reject Application"}
               </label>
               <label className="checkbox-label">
@@ -591,15 +690,19 @@ const ApplicationInfo = () => {
 
           {/* Remark only modal */}
           {state.role === "Auditor" &&
-            (applicationStatus.includes("Fill Remarks for App Review") ||
-              applicationStatus.includes("Fill Audit Report 1 Remarks")) && (
+            (applicationStatus.includes(
+              "Fill Remarks for Application Review"
+            ) ||
+              applicationStatus.includes(
+                "Fill Audit Report Stage 1 Remarks"
+              )) && (
               <button className="add-btn" onClick={() => setModalOpen(true)}>
-                {applicationStatus.includes("Fill Audit Report 1 Remarks")
-                  ? "Fill Audit Report 1 Remarks"
+                {applicationStatus.includes("Fill Audit Report Stage 1 Remarks")
+                  ? "Fill Audit Report Stage 1 Remarks"
                   : applicationStatus.includes(
-                      "Audit Plan 1 Acceptance Pending"
+                      "Audit Plan Stage 1 Acceptance Pending"
                     )
-                  ? "Accept Audit Plan 1"
+                  ? "Accept Audit Plan Stage 1"
                   : applicationStatus.includes(
                       "Audit Plan 2 Acceptance Pending"
                     )
@@ -614,33 +717,55 @@ const ApplicationInfo = () => {
           {((state.role === "Admin Auditor" &&
             applicationStatus.includes("Fill Quotation Choice")) ||
             (state.role === "Auditor" &&
-              (applicationStatus.includes("Fill Non conformity Remarks") ||
-                applicationStatus.includes("Fill Closure Acceptance"))) ||
+              (applicationStatus.includes(
+                "Fill Non conformity Remarks Stage 1"
+              ) ||
+                applicationStatus.includes(
+                  "Fill Closure Acceptance Stage 1"
+                ))) ||
             (state.role === "Client" &&
               applicationStatus.includes(
-                "Fill Non conforimity Acceptance"
+                "Fill Non conforimity Acceptance Stage 1"
               ))) && (
             <button className="add-btn" onClick={() => setConfModalOpen(true)}>
-              {applicationStatus.includes("Fill Non conforimity Acceptance")
-                ? "Fill Non conforimity Acceptance"
+              {applicationStatus.includes(
+                "Fill Non conforimity Acceptance Stage 1"
+              )
+                ? "Fill Non conforimity Acceptance Stage 1"
                 : applicationStatus.includes("Fill Quotation Choice")
                 ? "Fill Quotation Choice"
-                : applicationStatus.includes("Fill Non conformity Remarks")
+                : applicationStatus.includes(
+                    "Fill Non conformity Remarks Stage 1"
+                  )
                 ? "Fill Non Conformity Choice"
-                : applicationStatus.includes("Fill Closure Acceptance")
-                ? "Fill Closure Acceptance"
+                : applicationStatus.includes("Fill Closure Acceptance Stage 1")
+                ? "Fill Closure Acceptance Stage 1"
                 : "Fill Choice"}
             </button>
           )}
 
           {/* Full Modal */}
-          {(applicationStatus.includes("Fill Intimation Letter 1 Remarks") ||
-            applicationStatus.includes("Fill Audit Plan 1 Remarks")) && (
+          {(applicationStatus.includes(
+            "Fill Intimation Letter Stage 1 Remarks"
+          ) ||
+            applicationStatus.includes(
+              "Fill Intimation Letter Stage 2 Remarks"
+            ) ||
+            applicationStatus.includes("Fill Audit Plan Stage 1 Remarks") ||
+            applicationStatus.includes("Fill Audit Plan Stage 2 Remarks")) && (
             <button className="add-btn" onClick={() => setFullModalOpen(true)}>
-              {applicationStatus.includes("Fill Intimation Letter 1 Remarks")
-                ? "Fill Intimation letter 1 Remarks"
-                : applicationStatus.includes("Fill Audit Plan 1 Remarks")
-                ? "Fill Audit Plan 1 Remarks"
+              {applicationStatus.includes(
+                "Fill Intimation Letter Stage 1 Remarks"
+              )
+                ? "Fill Intimation letter Stage 1 Remarks"
+                : applicationStatus.includes(
+                    "Fill Intimation Letter Stage 2 Remarks"
+                  )
+                ? "Fill Intimation letter Stage 2 Remarks"
+                : applicationStatus.includes("Fill Audit Plan Stage 1 Remarks")
+                ? "Fill Audit Plan Stage 1 Remarks"
+                : applicationStatus.includes("Fill Audit Plan Stage 2 Remarks")
+                ? "Fill Audit Plan Stage 2 Remarks"
                 : "Send Remarks"}
             </button>
           )}
@@ -825,16 +950,16 @@ const ApplicationInfo = () => {
             </div>
           )}
 
-          {/* Intimation Letter 1 */}
+          {/* Intimation Letter Stage 1 */}
           {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Fill Intimation Letter 1")) ||
-            applicationStatus.includes("Intimation Letter 1")) && (
+            applicationStatus.includes("Fill Intimation Letter Stage 1")) ||
+            applicationStatus.includes("Intimation Letter Stage 1")) && (
             <div className="application_info-section">
               <NavLink to="intimation-letter-1" className="link-without-style">
                 <button className="application__btn">
                   <img
                     src={
-                      applicationStatus.includes("Intimation Letter 1") &&
+                      applicationStatus.includes("Intimation Letter Stage 1") &&
                       !(
                         state.role === "Admin Auditor" &&
                         applicationStatus.includes(
@@ -850,36 +975,38 @@ const ApplicationInfo = () => {
                     state.role === "Admin Auditor" &&
                     applicationStatus.includes("Intimation Letter 1 Rejected")
                       ? "Update"
-                      : applicationStatus.includes("Intimation Letter 1")
+                      : applicationStatus.includes("Intimation Letter Stage 1")
                       ? "View"
                       : "Fill"
-                  } Intimation Letter 1 Form`}</p>
+                  } Intimation Letter Stage 1 Form`}</p>
                 </button>
               </NavLink>
               <button className="application__btn application__btn--green">
                 <img src={print} alt="print" />
-                <p>Print Intimation Letter 1 Form</p>
+                <p>Print Intimation Letter Stage 1 Form</p>
               </button>
             </div>
           )}
 
-          {/* Audit Plan 1 */}
+          {/* Audit Plan Stage 1 */}
           {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Audit Plan 1")) ||
+            applicationStatus.includes("Audit Plan Stage 1")) ||
             (state.role === "Auditor" &&
-              (applicationStatus.includes("Fill Audit Plan 1") ||
-                applicationStatus.includes("Audit Plan 1 Rejected")))) && (
+              (applicationStatus.includes("Fill Audit Plan Stage 1") ||
+                applicationStatus.includes("Audit Plan 1 rejected")))) && (
             <div>
-              {applicationStatus.includes("Audit Plan 1") ? "Update" : "Upload"}{" "}
-              Audit Plan 1
+              {applicationStatus.includes("Audit Plan Stage 1")
+                ? "Update"
+                : "Upload"}{" "}
+              Audit Plan Stage 1
             </div>
           )}
           <div className="application_info-section">
             {((state.role === "Admin Auditor" &&
-              applicationStatus.includes("Audit Plan 1")) ||
+              applicationStatus.includes("Audit Plan Stage 1")) ||
               (state.role === "Auditor" &&
-                (applicationStatus.includes("Fill Audit Plan 1") ||
-                  applicationStatus.includes("Audit Plan 1 Rejected")))) && (
+                (applicationStatus.includes("Fill Audit Plan Stage 1") ||
+                  applicationStatus.includes("Audit Plan 1 rejected")))) && (
               <label className="application__btn" htmlFor="audit-plan-1-file">
                 <img src={upload} alt="view" />
                 <input
@@ -890,7 +1017,7 @@ const ApplicationInfo = () => {
                 />
               </label>
             )}
-            {applicationStatus.includes("Audit Plan 1") && (
+            {applicationStatus.includes("Audit Plan Stage 1") && (
               <button
                 className="application__btn application__btn--green"
                 onClick={handleDownload}
@@ -901,10 +1028,10 @@ const ApplicationInfo = () => {
             )}
           </div>
           {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Audit Plan 1")) ||
+            applicationStatus.includes("Audit Plan Stage 1")) ||
             (state.role === "Auditor" &&
-              (applicationStatus.includes("Fill Audit Plan 1") ||
-                applicationStatus.includes("Audit Plan 1 Rejected")))) && (
+              (applicationStatus.includes("Fill Audit Plan Stage 1") ||
+                applicationStatus.includes("Audit Plan 1 rejected")))) && (
             <div>
               <button
                 className="remarks-text add-btn pt-0"
@@ -916,25 +1043,29 @@ const ApplicationInfo = () => {
             </div>
           )}
 
-          {/* Audit Report 1 */}
+          {/* Audit Report Stage 1 */}
           {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Audit Report 1")) ||
+            applicationStatus.includes("Audit Report Stage 1")) ||
             (state.role === "Auditor" &&
-              (applicationStatus.includes("Fill Audit Report 1") ||
-                applicationStatus.includes("Audit Report 1 Rejected")))) && (
+              (applicationStatus.includes("Fill Audit Report Stage 1") ||
+                applicationStatus.includes(
+                  "Audit Report Stage 1 Rejected"
+                )))) && (
             <div>
-              {applicationStatus.includes("Audit Report 1")
+              {applicationStatus.includes("Audit Report Stage 1")
                 ? "Update"
                 : "Upload"}{" "}
-              Audit Report 1
+              Audit Report Stage 1
             </div>
           )}
           <div className="application_info-section">
             {((state.role === "Admin Auditor" &&
-              applicationStatus.includes("Audit Report 1")) ||
+              applicationStatus.includes("Audit Report Stage 1")) ||
               (state.role === "Auditor" &&
-                (applicationStatus.includes("Fill Audit Report 1") ||
-                  applicationStatus.includes("Audit Report 1 Rejected")))) && (
+                (applicationStatus.includes("Fill Audit Report Stage 1") ||
+                  applicationStatus.includes(
+                    "Audit Report Stage 1 Rejected"
+                  )))) && (
               <label className="application__btn" htmlFor="audit-report-1-file">
                 <img src={upload} alt="view" />
                 <input
@@ -945,7 +1076,7 @@ const ApplicationInfo = () => {
                 />
               </label>
             )}
-            {applicationStatus.includes("Audit Report 1") && (
+            {applicationStatus.includes("Audit Report Stage 1") && (
               <button
                 className="application__btn application__btn--green"
                 onClick={handleDownload}
@@ -956,10 +1087,12 @@ const ApplicationInfo = () => {
             )}
           </div>
           {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Audit Report 1")) ||
+            applicationStatus.includes("Audit Report Stage 1")) ||
             (state.role === "Auditor" &&
-              (applicationStatus.includes("Fill Audit Report 1") ||
-                applicationStatus.includes("Audit Report 1 Rejected")))) && (
+              (applicationStatus.includes("Fill Audit Report Stage 1") ||
+                applicationStatus.includes(
+                  "Audit Report Stage 1 Rejected"
+                )))) && (
             <div>
               <button
                 className="remarks-text add-btn pt-0"
@@ -971,7 +1104,8 @@ const ApplicationInfo = () => {
             </div>
           )}
 
-          {/* {((state.role === "Admin Auditor" &&
+          <>
+            {/* {((state.role === "Admin Auditor" &&
             applicationStatus.includes("Intimation Letter 1")) ||
             applicationStatus.includes("Auditor Assigned") ||
             applicationStatus.includes("Audit Plan Stage 1")) && (
@@ -1000,16 +1134,16 @@ const ApplicationInfo = () => {
             </div>
           )} */}
 
-          {/* {((state.role === "Auditor" &&
-            applicationStatus.includes("Audit Plan 1 Accepted")) ||
-            applicationStatus.includes("Audit Report 1")) && (
+            {/* {((state.role === "Auditor" &&
+            applicationStatus.includes("Audit Plan Stage 1 Accepted")) ||
+            applicationStatus.includes("Audit Report Stage 1")) && (
             <div className="application_info-section">
               <NavLink to="audit-report-stage-1" className="link-without-style">
                 <button className="application__btn">
                   <img
                     src={
                       applicationStatus.includes("Non Confirmities Raised") ||
-                      applicationStatus.includes("Audit Report 1")
+                      applicationStatus.includes("Audit Report Stage 1")
                         ? view
                         : request
                     }
@@ -1017,10 +1151,10 @@ const ApplicationInfo = () => {
                   />
                   <p>{`${
                     applicationStatus.includes("Non Confirmities Raised") ||
-                    applicationStatus.includes("Audit Report 1")
+                    applicationStatus.includes("Audit Report Stage 1")
                       ? "View"
                       : "Fill"
-                  } Audit Report 1 Form`}</p>
+                  } Audit Report Stage 1 Form`}</p>
                 </button>
               </NavLink>
               <button className="application__btn application__btn--green">
@@ -1029,69 +1163,69 @@ const ApplicationInfo = () => {
               </button>
             </div>
           )} */}
+          </>
 
           {/* Non confirmities 1 */}
-          {(state.role === "Auditor" || state.role === "Client") &&
-            (applicationStatus.includes("Fill Form 39B") ||
-              applicationStatus.includes("Update Form 39B") ||
-              applicationStatus.includes("Form 39B")) && (
-              <div className="application_info-section">
-                <NavLink
-                  to="corrective-action-report"
-                  className="link-without-style"
-                >
-                  <button className="application__btn">
-                    <img
-                      src={
-                        !applicationStatus.includes("Fill Form 39B") &&
-                        !applicationStatus.includes("Update Form 39B")
-                          ? view
-                          : request
-                      }
-                      alt="view"
-                    />
-                    <p>{`${
-                      !applicationStatus.includes("Fill Form 39B") &&
-                      !applicationStatus.includes("Update Form 39B")
-                        ? "View"
-                        : "Fill"
-                    } Corrective Action Report Form`}</p>
-                  </button>
-                </NavLink>
-                <button className="application__btn application__btn--green">
-                  <img src={print} alt="print" />
-                  <p>Print Corrective Action Report Form</p>
-                </button>
-              </div>
-            )}
-
-          {/* Intimation Letter 2 */}
           {((state.role === "Admin Auditor" &&
-            (applicationStatus.includes("Audit Stage 1 Completed") ||
-              applicationStatus.includes("Closure Accepted"))) ||
-            applicationStatus.includes("Intimation Letter 2 Prepared") ||
-            applicationStatus.includes("Intimation Letter 2")) && (
+            applicationStatus.includes("Form 39B Stage 1")) ||
+            ((state.role === "Auditor" || state.role === "Client") &&
+              (applicationStatus.includes("Fill Form 39B Stage 1") ||
+                applicationStatus.includes("Update Form 39B Stage 1") ||
+                applicationStatus.includes("Form 39B Stage 1")))) && (
             <div className="application_info-section">
-              <NavLink to="intimation-letter-2" className="link-without-style">
+              <NavLink
+                to="corrective-action-report"
+                className="link-without-style"
+              >
                 <button className="application__btn">
                   <img
                     src={
-                      applicationStatus.includes(
-                        "Intimation Letter 2 Prepared"
-                      ) ||
-                      applicationStatus.includes("Audit Plan Stage 2") ||
-                      applicationStatus.includes("Intimation Letter 2")
+                      !applicationStatus.includes("Fill Form 39B Stage 1") &&
+                      !applicationStatus.includes("Update Form 39B Stage 1")
                         ? view
                         : request
                     }
                     alt="view"
                   />
                   <p>{`${
-                    applicationStatus.includes(
-                      "Intimation Letter 2 Prepared"
-                    ) ||
-                    applicationStatus.includes("Audit Plan Stage 2") ||
-                    applicationStatus.includes("Intimation Letter 2")
+                    !applicationStatus.includes("Fill Form 39B Stage 1") &&
+                    !applicationStatus.includes("Update Form 39B Stage 1")
+                      ? "View"
+                      : "Fill"
+                  } Corrective Action Report Form`}</p>
+                </button>
+              </NavLink>
+              <button className="application__btn application__btn--green">
+                <img src={print} alt="print" />
+                <p>Print Corrective Action Report Form</p>
+              </button>
+            </div>
+          )}
+
+          {/* Intimation Letter 2 */}
+          {((state.role === "Admin Auditor" &&
+            applicationStatus.includes("Fill Intimation Letter Stage 2")) ||
+            applicationStatus.includes("Intimation Letter Stage 2")) && (
+            <div className="application_info-section">
+              <NavLink to="intimation-letter-2" className="link-without-style">
+                <button className="application__btn">
+                  <img
+                    src={
+                      applicationStatus.includes("Intimation Letter Stage 2") &&
+                      (!applicationStatus.includes(
+                        "Intimation Letter 2 Rejected"
+                      ) ||
+                        state.role !== "Admin Auditor")
+                        ? view
+                        : request
+                    }
+                    alt="view"
+                  />
+                  <p>{`${
+                    state.role === "Admin Auditor" &&
+                    applicationStatus.includes("Intimation Letter 2 Rejected")
+                      ? "Update"
+                      : applicationStatus.includes("Intimation Letter Stage 2")
                       ? "View"
                       : "Fill"
                   } Intimation Letter 2 Form`}</p>
@@ -1104,116 +1238,233 @@ const ApplicationInfo = () => {
             </div>
           )}
 
-          {/* Audit Plan 2 */}
-          {((state.role === "Auditor" &&
-            applicationStatus.includes("Intimation Letter 2 Prepared")) ||
-            applicationStatus.includes("Audit Plan Stage 2") ||
-            applicationStatus.includes("Audit Plan Stage 2 Completed") ||
-            applicationStatus.includes("Audit Plan 2 Acceptance Pending")) && (
-            <div className="application_info-section">
-              <NavLink to="audit-plan-stage-2" className="link-without-style">
-                <button className="application__btn">
-                  <img
-                    src={
-                      applicationStatus.includes("Audit Plan Stage 2") ||
-                      applicationStatus.includes(
-                        "Audit Plan 2 Acceptance Pending"
-                      )
-                        ? view
-                        : request
-                    }
-                    alt="view"
-                  />
-                  <p>{`${
-                    applicationStatus.includes("Audit Plan Stage 2") ||
-                    applicationStatus.includes(
-                      "Audit Plan 2 Acceptance Pending"
-                    )
-                      ? "View"
-                      : "Fill"
-                  } Audit Plan stage 2 Form`}</p>
-                </button>
-              </NavLink>
-              <button className="application__btn application__btn--green">
-                <img src={print} alt="print" />
-                <p>Print Audit Plan stage 2 Form</p>
+          {/* Audit Plan Stage 2 */}
+          {((state.role === "Admin Auditor" &&
+            applicationStatus.includes("Audit Plan Stage 2")) ||
+            (state.role === "Auditor" &&
+              (applicationStatus.includes("Fill Audit Plan Stage 2") ||
+                applicationStatus.includes("Audit Plan 2 rejected")))) && (
+            <div>
+              {applicationStatus.includes("Audit Plan Stage 2")
+                ? "Update"
+                : "Upload"}{" "}
+              Audit Plan Stage 2
+            </div>
+          )}
+          <div className="application_info-section">
+            {((state.role === "Admin Auditor" &&
+              applicationStatus.includes("Audit Plan Stage 2")) ||
+              (state.role === "Auditor" &&
+                (applicationStatus.includes("Fill Audit Plan Stage 2") ||
+                  applicationStatus.includes("Audit Plan 2 rejected")))) && (
+              <label className="application__btn" htmlFor="audit-plan-2-file">
+                <img src={upload} alt="view" />
+                <input
+                  type="file"
+                  id="audit-plan-2-file"
+                  onChange={(e) => setAuditPlan2(e.target.files[0])}
+                  accept="application/msword, application/pdf, .docx"
+                />
+              </label>
+            )}
+            {applicationStatus.includes("Audit Plan Stage 2") && (
+              <button
+                className="application__btn application__btn--green"
+                onClick={handleDownload}
+              >
+                <img src={download} alt="print" />
+                <p>Download Audit Plan stage 2 Form</p>
+              </button>
+            )}
+          </div>
+          {((state.role === "Admin Auditor" &&
+            applicationStatus.includes("Audit Plan Stage 2")) ||
+            (state.role === "Auditor" &&
+              (applicationStatus.includes("Fill Audit Plan Stage 2") ||
+                applicationStatus.includes("Audit Plan 2 rejected")))) && (
+            <div>
+              <button
+                className="remarks-text add-btn pt-0"
+                disabled={!auditPlan2}
+                onClick={() => uploadFile("plan2")}
+              >
+                Upload
               </button>
             </div>
           )}
 
-          {/* Audit Report 2 */}
-          {((state.role === "Auditor" &&
-            applicationStatus.includes("Audit Plan 2 Accepted")) ||
-            applicationStatus.includes("Audit Report 2")) && (
-            <div className="application_info-section">
-              <NavLink to="audit-report-stage-2" className="link-without-style">
-                <button className="application__btn">
-                  <img
-                    src={
-                      applicationStatus.includes("Non Confirmities Raised") ||
-                      applicationStatus.includes("Audit Report 2")
-                        ? view
-                        : request
-                    }
-                    alt="view"
-                  />
-                  <p>{`${
-                    applicationStatus.includes("Non Confirmities Raised") ||
-                    applicationStatus.includes("Audit Report 2")
-                      ? "View"
-                      : "Fill"
-                  } Audit Report 2 Form`}</p>
-                </button>
-              </NavLink>
-              <button className="application__btn application__btn--green">
-                <img src={print} alt="print" />
-                <p>Print Audit Report 2 Form</p>
+          {/* Audit Report Stage 2 */}
+          {((state.role === "Admin Auditor" &&
+            applicationStatus.includes("Audit Report Stage 2")) ||
+            (state.role === "Auditor" &&
+              (applicationStatus.includes("Fill Audit Report Stage 2") ||
+                applicationStatus.includes(
+                  "Audit Report Stage 2 Rejected"
+                )))) && (
+            <div>
+              {applicationStatus.includes("Audit Report Stage 2")
+                ? "Update"
+                : "Upload"}{" "}
+              Audit Report Stage 2
+            </div>
+          )}
+          <div className="application_info-section">
+            {((state.role === "Admin Auditor" &&
+              applicationStatus.includes("Audit Report Stage 2")) ||
+              (state.role === "Auditor" &&
+                (applicationStatus.includes("Fill Audit Report Stage 2") ||
+                  applicationStatus.includes(
+                    "Audit Report Stage 2 Rejected"
+                  )))) && (
+              <label className="application__btn" htmlFor="audit-report-2-file">
+                <img src={upload} alt="view" />
+                <input
+                  type="file"
+                  id="audit-report-2-file"
+                  onChange={(e) => setAuditReport2(e.target.files[0])}
+                  accept="application/msword, application/pdf, .docx"
+                />
+              </label>
+            )}
+            {applicationStatus.includes("Audit Report Stage 2") && (
+              <button
+                className="application__btn application__btn--green"
+                onClick={handleDownload}
+              >
+                <img src={download} alt="print" />
+                <p>Download Audit Report stage 2 Form</p>
+              </button>
+            )}
+          </div>
+          {((state.role === "Admin Auditor" &&
+            applicationStatus.includes("Audit Report Stage 2")) ||
+            (state.role === "Auditor" &&
+              (applicationStatus.includes("Fill Audit Report Stage 2") ||
+                applicationStatus.includes(
+                  "Audit Report Stage 2 Rejected"
+                )))) && (
+            <div>
+              <button
+                className="remarks-text add-btn pt-0"
+                disabled={!auditReport2}
+                onClick={() => uploadFile("report2")}
+              >
+                Upload
               </button>
             </div>
           )}
 
-          {/* Non confirmities 2 */}
-          {((state.role === "Auditor" &&
-            applicationStatus.includes("Non Confirmities Raised")) ||
-            applicationStatus.includes("Non Confirmities Rejected") ||
-            applicationStatus.includes("Form 39B Prepared") ||
-            applicationStatus.includes("Closure Pending") ||
-            applicationStatus.includes("Closure Rejected") ||
-            applicationStatus.includes("Non Confirmities Accepted")) &&
-            applicationStatus.includes("Audit Plan Stage 2") && (
+          <>
+            {/* {((state.role === "Auditor" &&
+              applicationStatus.includes("Fill Audit Plan Stage 2")) ||
+              applicationStatus.includes("Audit Plan Stage 2")) && (
               <div className="application_info-section">
-                <NavLink
-                  to="corrective-action-report-2"
-                  className="link-without-style"
-                >
+                <NavLink to="audit-plan-stage-2" className="link-without-style">
                   <button className="application__btn">
                     <img
                       src={
-                        !applicationStatus.includes("Non Confirmities Raised")
+                        applicationStatus.includes("Audit Plan Stage 2") ||
+                        applicationStatus.includes(
+                          "Audit Plan 2 Acceptance Pending"
+                        )
                           ? view
                           : request
                       }
                       alt="view"
                     />
                     <p>{`${
-                      !applicationStatus.includes("Non Confirmities Raised")
+                      applicationStatus.includes("Audit Plan Stage 2") ||
+                      applicationStatus.includes(
+                        "Audit Plan 2 Acceptance Pending"
+                      )
                         ? "View"
                         : "Fill"
-                    } Corrective Action Report Form`}</p>
+                    } Audit Plan stage 2 Form`}</p>
                   </button>
                 </NavLink>
                 <button className="application__btn application__btn--green">
                   <img src={print} alt="print" />
-                  <p>Print Corrective Action Report Form</p>
+                  <p>Print Audit Plan stage 2 Form</p>
                 </button>
               </div>
             )}
+
+            {((state.role === "Auditor" &&
+              applicationStatus.includes("Audit Plan 2 Accepted")) ||
+              applicationStatus.includes("Audit Report 2")) && (
+              <div className="application_info-section">
+                <NavLink
+                  to="audit-report-stage-2"
+                  className="link-without-style"
+                >
+                  <button className="application__btn">
+                    <img
+                      src={
+                        applicationStatus.includes("Non Confirmities Raised") ||
+                        applicationStatus.includes("Audit Report 2")
+                          ? view
+                          : request
+                      }
+                      alt="view"
+                    />
+                    <p>{`${
+                      applicationStatus.includes("Non Confirmities Raised") ||
+                      applicationStatus.includes("Audit Report 2")
+                        ? "View"
+                        : "Fill"
+                    } Audit Report 2 Form`}</p>
+                  </button>
+                </NavLink>
+                <button className="application__btn application__btn--green">
+                  <img src={print} alt="print" />
+                  <p>Print Audit Report 2 Form</p>
+                </button>
+              </div>
+            )} */}
+          </>
+
+          {/* Non confirmities 2 */}
+          {((state.role === "Admin Auditor" &&
+            applicationStatus.includes("Form 39B Stage 2")) ||
+            ((state.role === "Auditor" || state.role === "Client") &&
+              (applicationStatus.includes("Fill Form 39B Stage 2") ||
+                applicationStatus.includes("Update Form 39B Stage 2") ||
+                applicationStatus.includes("Form 39B Stage 2")))) && (
+            <div className="application_info-section">
+              <NavLink
+                to="corrective-action-report-2"
+                className="link-without-style"
+              >
+                <button className="application__btn">
+                  <img
+                    src={
+                      !applicationStatus.includes("Fill Form 39B Stage 2") &&
+                      !applicationStatus.includes("Update Form 39B Stage 2")
+                        ? view
+                        : request
+                    }
+                    alt="view"
+                  />
+                  <p>{`${
+                    !applicationStatus.includes("Fill Form 39B Stage 2") &&
+                    !applicationStatus.includes("Update Form 39B Stage 2")
+                      ? "View"
+                      : "Fill"
+                  } Corrective Action Report Form`}</p>
+                </button>
+              </NavLink>
+              <button className="application__btn application__btn--green">
+                <img src={print} alt="print" />
+                <p>Print Corrective Action Report Form</p>
+              </button>
+            </div>
+          )}
 
           {/* Technical Committee Report */}
           {state.role === "Admin Auditor" &&
             (applicationStatus.includes("Audit Stage 2 Completed") ||
               applicationStatus.includes("Technical Committee Report") ||
-              applicationStatus.includes("Audit Report 1 ihi")) && (
+              applicationStatus.includes("Audit Report Stage 1 ihi")) && (
               <div className="application_info-section">
                 <NavLink
                   to="technical-committee-report"
@@ -1294,17 +1545,41 @@ const ApplicationInfo = () => {
 
           {!remarks &&
             ((state.role === "Admin Auditor" &&
-              ((applicationStatus.includes("App Reviewer Remarks") &&
+              ((applicationStatus.includes("Application Reviewer Remarks") &&
                 !applicationStatus.includes("Intimation Letter 1")) ||
-                applicationStatus.includes("Intimation Letter Remarks") ||
-                applicationStatus.includes("Audit Plan 1 Remarks") ||
                 applicationStatus.includes(
-                  "Audit Report 1 Remarks by Application Reviewer"
+                  "Intimation Letter Stage 1 Remarks"
+                ) ||
+                applicationStatus.includes("Audit Plan Stage 1 Remarks") ||
+                applicationStatus.includes("Audit Plan Stage 2 Remarks") ||
+                applicationStatus.includes(
+                  "Audit Report Stage 1 Remarks by Application Reviewer"
+                ) ||
+                applicationStatus.includes(
+                  "Intimation Letter Stage 2 Remarks"
                 ))) ||
               (state.role === "Auditor" &&
-                (applicationStatus.includes("Audit Plan 1 Remarks") ||
+                (applicationStatus.includes("Audit Plan Stage 1 Remarks") ||
+                  applicationStatus.includes("Audit Plan Stage 2 Remarks") ||
                   applicationStatus.includes(
-                    "Audit Report 1 Remarks by Application Reviewer"
+                    "Audit Report Stage 1 Remarks by Application Reviewer"
+                  ) ||
+                  applicationStatus.includes(
+                    "Audit Report Stage 2 Remarks by Application Reviewer"
+                  ) ||
+                  applicationStatus.includes("Application Review Remarks") ||
+                  applicationStatus.includes(
+                    "Intimation Letter Stage 1 Remarks"
+                  ) ||
+                  applicationStatus.includes(
+                    "Intimation Letter Stage 2 Remarks"
+                  ))) ||
+              (state.role === "Client" &&
+                (applicationStatus.includes(
+                  "Intimation Letter Stage 1 Remarks"
+                ) ||
+                  applicationStatus.includes(
+                    "Intimation Letter Stage 2 Remarks"
                   )))) && (
               <button className="remarks-text add-btn" onClick={getRemarks}>
                 Show Remarks
@@ -1319,7 +1594,12 @@ const ApplicationInfo = () => {
                     Remark : {remark?.remark} &nbsp; | &nbsp; Sender :{" "}
                     {remark?.sender_name
                       ? remark?.sender_name
-                      : applicationStatus.includes("Audit Plan 1 Remarks")
+                      : applicationStatus.includes(
+                          "Audit Plan Stage 1 Remarks"
+                        ) &&
+                        !applicationStatus.includes(
+                          "Audit Report Stage 1 Remarks by Application Reviewer"
+                        )
                       ? "Client"
                       : "Auditor"}
                   </li>
