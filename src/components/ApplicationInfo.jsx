@@ -163,6 +163,14 @@ const ApplicationInfo = () => {
                   )
                 ? "audit_report_2/send_remark"
                 : applicationStatus.includes(
+                    "Fill Non conformity Remarks Stage 2"
+                  )
+                ? "audit_report_2/send_if_non_conformity_auditor"
+                : applicationStatus.includes(
+                    "Fill Non conforimity Acceptance Stage 2"
+                  )
+                ? "audit_report_2/non_conformity_acceptance_client"
+                : applicationStatus.includes(
                     "Fill Non conformity Remarks Stage 1"
                   )
                 ? "audit_report_1/send_if_non_conformity_auditor"
@@ -170,6 +178,8 @@ const ApplicationInfo = () => {
                     "Fill Non conforimity Acceptance Stage 1"
                   )
                 ? "audit_report_1/non_conformity_acceptance_client"
+                : applicationStatus.includes("Fill Closure Acceptance Stage 2")
+                ? "audit_report_2/closure_acceptance"
                 : applicationStatus.includes("Fill Closure Acceptance Stage 1")
                 ? "audit_report_1/closure_acceptance"
                 : applicationStatus.includes("Fill Audit Plan Stage 1 Remarks")
@@ -279,13 +289,17 @@ const ApplicationInfo = () => {
       const response = await axios({
         method:
           (fileName === "plan1" &&
-            applicationStatus.includes("Audit Plan Stage 1")) ||
+            (applicationStatus.includes("Audit Plan Stage 1") ||
+              applicationStatus.includes("Update Audit Plan Stage 1"))) ||
           (fileName === "report1" &&
-            applicationStatus.includes("Audit Report Stage 1")) ||
+            (applicationStatus.includes("Audit Report Stage 1") ||
+              applicationStatus.includes("Update Audit Report Stage 1"))) ||
           (fileName === "plan2" &&
-            applicationStatus.includes("Audit Plan Stage 2")) ||
+            (applicationStatus.includes("Audit Plan Stage 2") ||
+              applicationStatus.includes("Update Audit Plan Stage 2"))) ||
           (fileName === "report2" &&
-            applicationStatus.includes("Audit Report Stage 2"))
+            (applicationStatus.includes("Audit Report Stage 2") ||
+              applicationStatus.includes("Update Audit Report Stage 2")))
             ? "put"
             : "post",
         url:
@@ -300,13 +314,17 @@ const ApplicationInfo = () => {
               : "audit_report_2"
           }/${
             (fileName === "plan1" &&
-              applicationStatus.includes("Audit Plan Stage 1")) ||
+              (applicationStatus.includes("Audit Plan Stage 1") ||
+                applicationStatus.includes("Update Audit Plan Stage 1"))) ||
             (fileName === "report1" &&
-              applicationStatus.includes("Audit Report Stage 1")) ||
+              (applicationStatus.includes("Audit Report Stage 1") ||
+                applicationStatus.includes("Update Audit Report Stage 1"))) ||
             (fileName === "plan2" &&
-              applicationStatus.includes("Audit Plan Stage 2")) ||
+              (applicationStatus.includes("Audit Plan Stage 2") ||
+                applicationStatus.includes("Update Audit Plan Stage 2"))) ||
             (fileName === "report2" &&
-              applicationStatus.includes("Audit Report Stage 2"))
+              (applicationStatus.includes("Audit Report Stage 2") ||
+                applicationStatus.includes("Update Audit Report Stage 2")))
               ? "update"
               : "create"
           }/${id}`,
@@ -496,6 +514,10 @@ const ApplicationInfo = () => {
                     )
                   ? "Create Non conformity"
                   : applicationStatus.includes(
+                      "Fill Non conformity Remarks Stage 2"
+                    )
+                  ? "Create Non conformity"
+                  : applicationStatus.includes(
                       "Fill Non conforimity Acceptance Stage 1"
                     )
                   ? "Accept/Reject Non conformity"
@@ -514,6 +536,9 @@ const ApplicationInfo = () => {
                   {applicationStatus.includes("Fill Quotation Choice") ||
                   applicationStatus.includes(
                     "Fill Non conformity Remarks Stage 1"
+                  ) ||
+                  applicationStatus.includes(
+                    "Fill Non conformity Remarks Stage 2"
                   )
                     ? "Yes"
                     : "Accept"}
@@ -532,6 +557,9 @@ const ApplicationInfo = () => {
                   {applicationStatus.includes("Fill Quotation Choice") ||
                   applicationStatus.includes(
                     "Fill Non conformity Remarks Stage 1"
+                  ) ||
+                  applicationStatus.includes(
+                    "Fill Non conformity Remarks Stage 2"
                   )
                     ? "No"
                     : "Reject"}
@@ -693,12 +721,17 @@ const ApplicationInfo = () => {
             (applicationStatus.includes(
               "Fill Remarks for Application Review"
             ) ||
+              applicationStatus.includes("Fill Audit Report Stage 1 Remarks") ||
               applicationStatus.includes(
-                "Fill Audit Report Stage 1 Remarks"
+                "Fill Audit Report Stage 2 Remarks"
               )) && (
               <button className="add-btn" onClick={() => setModalOpen(true)}>
                 {applicationStatus.includes("Fill Audit Report Stage 1 Remarks")
                   ? "Fill Audit Report Stage 1 Remarks"
+                  : applicationStatus.includes(
+                      "Fill Audit Report Stage 2 Remarks"
+                    )
+                  ? "Fill Audit Report Stage 2 Remarks"
                   : applicationStatus.includes(
                       "Audit Plan Stage 1 Acceptance Pending"
                     )
@@ -720,17 +753,28 @@ const ApplicationInfo = () => {
               (applicationStatus.includes(
                 "Fill Non conformity Remarks Stage 1"
               ) ||
+                applicationStatus.includes("Fill Closure Acceptance Stage 1") ||
                 applicationStatus.includes(
-                  "Fill Closure Acceptance Stage 1"
+                  "Fill Non conformity Remarks Stage 2"
+                ) ||
+                applicationStatus.includes(
+                  "Fill Closure Acceptance Stage 2"
                 ))) ||
             (state.role === "Client" &&
-              applicationStatus.includes(
+              (applicationStatus.includes(
                 "Fill Non conforimity Acceptance Stage 1"
-              ))) && (
+              ) ||
+                applicationStatus.includes(
+                  "Fill Non conforimity Acceptance Stage 2"
+                )))) && (
             <button className="add-btn" onClick={() => setConfModalOpen(true)}>
               {applicationStatus.includes(
-                "Fill Non conforimity Acceptance Stage 1"
+                "Fill Non conforimity Acceptance Stage 2"
               )
+                ? "Fill Non conforimity Acceptance Stage 2"
+                : applicationStatus.includes(
+                    "Fill Non conforimity Acceptance Stage 1"
+                  )
                 ? "Fill Non conforimity Acceptance Stage 1"
                 : applicationStatus.includes("Fill Quotation Choice")
                 ? "Fill Quotation Choice"
@@ -738,6 +782,12 @@ const ApplicationInfo = () => {
                     "Fill Non conformity Remarks Stage 1"
                   )
                 ? "Fill Non Conformity Choice"
+                : applicationStatus.includes(
+                    "Fill Non conformity Remarks Stage 2"
+                  )
+                ? "Fill Non Conformity Choice"
+                : applicationStatus.includes("Fill Closure Acceptance Stage 2")
+                ? "Fill Closure Acceptance Stage 2"
                 : applicationStatus.includes("Fill Closure Acceptance Stage 1")
                 ? "Fill Closure Acceptance Stage 1"
                 : "Fill Choice"}
@@ -993,9 +1043,11 @@ const ApplicationInfo = () => {
             applicationStatus.includes("Audit Plan Stage 1")) ||
             (state.role === "Auditor" &&
               (applicationStatus.includes("Fill Audit Plan Stage 1") ||
-                applicationStatus.includes("Audit Plan 1 rejected")))) && (
+                applicationStatus.includes("Audit Plan 1 rejected") ||
+                applicationStatus.includes("Update Audit Plan Stage 1")))) && (
             <div>
-              {applicationStatus.includes("Audit Plan Stage 1")
+              {applicationStatus.includes("Audit Plan Stage 1") ||
+              applicationStatus.includes("Update Audit Plan Stage 1")
                 ? "Update"
                 : "Upload"}{" "}
               Audit Plan Stage 1
@@ -1006,7 +1058,10 @@ const ApplicationInfo = () => {
               applicationStatus.includes("Audit Plan Stage 1")) ||
               (state.role === "Auditor" &&
                 (applicationStatus.includes("Fill Audit Plan Stage 1") ||
-                  applicationStatus.includes("Audit Plan 1 rejected")))) && (
+                  applicationStatus.includes("Audit Plan 1 rejected") ||
+                  applicationStatus.includes(
+                    "Update Audit Plan Stage 1"
+                  )))) && (
               <label className="application__btn" htmlFor="audit-plan-1-file">
                 <img src={upload} alt="view" />
                 <input
@@ -1017,7 +1072,8 @@ const ApplicationInfo = () => {
                 />
               </label>
             )}
-            {applicationStatus.includes("Audit Plan Stage 1") && (
+            {(applicationStatus.includes("Audit Plan Stage 1") ||
+              applicationStatus.includes("Update Audit Plan Stage 1")) && (
               <button
                 className="application__btn application__btn--green"
                 onClick={handleDownload}
@@ -1029,9 +1085,11 @@ const ApplicationInfo = () => {
           </div>
           {((state.role === "Admin Auditor" &&
             applicationStatus.includes("Audit Plan Stage 1")) ||
+            applicationStatus.includes("Update Audit Plan Stage 1") ||
             (state.role === "Auditor" &&
               (applicationStatus.includes("Fill Audit Plan Stage 1") ||
-                applicationStatus.includes("Audit Plan 1 rejected")))) && (
+                applicationStatus.includes("Audit Plan 1 rejected") ||
+                applicationStatus.includes("Update Audit Plan Stage 1")))) && (
             <div>
               <button
                 className="remarks-text add-btn pt-0"
@@ -1045,12 +1103,15 @@ const ApplicationInfo = () => {
 
           {/* Audit Report Stage 1 */}
           {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Audit Report Stage 1")) ||
+            (applicationStatus.includes("Audit Report Stage 1") ||
+              applicationStatus.includes("Audit Report Stage 1 Prepared"))) ||
             (state.role === "Auditor" &&
               (applicationStatus.includes("Fill Audit Report Stage 1") ||
-                applicationStatus.includes(
-                  "Audit Report Stage 1 Rejected"
-                )))) && (
+                applicationStatus.includes("Audit Report Stage 1 Rejected") ||
+                applicationStatus.includes("Audit Report Stage 1 Prepared")) &&
+              !applicationStatus.includes(
+                "Audit Report Stage 1 Prepared"
+              ))) && (
             <div>
               {applicationStatus.includes("Audit Report Stage 1")
                 ? "Update"
@@ -1076,7 +1137,8 @@ const ApplicationInfo = () => {
                 />
               </label>
             )}
-            {applicationStatus.includes("Audit Report Stage 1") && (
+            {(applicationStatus.includes("Audit Report Stage 1") ||
+              applicationStatus.includes("Audit Report Stage 1 Prepared")) && (
               <button
                 className="application__btn application__btn--green"
                 onClick={handleDownload}
@@ -1087,7 +1149,8 @@ const ApplicationInfo = () => {
             )}
           </div>
           {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Audit Report Stage 1")) ||
+            (applicationStatus.includes("Audit Report Stage 1") ||
+              applicationStatus.includes("Audit Report Stage 1 Prepared"))) ||
             (state.role === "Auditor" &&
               (applicationStatus.includes("Fill Audit Report Stage 1") ||
                 applicationStatus.includes(
@@ -1243,9 +1306,11 @@ const ApplicationInfo = () => {
             applicationStatus.includes("Audit Plan Stage 2")) ||
             (state.role === "Auditor" &&
               (applicationStatus.includes("Fill Audit Plan Stage 2") ||
+                applicationStatus.includes("Update Audit Plan Stage 2") ||
                 applicationStatus.includes("Audit Plan 2 rejected")))) && (
             <div>
-              {applicationStatus.includes("Audit Plan Stage 2")
+              {applicationStatus.includes("Audit Plan Stage 2") ||
+              applicationStatus.includes("Update Audit Plan Stage 2")
                 ? "Update"
                 : "Upload"}{" "}
               Audit Plan Stage 2
@@ -1256,6 +1321,7 @@ const ApplicationInfo = () => {
               applicationStatus.includes("Audit Plan Stage 2")) ||
               (state.role === "Auditor" &&
                 (applicationStatus.includes("Fill Audit Plan Stage 2") ||
+                  applicationStatus.includes("Update Audit Plan Stage 2") ||
                   applicationStatus.includes("Audit Plan 2 rejected")))) && (
               <label className="application__btn" htmlFor="audit-plan-2-file">
                 <img src={upload} alt="view" />
@@ -1267,7 +1333,8 @@ const ApplicationInfo = () => {
                 />
               </label>
             )}
-            {applicationStatus.includes("Audit Plan Stage 2") && (
+            {(applicationStatus.includes("Audit Plan Stage 2") ||
+              applicationStatus.includes("Update Audit Plan Stage 2")) && (
               <button
                 className="application__btn application__btn--green"
                 onClick={handleDownload}
@@ -1281,6 +1348,7 @@ const ApplicationInfo = () => {
             applicationStatus.includes("Audit Plan Stage 2")) ||
             (state.role === "Auditor" &&
               (applicationStatus.includes("Fill Audit Plan Stage 2") ||
+                applicationStatus.includes("Update Audit Plan Stage 2") ||
                 applicationStatus.includes("Audit Plan 2 rejected")))) && (
             <div>
               <button
@@ -1554,6 +1622,9 @@ const ApplicationInfo = () => {
                 applicationStatus.includes("Audit Plan Stage 2 Remarks") ||
                 applicationStatus.includes(
                   "Audit Report Stage 1 Remarks by Application Reviewer"
+                ) ||
+                applicationStatus.includes(
+                  "Audit Report Stage 2 Remarks by Application Reviewer"
                 ) ||
                 applicationStatus.includes(
                   "Intimation Letter Stage 2 Remarks"
