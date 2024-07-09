@@ -1,16 +1,10 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useMemo } from "react";
 import Table from "./Table";
 import { AuthContext } from "../context/AuthContext";
-import axios from "axios";
-import { Snackbar, Alert } from "@mui/material";
 import { GetAllClientPendingApplications } from "../api/api";
 import { useNavigate } from "react-router-dom";
-const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 const ClientPendingApplications = () => {
-  const [open, setOpen] = useState(false);
-  const [alertMsg, setAlertMsg] = useState("");
-  const [alertType, setAlertType] = useState("success");
   const { state } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -37,30 +31,15 @@ const ClientPendingApplications = () => {
     state.token
   );
 
-  const handleAction = async ({ type, row }) => {
-    if (type == "fill-form")
-      navigate(`/application/${row.id}/application-form`);
-    else navigate(`/application/${row.id}`);
-  };
-
-  const rowActions = ({ row, table }) => (
-    <>
-      {row?.original?.status == "Application Form Incomplete" ? (
-        <button
-          onClick={() => handleAction({ type: "fill-form", row: row.original })}
-          className="application-action"
-        >
-          Fill Application Form
-        </button>
-      ) : (
-        <button
-          onClick={() => handleAction({ type: "accept", row: row.original })}
-          className="application-action"
-        >
-          View
-        </button>
-      )}
-    </>
+  const rowActions = ({ row }) => (
+    <button
+      onClick={() =>
+        navigate(`/application/${row?.original?.basic_app_id}/new-application`)
+      }
+      className="application-action"
+    >
+      View
+    </button>
   );
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -68,20 +47,6 @@ const ClientPendingApplications = () => {
 
   return (
     <>
-      <Snackbar
-        open={open}
-        autoHideDuration={3000}
-        onClose={() => setOpen(false)}
-      >
-        <Alert
-          variant="filled"
-          onClose={() => setOpen(false)}
-          severity={alertType}
-          sx={{ width: "100%" }}
-        >
-          {alertMsg}
-        </Alert>
-      </Snackbar>
       <Table
         data={data?.data}
         columns={columns}
@@ -89,6 +54,8 @@ const ClientPendingApplications = () => {
         height={"100vh - 215px"}
         isLoading={isFetching}
         refetchData={refetch}
+        rowActions={rowActions}
+        showActions={true}
       />
     </>
   );

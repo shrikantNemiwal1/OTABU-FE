@@ -116,7 +116,6 @@ const DashboardClient = () => {
           },
         });
         actions.resetForm();
-        console.log(response);
         setAlertType("success");
         setAlertMsg("Form Submitted Successfully");
         navigate("/dashboard/pending-applications?refresh=true");

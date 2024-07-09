@@ -34,6 +34,7 @@ const ApplicationInfo = () => {
   const [fullModalOpen, setFullModalOpen] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState([]);
   const [remarks, setRemarks] = useState();
+  const [remarksLoading, setRemarksLoading] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
   const [auditPlan1, setAuditPlan1] = useState("");
   const [auditReport1, setAuditReport1] = useState("");
@@ -74,6 +75,7 @@ const ApplicationInfo = () => {
   };
 
   const getRemarks = async () => {
+    setRemarksLoading(true);
     try {
       const config = {
         headers: { Authorization: `Bearer ${state.token}` },
@@ -117,7 +119,7 @@ const ApplicationInfo = () => {
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
-    //setDataLoading(false);
+    setRemarksLoading(false);
   };
 
   useEffect(() => {
@@ -136,7 +138,7 @@ const ApplicationInfo = () => {
     initialValues,
     validationSchema: remarkFormSchema,
     enableReinitialize: true,
-    onSubmit: async (values) => {
+    onSubmit: async (values, actions) => {
       if (
         (applicationStatus.includes("Fill Intimation Letter Stage 1 Remarks") ||
           applicationStatus.includes("Fill Audit Plan Stage 1 Remarks") ||
@@ -246,6 +248,7 @@ const ApplicationInfo = () => {
         console.log(response);
         getApplicationDetails();
         setRemarks(null);
+        actions.resetForm();
       } catch (error) {
         setAlertType("error");
         setAlertMsg(error?.response?.data?.msg);
@@ -822,16 +825,16 @@ const ApplicationInfo = () => {
 
           {/* BasicApplicationForm */}
           {state.role !== "Auditor" &&
-            applicationStatus.includes("Application Form Incomplete") && (
+            applicationStatus.includes("Basic Application Form") && (
               <div className="application_info-section">
-                <NavLink to="application-form" className="link-without-style">
+                <NavLink to="new-application" className="link-without-style">
                   <button className="application__btn">
                     <img src={view} alt="view" />
                     <p>{`${
                       applicationStatus.includes("Application Rejected")
                         ? "Update"
                         : "View"
-                    } Basic Application Form`}</p>
+                    } New Application Form`}</p>
                   </button>
                 </NavLink>
                 <button className="application__btn application__btn--green">
@@ -1062,15 +1065,43 @@ const ApplicationInfo = () => {
                   applicationStatus.includes(
                     "Update Audit Plan Stage 1"
                   )))) && (
-              <label className="application__btn" htmlFor="audit-plan-1-file">
-                <img src={upload} alt="view" />
-                <input
-                  type="file"
-                  id="audit-plan-1-file"
-                  onChange={(e) => setAuditPlan1(e.target.files[0])}
-                  accept="application/msword, application/pdf, .docx"
-                />
-              </label>
+              <div className="upload-container">
+                <label className="application__btn" htmlFor="audit-plan-1-file">
+                  <img src={upload} alt="view" />
+                  <input
+                    type="file"
+                    id="audit-plan-1-file"
+                    onChange={(e) => setAuditPlan1(e.target.files[0])}
+                    accept="application/msword, application/pdf, .docx"
+                  />
+                </label>
+                {auditPlan1 &&
+                  ((state.role === "Admin Auditor" &&
+                    applicationStatus.includes("Audit Plan Stage 1")) ||
+                    applicationStatus.includes("Update Audit Plan Stage 1") ||
+                    (state.role === "Auditor" &&
+                      (applicationStatus.includes("Fill Audit Plan Stage 1") ||
+                        applicationStatus.includes("Audit Plan 1 rejected") ||
+                        applicationStatus.includes(
+                          "Update Audit Plan Stage 1"
+                        )))) && (
+                    <div>
+                      <button
+                        className="upload-btn"
+                        disabled={!auditPlan1}
+                        onClick={() => uploadFile("plan1")}
+                      >
+                        {uploading ? (
+                          <div className="center">
+                            <Spinner color="white" size={25} />
+                          </div>
+                        ) : (
+                          "Upload"
+                        )}
+                      </button>
+                    </div>
+                  )}
+              </div>
             )}
             {(applicationStatus.includes("Audit Plan Stage 1") ||
               applicationStatus.includes("Update Audit Plan Stage 1")) && (
@@ -1083,23 +1114,6 @@ const ApplicationInfo = () => {
               </button>
             )}
           </div>
-          {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Audit Plan Stage 1")) ||
-            applicationStatus.includes("Update Audit Plan Stage 1") ||
-            (state.role === "Auditor" &&
-              (applicationStatus.includes("Fill Audit Plan Stage 1") ||
-                applicationStatus.includes("Audit Plan 1 rejected") ||
-                applicationStatus.includes("Update Audit Plan Stage 1")))) && (
-            <div>
-              <button
-                className="remarks-text add-btn pt-0"
-                disabled={!auditPlan1}
-                onClick={() => uploadFile("plan1")}
-              >
-                Upload
-              </button>
-            </div>
-          )}
 
           {/* Audit Report Stage 1 */}
           {((state.role === "Admin Auditor" &&
@@ -1127,15 +1141,49 @@ const ApplicationInfo = () => {
                   applicationStatus.includes(
                     "Audit Report Stage 1 Rejected"
                   )))) && (
-              <label className="application__btn" htmlFor="audit-report-1-file">
-                <img src={upload} alt="view" />
-                <input
-                  type="file"
-                  id="audit-report-1-file"
-                  onChange={(e) => setAuditReport1(e.target.files[0])}
-                  accept="application/msword, application/pdf, .docx"
-                />
-              </label>
+              <div className="upload-container">
+                <label
+                  className="application__btn"
+                  htmlFor="audit-report-1-file"
+                >
+                  <img src={upload} alt="view" />
+                  <input
+                    type="file"
+                    id="audit-report-1-file"
+                    onChange={(e) => setAuditReport1(e.target.files[0])}
+                    accept="application/msword, application/pdf, .docx"
+                  />
+                </label>
+                {auditReport1 &&
+                  ((state.role === "Admin Auditor" &&
+                    (applicationStatus.includes("Audit Report Stage 1") ||
+                      applicationStatus.includes(
+                        "Audit Report Stage 1 Prepared"
+                      ))) ||
+                    (state.role === "Auditor" &&
+                      (applicationStatus.includes(
+                        "Fill Audit Report Stage 1"
+                      ) ||
+                        applicationStatus.includes(
+                          "Audit Report Stage 1 Rejected"
+                        )))) && (
+                    <div>
+                      <button
+                        className="upload-btn"
+                        disabled={!auditReport1}
+                        onClick={() => uploadFile("report1")}
+                      >
+                        {uploading ? (
+                          <div className="center">
+                            <Spinner color="white" size={25} />
+                          </div>
+                        ) : (
+                          "Upload"
+                        )}
+                      </button>
+                    </div>
+                  )}
+              </div>
             )}
             {(applicationStatus.includes("Audit Report Stage 1") ||
               applicationStatus.includes("Audit Report Stage 1 Prepared")) && (
@@ -1148,24 +1196,6 @@ const ApplicationInfo = () => {
               </button>
             )}
           </div>
-          {((state.role === "Admin Auditor" &&
-            (applicationStatus.includes("Audit Report Stage 1") ||
-              applicationStatus.includes("Audit Report Stage 1 Prepared"))) ||
-            (state.role === "Auditor" &&
-              (applicationStatus.includes("Fill Audit Report Stage 1") ||
-                applicationStatus.includes(
-                  "Audit Report Stage 1 Rejected"
-                )))) && (
-            <div>
-              <button
-                className="remarks-text add-btn pt-0"
-                disabled={!auditReport1}
-                onClick={() => uploadFile("report1")}
-              >
-                Upload
-              </button>
-            </div>
-          )}
 
           <>
             {/* {((state.role === "Admin Auditor" &&
@@ -1323,15 +1353,44 @@ const ApplicationInfo = () => {
                 (applicationStatus.includes("Fill Audit Plan Stage 2") ||
                   applicationStatus.includes("Update Audit Plan Stage 2") ||
                   applicationStatus.includes("Audit Plan 2 rejected")))) && (
-              <label className="application__btn" htmlFor="audit-plan-2-file">
-                <img src={upload} alt="view" />
-                <input
-                  type="file"
-                  id="audit-plan-2-file"
-                  onChange={(e) => setAuditPlan2(e.target.files[0])}
-                  accept="application/msword, application/pdf, .docx"
-                />
-              </label>
+              <div className="upload-container">
+                <label className="application__btn" htmlFor="audit-plan-2-file">
+                  <img src={upload} alt="view" />
+                  <input
+                    type="file"
+                    id="audit-plan-2-file"
+                    onChange={(e) => setAuditPlan2(e.target.files[0])}
+                    accept="application/msword, application/pdf, .docx"
+                  />
+                </label>
+                {auditPlan2 &&
+                  ((state.role === "Admin Auditor" &&
+                    applicationStatus.includes("Audit Plan Stage 2")) ||
+                    (state.role === "Auditor" &&
+                      (applicationStatus.includes("Fill Audit Plan Stage 2") ||
+                        applicationStatus.includes(
+                          "Update Audit Plan Stage 2"
+                        ) ||
+                        applicationStatus.includes(
+                          "Audit Plan 2 rejected"
+                        )))) && (
+                    <div>
+                      <button
+                        className="upload-btn"
+                        disabled={!auditPlan2}
+                        onClick={() => uploadFile("plan2")}
+                      >
+                        {uploading ? (
+                          <div className="center">
+                            <Spinner color="white" size={25} />
+                          </div>
+                        ) : (
+                          "Upload"
+                        )}
+                      </button>
+                    </div>
+                  )}
+              </div>
             )}
             {(applicationStatus.includes("Audit Plan Stage 2") ||
               applicationStatus.includes("Update Audit Plan Stage 2")) && (
@@ -1344,22 +1403,6 @@ const ApplicationInfo = () => {
               </button>
             )}
           </div>
-          {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Audit Plan Stage 2")) ||
-            (state.role === "Auditor" &&
-              (applicationStatus.includes("Fill Audit Plan Stage 2") ||
-                applicationStatus.includes("Update Audit Plan Stage 2") ||
-                applicationStatus.includes("Audit Plan 2 rejected")))) && (
-            <div>
-              <button
-                className="remarks-text add-btn pt-0"
-                disabled={!auditPlan2}
-                onClick={() => uploadFile("plan2")}
-              >
-                Upload
-              </button>
-            </div>
-          )}
 
           {/* Audit Report Stage 2 */}
           {((state.role === "Admin Auditor" &&
@@ -1384,15 +1427,46 @@ const ApplicationInfo = () => {
                   applicationStatus.includes(
                     "Audit Report Stage 2 Rejected"
                   )))) && (
-              <label className="application__btn" htmlFor="audit-report-2-file">
-                <img src={upload} alt="view" />
-                <input
-                  type="file"
-                  id="audit-report-2-file"
-                  onChange={(e) => setAuditReport2(e.target.files[0])}
-                  accept="application/msword, application/pdf, .docx"
-                />
-              </label>
+              <div className="upload-container">
+                <label
+                  className="application__btn"
+                  htmlFor="audit-report-2-file"
+                >
+                  <img src={upload} alt="view" />
+                  <input
+                    type="file"
+                    id="audit-report-2-file"
+                    onChange={(e) => setAuditReport2(e.target.files[0])}
+                    accept="application/msword, application/pdf, .docx"
+                  />
+                </label>
+                {auditReport2 &&
+                  ((state.role === "Admin Auditor" &&
+                    applicationStatus.includes("Audit Report Stage 2")) ||
+                    (state.role === "Auditor" &&
+                      (applicationStatus.includes(
+                        "Fill Audit Report Stage 2"
+                      ) ||
+                        applicationStatus.includes(
+                          "Audit Report Stage 2 Rejected"
+                        )))) && (
+                    <div>
+                      <button
+                        className="upload-btn"
+                        disabled={!auditReport2}
+                        onClick={() => uploadFile("report2")}
+                      >
+                        {uploading ? (
+                          <div className="center">
+                            <Spinner color="white" size={25} />
+                          </div>
+                        ) : (
+                          "Upload"
+                        )}
+                      </button>
+                    </div>
+                  )}
+              </div>
             )}
             {applicationStatus.includes("Audit Report Stage 2") && (
               <button
@@ -1404,23 +1478,6 @@ const ApplicationInfo = () => {
               </button>
             )}
           </div>
-          {((state.role === "Admin Auditor" &&
-            applicationStatus.includes("Audit Report Stage 2")) ||
-            (state.role === "Auditor" &&
-              (applicationStatus.includes("Fill Audit Report Stage 2") ||
-                applicationStatus.includes(
-                  "Audit Report Stage 2 Rejected"
-                )))) && (
-            <div>
-              <button
-                className="remarks-text add-btn pt-0"
-                disabled={!auditReport2}
-                onClick={() => uploadFile("report2")}
-              >
-                Upload
-              </button>
-            </div>
-          )}
 
           <>
             {/* {((state.role === "Auditor" &&
@@ -1530,9 +1587,9 @@ const ApplicationInfo = () => {
 
           {/* Technical Committee Report */}
           {state.role === "Admin Auditor" &&
-            (applicationStatus.includes("Audit Stage 2 Completed") ||
+            (applicationStatus.includes("Fill Technical Committee Report") ||
               applicationStatus.includes("Technical Committee Report") ||
-              applicationStatus.includes("Audit Report Stage 1 ihi")) && (
+              applicationStatus.includes("Technical Committee Report")) && (
               <div className="application_info-section">
                 <NavLink
                   to="technical-committee-report"
@@ -1541,24 +1598,14 @@ const ApplicationInfo = () => {
                   <button className="application__btn">
                     <img
                       src={
-                        applicationStatus.includes(
-                          "Technical Committee Report Completed"
-                        ) ||
-                        applicationStatus.includes(
-                          "certificate Issue Checklist Completed"
-                        )
+                        applicationStatus.includes("Technical Committee Report")
                           ? view
                           : request
                       }
                       alt="view"
                     />
                     <p>{`${
-                      applicationStatus.includes(
-                        "Technical Committee Report Completed"
-                      ) ||
-                      applicationStatus.includes(
-                        "certificate Issue Checklist Completed"
-                      )
+                      applicationStatus.includes("Technical Committee Report")
                         ? "View"
                         : "Fill"
                     } Technical Committee Report Form`}</p>
@@ -1573,12 +1620,8 @@ const ApplicationInfo = () => {
 
           {/* Certification Issue Checklist */}
           {state.role === "Admin Auditor" &&
-            (applicationStatus.includes(
-              "Technical Committee Report Completed"
-            ) ||
-              applicationStatus.includes(
-                "certificate Issue Checklist Completed"
-              )) && (
+            (applicationStatus.includes("Fill Certificate Issue Checklist") ||
+              applicationStatus.includes("Certificate Issue Checklist")) && (
               <div className="application_info-section">
                 <NavLink
                   to="certificate-issue-checklist"
@@ -1588,7 +1631,7 @@ const ApplicationInfo = () => {
                     <img
                       src={
                         applicationStatus.includes(
-                          "certificate Issue Checklist Completed"
+                          "Certificate Issue Checklist"
                         )
                           ? view
                           : request
@@ -1596,9 +1639,7 @@ const ApplicationInfo = () => {
                       alt="view"
                     />
                     <p>{`${
-                      applicationStatus.includes(
-                        "certificate Issue Checklist Completed"
-                      )
+                      applicationStatus.includes("Certificate Issue Checklist")
                         ? "View"
                         : "Fill"
                     } Certification Issue Checklist Form`}</p>
@@ -1652,8 +1693,18 @@ const ApplicationInfo = () => {
                   applicationStatus.includes(
                     "Intimation Letter Stage 2 Remarks"
                   )))) && (
-              <button className="remarks-text add-btn" onClick={getRemarks}>
-                Show Remarks
+              <button
+                className="remarks-text add-btn"
+                onClick={getRemarks}
+                style={{ width: "9rem" }}
+              >
+                {remarksLoading ? (
+                  <div className="center">
+                    <Spinner color="white" size={20} />
+                  </div>
+                ) : (
+                  "Show Remarks"
+                )}
               </button>
             )}
           {remarks?.length > 0 && (

@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { intimationLetter1FormSchema } from "../validation/formSchema";
-import { changedDivisions } from "./ApplicationFormHelper";
 import { useFormik } from "formik";
 import "./styles/registration.scss";
 import "./styles/checkbox.scss";
@@ -37,8 +36,7 @@ const initialValues = {
 
 const IntimationLetter = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [formLoading, setFormLoading] = useState(false);
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formLoading, setFormLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [alertType, setAlertType] = useState("success");
   const [alertMsg, setAlertMsg] = useState("");
@@ -59,9 +57,7 @@ const IntimationLetter = () => {
           `/api/intimation_letter_${stage}/get_intimation_${stage}/${id}`,
         config
       );
-      console.log(res?.data);
       setInitialForm(res?.data);
-      setFormSubmitted(true);
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
@@ -98,11 +94,11 @@ const IntimationLetter = () => {
 
       try {
         const response = await axios({
-          method: formSubmitted ? "put" : "post",
+          method: values?.fill !== "yes" ? "put" : "post",
           url:
             BASE_URL +
             `/api/intimation_letter_${stage}/${
-              formSubmitted
+              values?.fill !== "yes"
                 ? `update_intimation_${stage}`
                 : `create_intimation_${stage}`
             }/${id}`,
@@ -116,7 +112,7 @@ const IntimationLetter = () => {
         setOpen(true);
         setTimeout(() => {
           navigate(-1);
-        }, 3000);
+        }, 2000);
       } catch (error) {
         setAlertType("error");
         setAlertMsg(error?.response?.data?.msg);
@@ -203,7 +199,7 @@ const IntimationLetter = () => {
                   >
                     {isLoading ? (
                       <Spinner size={25} color="white" />
-                    ) : formSubmitted ? (
+                    ) : values?.fill !== "yes" ? (
                       "Update"
                     ) : (
                       "Submit"

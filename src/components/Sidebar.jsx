@@ -2,6 +2,10 @@ import { NavLink, useLocation } from "react-router-dom";
 import logoDull from "../assets/images/logo-dull.png";
 import dashboard from "../assets/icons/dashboard.svg";
 import client from "../assets/icons/client.svg";
+import active from "../assets/icons/active.svg";
+import newIcon from "../assets/icons/new.svg";
+import pending from "../assets/icons/pending.svg";
+import completed from "../assets/icons/completed.svg";
 import "./styles/sidebar.scss";
 import Restricted from "./Restricted";
 
@@ -21,8 +25,8 @@ const Sidebar = () => {
               }
               to="/dashboard/new-application"
             >
-              <img src={dashboard} alt="dashboard" />
-              <div>Request New Application</div>
+              <img src={newIcon} alt="dashboard" />
+              <div>New Certification</div>
             </NavLink>
           </li>
           <li className="sidebar__links-item">
@@ -34,8 +38,8 @@ const Sidebar = () => {
               }
               to="/dashboard/pending-applications"
             >
-              <img src={client} alt="client" />
-              <div>Pending Applications</div>
+              <img src={pending} alt="client" />
+              <div>Pending Certifications</div>
             </NavLink>
           </li>
           <li className="sidebar__links-item">
@@ -47,7 +51,7 @@ const Sidebar = () => {
               }
               to="/dashboard/active-certifications"
             >
-              <img src={client} alt="" />
+              <img src={active} alt="" />
               <div>Active Certifications</div>
             </NavLink>
           </li>
@@ -60,25 +64,12 @@ const Sidebar = () => {
               }
               to="/dashboard/completed-certifications"
             >
-              <img src={client} alt="" />
+              <img src={completed} alt="" />
               <div>Completed Certifications</div>
             </NavLink>
           </li>
         </Restricted>
         <Restricted to={"Auditor"}>
-          {/* <li className="sidebar__links-item">
-            <NavLink
-              className={
-                pathname === "/dashboard/assigned-pending"
-                  ? "sidebar__link sidebar__link--active"
-                  : "sidebar__link"
-              }
-              to="/dashboard/assigned-pending"
-            >
-              <img src={dashboard} alt="dashboard" />
-              <div>Assigned Pending Applications</div>
-            </NavLink>
-          </li> */}
           <li className="sidebar__links-item">
             <NavLink
               className={
@@ -88,7 +79,7 @@ const Sidebar = () => {
               }
               to="/dashboard/assigned-active"
             >
-              <img src={client} alt="client" />
+              <img src={active} alt="client" />
               <div>Assigned Active applications</div>
             </NavLink>
           </li>
@@ -103,8 +94,8 @@ const Sidebar = () => {
               }
               to="/dashboard/pending-clients"
             >
-              <img src={client} alt="client" />
-              <div>Pending Clients</div>
+              <img src={pending} alt="client" />
+              <div>Pending Certifications</div>
             </NavLink>
           </li>
           <li className="sidebar__links-item">
@@ -129,8 +120,8 @@ const Sidebar = () => {
               }
               to="/dashboard/active-clients"
             >
-              <img src={client} alt="" />
-              <div>Active Clients</div>
+              <img src={active} alt="" />
+              <div>Active Certifications</div>
             </NavLink>
           </li>
           <li className="sidebar__links-item">
@@ -142,8 +133,8 @@ const Sidebar = () => {
               }
               to="/dashboard/completed-clients"
             >
-              <img src={client} alt="" />
-              <div>Completed Clients</div>
+              <img src={completed} alt="" />
+              <div>Completed Certifications</div>
             </NavLink>
           </li>
         </Restricted>

@@ -37,8 +37,7 @@ const auditorInputs = {
 
 const ApplicationForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [formLoading, setFormLoading] = useState(false);
-  const [formDisabled, setFormDisabled] = useState(false);
+  const [formLoading, setFormLoading] = useState(true);
 
   const [open, setOpen] = useState(false);
   const [alertType, setAlertType] = useState("success");
@@ -51,31 +50,8 @@ const ApplicationForm = () => {
 
   const [initialForm, setInitialForm] = useState(initialValues);
 
-  const getAutoFillData = async () => {
-    try {
-      const config = {
-        headers: { Authorization: `Bearer ${state.token}` },
-      };
-      const res = await axios.get(
-        BASE_URL + `/api/application_form/get_autofill_data/${id}`,
-        config
-      );
-      const autoFilledData = {
-        ...initialValues,
-        ApplicationReview: { ...initialValues.ApplicationReview, ...res?.data },
-      };
-      setInitialForm(autoFilledData);
-      // state.role === "Client" ? setFormDisabled(true) : null;
-      // initialForm.Status === "Application Rejected"
-      //   ? setFormDisabled(false)
-      //   : null;
-    } catch (error) {
-      console.log(error?.response?.data?.msg);
-    }
-    setFormLoading(false);
-  };
-
   const getFormDetails = async () => {
+    setFormLoading(true);
     try {
       const config = {
         headers: { Authorization: `Bearer ${state.token}` },
@@ -86,10 +62,7 @@ const ApplicationForm = () => {
       );
       console.log(res?.data);
       setInitialForm(res?.data);
-      setFormDisabled(true);
     } catch (error) {
-      // if (error?.response?.data?.msg === "Application Review Does not Exist")
-      //   getAutoFillData();
       console.log(error?.response?.data?.msg);
     }
     setFormLoading(false);
@@ -123,20 +96,17 @@ const ApplicationForm = () => {
       }
       setIsLoading(true);
 
-      const formValues = formDisabled
-        ? changedDivisions(initialForm, values)
-        : values;
+      const formValues =
+        values?.fill === "no" ? changedDivisions(initialForm, values) : values;
       console.log(formValues);
-      const config = {
-        headers: { Authorization: `Bearer ${state.token}` },
-      };
+
       try {
         const response = await axios({
-          method: !formDisabled ? "post" : "patch",
+          method: values?.fill === "yes" ? "post" : "patch",
           url:
             BASE_URL +
             `/api/app_review/${
-              !formDisabled ? "create" : "partial_update"
+              values?.fill === "yes" ? "create" : "partial_update"
             }/${id}`,
           data: formValues,
           headers: {
@@ -146,7 +116,6 @@ const ApplicationForm = () => {
         setAlertType("success");
         setAlertMsg("Form Submitted Successfully");
         setOpen(true);
-        console.log(response);
         setTimeout(() => {
           navigate(-1);
         }, 2000);
@@ -154,16 +123,10 @@ const ApplicationForm = () => {
         setAlertType("error");
         setAlertMsg(error?.response?.data?.msg);
         setOpen(true);
-        console.log(error?.response?.data?.msg);
       }
       setIsLoading(false);
     },
   });
-  console.log([
-    values?.TotEmplMandaysTeam?.auditor_tl,
-    values?.TotEmplMandaysTeam?.tech_auditor,
-    values?.TotEmplMandaysTeam?.auditor_2,
-  ]);
   const filteredAuditors = data?.data?.filter(
     (auditor) =>
       ![
@@ -173,8 +136,6 @@ const ApplicationForm = () => {
         values?.OtabuOffSignDate?.tech_support_code_TE_LA,
       ].includes(String(auditor?.id))
   );
-
-  console.log(filteredAuditors);
 
   return (
     <>
@@ -199,556 +160,561 @@ const ApplicationForm = () => {
             </Alert>
           </Snackbar>
           <form onSubmit={handleSubmit}>
-            <div className="registration__form">
-              {/* ApplicationForm */}
-              <>
-                <h2 className="form-sub-title">Application Review Form</h2>
+            <fieldset disabled={state.role !== "Admin Auditor"}>
+              <div className="registration__form">
+                {/* ApplicationForm */}
+                <>
+                  <h2 className="form-sub-title">Application Review Form</h2>
 
-                {Object.keys(ApplicationReviewInputs).map((key) => (
-                  <div className="input__container" key={key}>
-                    <label htmlFor={`ApplicationReview.${key}`}>
-                      {`${ApplicationReviewInputs[key]} :`}
+                  {Object.keys(ApplicationReviewInputs).map((key) => (
+                    <div className="input__container" key={key}>
+                      <label htmlFor={`ApplicationReview.${key}`}>
+                        {`${ApplicationReviewInputs[key]} :`}
+                      </label>
+                      <input
+                        type="text"
+                        name={`ApplicationReview.${key}`}
+                        id={`ApplicationReview.${key}`}
+                        value={values.ApplicationReview[key]}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        placeholder={`Enter ${ApplicationReviewInputs[key]}`}
+                      />
+                      <div className="input__error-container">
+                        {errors.ApplicationReview?.[key] ||
+                        touched.ApplicationReview?.[key] ? (
+                          <p className="input__error">
+                            {errors.ApplicationReview?.[key]}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  ))}
+
+                  <div className="input__container">
+                    <label htmlFor="ApplicationReview.name_con_busi_asso">
+                      Name of Consultant/Business Associates :
                     </label>
                     <input
                       type="text"
-                      name={`ApplicationReview.${key}`}
-                      id={`ApplicationReview.${key}`}
-                      value={values.ApplicationReview[key]}
+                      name="ApplicationReview.name_con_busi_asso"
+                      id="ApplicationReview.name_con_busi_asso"
+                      value={values.ApplicationReview.name_con_busi_asso}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      placeholder={`Enter ${ApplicationReviewInputs[key]}`}
+                      placeholder="Name of Consultant/Business Associates"
                     />
                     <div className="input__error-container">
-                      {errors.ApplicationReview?.[key] ||
-                      touched.ApplicationReview?.[key] ? (
+                      {errors.ApplicationReview?.name_con_busi_asso &&
+                      touched.ApplicationReview?.name_con_busi_asso ? (
                         <p className="input__error">
-                          {errors.ApplicationReview?.[key]}
+                          {errors.ApplicationReview.name_con_busi_asso}
                         </p>
                       ) : null}
                     </div>
                   </div>
-                ))}
 
-                <div className="input__container">
-                  <label htmlFor="ApplicationReview.name_con_busi_asso">
-                    Name of Consultant/Business Associates :
-                  </label>
-                  <input
-                    type="text"
-                    name="ApplicationReview.name_con_busi_asso"
-                    id="ApplicationReview.name_con_busi_asso"
-                    value={values.ApplicationReview.name_con_busi_asso}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="Name of Consultant/Business Associates"
-                  />
-                  <div className="input__error-container">
-                    {errors.ApplicationReview?.name_con_busi_asso &&
-                    touched.ApplicationReview?.name_con_busi_asso ? (
-                      <p className="input__error">
-                        {errors.ApplicationReview.name_con_busi_asso}
-                      </p>
-                    ) : null}
+                  <div className="input__container checkbox-container">
+                    <label>
+                      Is any way Consultant/Business Associates affecting the
+                      impartial auditing Process?
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="ApplicationReview.con_busi_asso_affect"
+                        value="Yes"
+                        checked={
+                          values.ApplicationReview.con_busi_asso_affect ===
+                          "Yes"
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <p>Yes</p>
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="ApplicationReview.con_busi_asso_affect"
+                        value="No"
+                        checked={
+                          values.ApplicationReview.con_busi_asso_affect === "No"
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <p>No</p>
+                    </label>
+                    <div className="input__error-container">
+                      {errors.ApplicationReview?.con_busi_asso_affect ||
+                      touched.ApplicationReview?.con_busi_asso_affect ? (
+                        <p className="input__error">
+                          {errors.ApplicationReview?.con_busi_asso_affect}
+                        </p>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
 
-                <div className="input__container checkbox-container">
-                  <label>
-                    Is any way Consultant/Business Associates affecting the
-                    impartial auditing Process?
-                  </label>
-                  <label className="checkbox-label">
+                  <div className="input__container">
+                    <label htmlFor="ApplicationReview.how">
+                      If yes then how?
+                    </label>
                     <input
-                      type="radio"
-                      name="ApplicationReview.con_busi_asso_affect"
-                      value="Yes"
-                      checked={
-                        values.ApplicationReview.con_busi_asso_affect === "Yes"
-                      }
+                      type="text"
+                      name="ApplicationReview.how"
+                      id="ApplicationReview.how"
+                      value={values.ApplicationReview.how}
                       onChange={handleChange}
                       onBlur={handleBlur}
                     />
-                    <p>Yes</p>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="ApplicationReview.con_busi_asso_affect"
-                      value="No"
-                      checked={
-                        values.ApplicationReview.con_busi_asso_affect === "No"
-                      }
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>No</p>
-                  </label>
-                  <div className="input__error-container">
-                    {errors.ApplicationReview?.con_busi_asso_affect ||
-                    touched.ApplicationReview?.con_busi_asso_affect ? (
-                      <p className="input__error">
-                        {errors.ApplicationReview?.con_busi_asso_affect}
-                      </p>
-                    ) : null}
+                    <div className="input__error-container">
+                      {errors.ApplicationReview?.how &&
+                      touched.ApplicationReview?.how ? (
+                        <p className="input__error">
+                          {errors.ApplicationReview.how}
+                        </p>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
-
-                <div className="input__container">
-                  <label htmlFor="ApplicationReview.how">
-                    If yes then how?
-                  </label>
-                  <input
-                    type="text"
-                    name="ApplicationReview.how"
-                    id="ApplicationReview.how"
-                    value={values.ApplicationReview.how}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                  <div className="input__error-container">
-                    {errors.ApplicationReview?.how &&
-                    touched.ApplicationReview?.how ? (
-                      <p className="input__error">
-                        {errors.ApplicationReview.how}
-                      </p>
-                    ) : null}
-                  </div>
-                </div>
-              </>
-              {/* SiteCapaOutsource */}
-              <>
-                <div className="input__container">
-                  <h3 className="form-sub-title">No. of Sites</h3>
-                  <table className="table-form">
-                    <thead>
-                      <tr>
-                        <th></th>
-                        {Object.keys(sitesApplicability).map((columnKey) => (
-                          <th key={columnKey}>
-                            {sitesApplicability[columnKey]}
+                </>
+                {/* SiteCapaOutsource */}
+                <>
+                  <div className="input__container">
+                    <h3 className="form-sub-title">No. of Sites</h3>
+                    <table className="table-form">
+                      <thead>
+                        <tr>
+                          <th></th>
+                          {Object.keys(sitesApplicability).map((columnKey) => (
+                            <th key={columnKey}>
+                              {sitesApplicability[columnKey]}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="table-row">
+                          <th className="row-head">
+                            Sites applicability and selection in audit (if sites
+                            available)
                           </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="table-row">
-                        <th className="row-head">
-                          Sites applicability and selection in audit (if sites
-                          available)
-                        </th>
-                        {Object.keys(sitesApplicability).map((columnKey) => (
-                          <td key={`${columnKey}`}>
-                            <input
-                              type="tel"
-                              name={`SiteCapaOutsource.${columnKey}`}
-                              value={values?.SiteCapaOutsource[columnKey]}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              onKeyDown={(e) => {
-                                const key = e.key;
-                                if (
-                                  !/^\d$/.test(key) &&
-                                  key !== "Backspace" &&
-                                  key !== "Delete"
-                                ) {
-                                  e.preventDefault();
-                                }
-                              }}
-                            />
-                            {touched?.SiteCapaOutsource?.[columnKey] &&
-                              errors?.SiteCapaOutsource?.[columnKey] && (
-                                <div>
-                                  {errors?.SiteCapaOutsource?.[columnKey]}
-                                </div>
-                              )}
-                          </td>
-                        ))}
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                          {Object.keys(sitesApplicability).map((columnKey) => (
+                            <td key={`${columnKey}`}>
+                              <input
+                                type="tel"
+                                name={`SiteCapaOutsource.${columnKey}`}
+                                value={values?.SiteCapaOutsource[columnKey]}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                onKeyDown={(e) => {
+                                  const key = e.key;
+                                  if (
+                                    !/^\d$/.test(key) &&
+                                    key !== "Backspace" &&
+                                    key !== "Delete"
+                                  ) {
+                                    e.preventDefault();
+                                  }
+                                }}
+                              />
+                              {touched?.SiteCapaOutsource?.[columnKey] &&
+                                errors?.SiteCapaOutsource?.[columnKey] && (
+                                  <div>
+                                    {errors?.SiteCapaOutsource?.[columnKey]}
+                                  </div>
+                                )}
+                            </td>
+                          ))}
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
 
-                {Object.keys(outSourceInputs).map((key) => (
-                  <div className="input__container" key={key}>
-                    <label htmlFor={`SiteCapaOutsource.${key}`}>
-                      {`${outSourceInputs[key]} :`}
+                  {Object.keys(outSourceInputs).map((key) => (
+                    <div className="input__container" key={key}>
+                      <label htmlFor={`SiteCapaOutsource.${key}`}>
+                        {`${outSourceInputs[key]} :`}
+                      </label>
+                      <input
+                        type="text"
+                        name={`SiteCapaOutsource.${key}`}
+                        id={`SiteCapaOutsource.${key}`}
+                        value={values.SiteCapaOutsource[key]}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        placeholder={`Enter ${outSourceInputs[key]}`}
+                      />
+                      <div className="input__error-container">
+                        {errors.SiteCapaOutsource?.[key] ||
+                        touched.SiteCapaOutsource?.[key] ? (
+                          <p className="input__error">
+                            {errors.SiteCapaOutsource?.[key]}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  ))}
+
+                  <div className="input__container checkbox-container">
+                    <label>QMS RISK CATEGORY:</label>
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="SiteCapaOutsource.qms_risk_category"
+                        value="High"
+                        checked={
+                          values.SiteCapaOutsource.qms_risk_category === "High"
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <p>High</p>
                     </label>
-                    <input
-                      type="text"
-                      name={`SiteCapaOutsource.${key}`}
-                      id={`SiteCapaOutsource.${key}`}
-                      value={values.SiteCapaOutsource[key]}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      placeholder={`Enter ${outSourceInputs[key]}`}
-                    />
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="SiteCapaOutsource.qms_risk_category"
+                        value="Medium"
+                        checked={
+                          values.SiteCapaOutsource.qms_risk_category ===
+                          "Medium"
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <p>Medium</p>
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="SiteCapaOutsource.qms_risk_category"
+                        value="Low"
+                        checked={
+                          values.SiteCapaOutsource.qms_risk_category === "Low"
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <p>Low</p>
+                    </label>
                     <div className="input__error-container">
-                      {errors.SiteCapaOutsource?.[key] ||
-                      touched.SiteCapaOutsource?.[key] ? (
+                      {errors.SiteCapaOutsource?.qms_risk_category ||
+                      touched.SiteCapaOutsource?.qms_risk_category ? (
                         <p className="input__error">
-                          {errors.SiteCapaOutsource?.[key]}
+                          {errors.SiteCapaOutsource?.qms_risk_category}
                         </p>
                       ) : null}
                     </div>
                   </div>
-                ))}
 
-                <div className="input__container checkbox-container">
-                  <label>QMS RISK CATEGORY:</label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="SiteCapaOutsource.qms_risk_category"
-                      value="High"
-                      checked={
-                        values.SiteCapaOutsource.qms_risk_category === "High"
-                      }
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>High</p>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="SiteCapaOutsource.qms_risk_category"
-                      value="Medium"
-                      checked={
-                        values.SiteCapaOutsource.qms_risk_category === "Medium"
-                      }
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>Medium</p>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="SiteCapaOutsource.qms_risk_category"
-                      value="Low"
-                      checked={
-                        values.SiteCapaOutsource.qms_risk_category === "Low"
-                      }
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>Low</p>
-                  </label>
-                  <div className="input__error-container">
-                    {errors.SiteCapaOutsource?.qms_risk_category ||
-                    touched.SiteCapaOutsource?.qms_risk_category ? (
-                      <p className="input__error">
-                        {errors.SiteCapaOutsource?.qms_risk_category}
-                      </p>
-                    ) : null}
+                  <div className="input__container checkbox-container">
+                    <label>EMS COMLEXITY CATEGORY:</label>
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="SiteCapaOutsource.ems_compl_category"
+                        value="High"
+                        checked={
+                          values.SiteCapaOutsource.ems_compl_category === "High"
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <p>High</p>
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="SiteCapaOutsource.ems_compl_category"
+                        value="Medium"
+                        checked={
+                          values.SiteCapaOutsource.ems_compl_category ===
+                          "Medium"
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <p>Medium</p>
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="SiteCapaOutsource.ems_compl_category"
+                        value="Low"
+                        checked={
+                          values.SiteCapaOutsource.ems_compl_category === "Low"
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <p>Low</p>
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="SiteCapaOutsource.ems_compl_category"
+                        value="Limited"
+                        checked={
+                          values.SiteCapaOutsource.ems_compl_category ===
+                          "Limited"
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <p>Limited</p>
+                    </label>
+                    <div className="input__error-container">
+                      {errors.SiteCapaOutsource?.ems_compl_category ||
+                      touched.SiteCapaOutsource?.ems_compl_category ? (
+                        <p className="input__error">
+                          {errors.SiteCapaOutsource?.ems_compl_category}
+                        </p>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
 
-                <div className="input__container checkbox-container">
-                  <label>EMS COMLEXITY CATEGORY:</label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="SiteCapaOutsource.ems_compl_category"
-                      value="High"
-                      checked={
-                        values.SiteCapaOutsource.ems_compl_category === "High"
-                      }
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>High</p>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="SiteCapaOutsource.ems_compl_category"
-                      value="Medium"
-                      checked={
-                        values.SiteCapaOutsource.ems_compl_category === "Medium"
-                      }
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>Medium</p>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="SiteCapaOutsource.ems_compl_category"
-                      value="Low"
-                      checked={
-                        values.SiteCapaOutsource.ems_compl_category === "Low"
-                      }
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>Low</p>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="SiteCapaOutsource.ems_compl_category"
-                      value="Limited"
-                      checked={
-                        values.SiteCapaOutsource.ems_compl_category ===
-                        "Limited"
-                      }
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>Limited</p>
-                  </label>
-                  <div className="input__error-container">
-                    {errors.SiteCapaOutsource?.ems_compl_category ||
-                    touched.SiteCapaOutsource?.ems_compl_category ? (
-                      <p className="input__error">
-                        {errors.SiteCapaOutsource?.ems_compl_category}
-                      </p>
-                    ) : null}
+                  <div className="input__container checkbox-container">
+                    <label>OH&SMS COMPLEXITY CATEGORY:</label>
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="SiteCapaOutsource.oh_sms_compl_category"
+                        value="High"
+                        checked={
+                          values.SiteCapaOutsource.oh_sms_compl_category ===
+                          "High"
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <p>High</p>
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="SiteCapaOutsource.oh_sms_compl_category"
+                        value="Medium"
+                        checked={
+                          values.SiteCapaOutsource.oh_sms_compl_category ===
+                          "Medium"
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <p>Medium</p>
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="SiteCapaOutsource.oh_sms_compl_category"
+                        value="Low"
+                        checked={
+                          values.SiteCapaOutsource.oh_sms_compl_category ===
+                          "Low"
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <p>Low</p>
+                    </label>
+                    <div className="input__error-container">
+                      {errors.SiteCapaOutsource?.oh_sms_compl_category ||
+                      touched.SiteCapaOutsource?.oh_sms_compl_category ? (
+                        <p className="input__error">
+                          {errors.SiteCapaOutsource?.oh_sms_compl_category}
+                        </p>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
 
-                <div className="input__container checkbox-container">
-                  <label>OH&SMS COMPLEXITY CATEGORY:</label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="SiteCapaOutsource.oh_sms_compl_category"
-                      value="High"
-                      checked={
-                        values.SiteCapaOutsource.oh_sms_compl_category ===
-                        "High"
-                      }
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>High</p>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="SiteCapaOutsource.oh_sms_compl_category"
-                      value="Medium"
-                      checked={
-                        values.SiteCapaOutsource.oh_sms_compl_category ===
-                        "Medium"
-                      }
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>Medium</p>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="SiteCapaOutsource.oh_sms_compl_category"
-                      value="Low"
-                      checked={
-                        values.SiteCapaOutsource.oh_sms_compl_category === "Low"
-                      }
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>Low</p>
-                  </label>
-                  <div className="input__error-container">
-                    {errors.SiteCapaOutsource?.oh_sms_compl_category ||
-                    touched.SiteCapaOutsource?.oh_sms_compl_category ? (
-                      <p className="input__error">
-                        {errors.SiteCapaOutsource?.oh_sms_compl_category}
-                      </p>
-                    ) : null}
-                  </div>
-                </div>
-
-                <div className="input__container">
-                  <h3 className="form-sub-title">Number of Shifts:</h3>
-                  <table className="table-form">
-                    <thead>
-                      <tr>
-                        <th></th>
-                        {Object.keys(shifts).map((columnKey) => (
-                          <th key={columnKey}>{shifts[columnKey]}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="table-row">
-                        <th className="row-head">
-                          Total Number of Employee in Each Shift
-                        </th>
-                        {Object.keys(shifts).map((columnKey) => (
-                          <td key={`${columnKey}`}>
-                            <input
-                              type="tel"
-                              name={`SiteCapaOutsource.${columnKey}`}
-                              value={values?.SiteCapaOutsource[columnKey]}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              onKeyDown={(e) => {
-                                const key = e.key;
-                                if (
-                                  !/^\d$/.test(key) &&
-                                  key !== "Backspace" &&
-                                  key !== "Delete"
-                                ) {
-                                  e.preventDefault();
-                                }
-                              }}
-                            />
-                            {touched?.SiteCapaOutsource?.[columnKey] &&
-                              errors?.SiteCapaOutsource?.[columnKey] && (
-                                <div>
-                                  {errors?.SiteCapaOutsource?.[columnKey]}
-                                </div>
-                              )}
-                          </td>
-                        ))}
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </>
-              {/* TotEmplMandaysTeam */}
-              <>
-                <div className="input__container">
-                  <h3 className="form-sub-title">
-                    Total No of Employees per Shifts including Temporary
-                    employees, contracting employees, work from home employees &
-                    part time employees as per Client’ Scope:
-                  </h3>
-                  <table className="table-form">
-                    <thead>
-                      <tr>
-                        <th></th>
-                        {Object.keys(totalEmployeesInput).map((columnKey) => (
-                          <th key={columnKey}>
-                            {totalEmployeesInput[columnKey]}
+                  <div className="input__container">
+                    <h3 className="form-sub-title">Number of Shifts:</h3>
+                    <table className="table-form">
+                      <thead>
+                        <tr>
+                          <th></th>
+                          {Object.keys(shifts).map((columnKey) => (
+                            <th key={columnKey}>{shifts[columnKey]}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="table-row">
+                          <th className="row-head">
+                            Total Number of Employee in Each Shift
                           </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="table-row">
-                        <th className="row-head"></th>
-                        {Object.keys(totalEmployeesInput).map((columnKey) => (
-                          <td key={`${columnKey}`}>
-                            <input
-                              type="tel"
-                              name={`TotEmplMandaysTeam.${columnKey}`}
-                              value={values?.TotEmplMandaysTeam?.[columnKey]}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              onKeyDown={(e) => {
-                                const key = e.key;
-                                if (
-                                  !/^\d$/.test(key) &&
-                                  key !== "Backspace" &&
-                                  key !== "Delete"
-                                ) {
-                                  e.preventDefault();
-                                }
-                              }}
-                            />
-                            {touched?.TotEmplMandaysTeam?.[columnKey] &&
-                              errors?.TotEmplMandaysTeam?.[columnKey] && (
-                                <div>
-                                  {errors?.TotEmplMandaysTeam?.[columnKey]}
-                                </div>
-                              )}
-                          </td>
-                        ))}
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                {Object.keys(mandaysInputs).map((key) => (
-                  <div className="input__container" key={key}>
-                    <label htmlFor={`TotEmplMandaysTeam.${key}`}>
-                      {`${mandaysInputs[key]} :`}
-                    </label>
-                    <input
-                      type="text"
-                      name={`TotEmplMandaysTeam.${key}`}
-                      id={`TotEmplMandaysTeam.${key}`}
-                      value={values?.TotEmplMandaysTeam?.[key]}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      placeholder={`Enter ${mandaysInputs[key]}`}
-                    />
-                    <div className="input__error-container">
-                      {errors.TotEmplMandaysTeam?.[key] ||
-                      touched.TotEmplMandaysTeam?.[key] ? (
-                        <p className="input__error">
-                          {errors.TotEmplMandaysTeam?.[key]}
-                        </p>
-                      ) : null}
-                    </div>
+                          {Object.keys(shifts).map((columnKey) => (
+                            <td key={`${columnKey}`}>
+                              <input
+                                type="tel"
+                                name={`SiteCapaOutsource.${columnKey}`}
+                                value={values?.SiteCapaOutsource[columnKey]}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                onKeyDown={(e) => {
+                                  const key = e.key;
+                                  if (
+                                    !/^\d$/.test(key) &&
+                                    key !== "Backspace" &&
+                                    key !== "Delete"
+                                  ) {
+                                    e.preventDefault();
+                                  }
+                                }}
+                              />
+                              {touched?.SiteCapaOutsource?.[columnKey] &&
+                                errors?.SiteCapaOutsource?.[columnKey] && (
+                                  <div>
+                                    {errors?.SiteCapaOutsource?.[columnKey]}
+                                  </div>
+                                )}
+                            </td>
+                          ))}
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
-                ))}
+                </>
+                {/* TotEmplMandaysTeam */}
+                <>
+                  <div className="input__container">
+                    <h3 className="form-sub-title">
+                      Total No of Employees per Shifts including Temporary
+                      employees, contracting employees, work from home employees
+                      & part time employees as per Client’ Scope:
+                    </h3>
+                    <table className="table-form">
+                      <thead>
+                        <tr>
+                          <th></th>
+                          {Object.keys(totalEmployeesInput).map((columnKey) => (
+                            <th key={columnKey}>
+                              {totalEmployeesInput[columnKey]}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="table-row">
+                          <th className="row-head"></th>
+                          {Object.keys(totalEmployeesInput).map((columnKey) => (
+                            <td key={`${columnKey}`}>
+                              <input
+                                type="tel"
+                                name={`TotEmplMandaysTeam.${columnKey}`}
+                                value={values?.TotEmplMandaysTeam?.[columnKey]}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                onKeyDown={(e) => {
+                                  const key = e.key;
+                                  if (
+                                    !/^\d$/.test(key) &&
+                                    key !== "Backspace" &&
+                                    key !== "Delete"
+                                  ) {
+                                    e.preventDefault();
+                                  }
+                                }}
+                              />
+                              {touched?.TotEmplMandaysTeam?.[columnKey] &&
+                                errors?.TotEmplMandaysTeam?.[columnKey] && (
+                                  <div>
+                                    {errors?.TotEmplMandaysTeam?.[columnKey]}
+                                  </div>
+                                )}
+                            </td>
+                          ))}
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
 
-                {Object.keys(auditorInputs).map((key) => (
-                  <div className="input__container" key={key}>
-                    <label htmlFor="standard">
-                      Select {auditorInputs[key]} :
-                    </label>
-                    <div className="custom-select" id="standard">
-                      <select
+                  {Object.keys(mandaysInputs).map((key) => (
+                    <div className="input__container" key={key}>
+                      <label htmlFor={`TotEmplMandaysTeam.${key}`}>
+                        {`${mandaysInputs[key]} :`}
+                      </label>
+                      <input
+                        type="text"
                         name={`TotEmplMandaysTeam.${key}`}
                         id={`TotEmplMandaysTeam.${key}`}
                         value={values?.TotEmplMandaysTeam?.[key]}
                         onChange={handleChange}
-                      >
-                        <option value="">Select an option</option>
-                        {filteredAuditors?.map((auditor) => {
-                          return (
-                            <option value={auditor.id} key={auditor.id}>
-                              {auditor.auditor_name}
-                            </option>
-                          );
-                        })}
-                        {values?.TotEmplMandaysTeam?.[key] !== "" && (
-                          <option
-                            value={
-                              data?.data?.find(
-                                (auditor) =>
-                                  String(auditor?.id) ==
-                                  values?.TotEmplMandaysTeam?.[key]
-                              )?.id
-                            }
-                            key={
-                              data?.data?.find(
-                                (auditor) =>
-                                  String(auditor?.id) ==
-                                  values?.TotEmplMandaysTeam?.[key]
-                              )?.id
-                            }
-                          >
-                            {
-                              data?.data?.find(
-                                (auditor) =>
-                                  String(auditor?.id) ==
-                                  values?.TotEmplMandaysTeam?.[key]
-                              )?.auditor_name
-                            }
-                          </option>
-                        )}
-                      </select>
+                        onBlur={handleBlur}
+                        placeholder={`Enter ${mandaysInputs[key]}`}
+                      />
+                      <div className="input__error-container">
+                        {errors.TotEmplMandaysTeam?.[key] ||
+                        touched.TotEmplMandaysTeam?.[key] ? (
+                          <p className="input__error">
+                            {errors.TotEmplMandaysTeam?.[key]}
+                          </p>
+                        ) : null}
+                      </div>
                     </div>
-                    <div className="input__error-container">
-                      {errors?.TotEmplMandaysTeam?.[key] &&
-                      touched?.TotEmplMandaysTeam?.[key] ? (
-                        <p className="input__error">
-                          {errors?.TotEmplMandaysTeam?.[key]}
-                        </p>
-                      ) : null}
-                    </div>
-                  </div>
-                ))}
+                  ))}
 
-                {/* <div className="input__container">
+                  {Object.keys(auditorInputs).map((key) => (
+                    <div className="input__container" key={key}>
+                      <label htmlFor="standard">
+                        Select {auditorInputs[key]} :
+                      </label>
+                      <div className="custom-select" id="standard">
+                        <select
+                          name={`TotEmplMandaysTeam.${key}`}
+                          id={`TotEmplMandaysTeam.${key}`}
+                          value={values?.TotEmplMandaysTeam?.[key]}
+                          onChange={handleChange}
+                        >
+                          <option value="">Select an option</option>
+                          {filteredAuditors?.map((auditor) => {
+                            return (
+                              <option value={auditor.id} key={auditor.id}>
+                                {auditor.auditor_name}
+                              </option>
+                            );
+                          })}
+                          {values?.TotEmplMandaysTeam?.[key] !== "" && (
+                            <option
+                              value={
+                                data?.data?.find(
+                                  (auditor) =>
+                                    String(auditor?.id) ==
+                                    values?.TotEmplMandaysTeam?.[key]
+                                )?.id
+                              }
+                              key={
+                                data?.data?.find(
+                                  (auditor) =>
+                                    String(auditor?.id) ==
+                                    values?.TotEmplMandaysTeam?.[key]
+                                )?.id
+                              }
+                            >
+                              {
+                                data?.data?.find(
+                                  (auditor) =>
+                                    String(auditor?.id) ==
+                                    values?.TotEmplMandaysTeam?.[key]
+                                )?.auditor_name
+                              }
+                            </option>
+                          )}
+                        </select>
+                      </div>
+                      <div className="input__error-container">
+                        {errors?.TotEmplMandaysTeam?.[key] &&
+                        touched?.TotEmplMandaysTeam?.[key] ? (
+                          <p className="input__error">
+                            {errors?.TotEmplMandaysTeam?.[key]}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* <div className="input__container">
                   <label htmlFor="standard">Select :</label>
                   <div className="custom-select" id="standard">
                     <select
@@ -775,93 +741,211 @@ const ApplicationForm = () => {
                   </div>
                 </div> */}
 
-                <div className="input__container checkbox-container">
-                  <label>
-                    Surveillance (Frequency: 6 Month/ 9 Month / Annual) :{" "}
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="TotEmplMandaysTeam.oh_sms_compl_category"
-                      value="6 Months"
-                      checked={
-                        values?.TotEmplMandaysTeam?.oh_sms_compl_category ===
-                        "6 Months"
-                      }
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>6 Months</p>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="TotEmplMandaysTeam.oh_sms_compl_category"
-                      value="9 Months"
-                      checked={
-                        values?.TotEmplMandaysTeam?.oh_sms_compl_category ===
-                        "9 Months"
-                      }
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>9 Months</p>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="TotEmplMandaysTeam.oh_sms_compl_category"
-                      value="Annual"
-                      checked={
-                        values.TotEmplMandaysTeam.oh_sms_compl_category ===
-                        "Annual"
-                      }
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    <p>Annual</p>
-                  </label>
-                  <div className="input__error-container">
-                    {errors.TotEmplMandaysTeam?.oh_sms_compl_category ||
-                    touched.TotEmplMandaysTeam?.oh_sms_compl_category ? (
-                      <p className="input__error">
-                        {errors.TotEmplMandaysTeam?.oh_sms_compl_category}
-                      </p>
-                    ) : null}
+                  <div className="input__container checkbox-container">
+                    <label>
+                      Surveillance (Frequency: 6 Month/ 9 Month / Annual) :{" "}
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="TotEmplMandaysTeam.oh_sms_compl_category"
+                        value="6 Months"
+                        checked={
+                          values?.TotEmplMandaysTeam?.oh_sms_compl_category ===
+                          "6 Months"
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <p>6 Months</p>
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="TotEmplMandaysTeam.oh_sms_compl_category"
+                        value="9 Months"
+                        checked={
+                          values?.TotEmplMandaysTeam?.oh_sms_compl_category ===
+                          "9 Months"
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <p>9 Months</p>
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="radio"
+                        name="TotEmplMandaysTeam.oh_sms_compl_category"
+                        value="Annual"
+                        checked={
+                          values.TotEmplMandaysTeam.oh_sms_compl_category ===
+                          "Annual"
+                        }
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <p>Annual</p>
+                    </label>
+                    <div className="input__error-container">
+                      {errors.TotEmplMandaysTeam?.oh_sms_compl_category ||
+                      touched.TotEmplMandaysTeam?.oh_sms_compl_category ? (
+                        <p className="input__error">
+                          {errors.TotEmplMandaysTeam?.oh_sms_compl_category}
+                        </p>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
-              </>
-              {/* Working Table */}
-              <>
-                <h3 className="form-sub-title">WORKING TABLE</h3>
+                </>
+                {/* Working Table */}
+                <>
+                  <h3 className="form-sub-title">WORKING TABLE</h3>
 
-                <div className="input__container">
-                  <table className="table-form">
-                    <thead>
-                      <tr>
-                        <th></th>
-                        {Object.keys(workingTableColumnKeys).map(
-                          (columnKey) => (
-                            <th className="column-head-medium" key={columnKey}>
-                              {workingTableColumnKeys[columnKey]}
-                            </th>
-                          )
-                        )}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.keys(workingTableRowKeys).map((rowKey) => (
-                        <tr key={rowKey} className="table-row">
-                          <th className="row-head">
-                            {workingTableRowKeys[rowKey]}
-                          </th>
+                  <div className="input__container">
+                    <table className="table-form">
+                      <thead>
+                        <tr>
+                          <th></th>
                           {Object.keys(workingTableColumnKeys).map(
                             (columnKey) => (
-                              <td key={`${columnKey}-${rowKey}`}>
+                              <th
+                                className="column-head-medium"
+                                key={columnKey}
+                              >
+                                {workingTableColumnKeys[columnKey]}
+                              </th>
+                            )
+                          )}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.keys(workingTableRowKeys).map((rowKey) => (
+                          <tr key={rowKey} className="table-row">
+                            <th className="row-head">
+                              {workingTableRowKeys[rowKey]}
+                            </th>
+                            {Object.keys(workingTableColumnKeys).map(
+                              (columnKey) => (
+                                <td key={`${columnKey}-${rowKey}`}>
+                                  <input
+                                    type="tel"
+                                    name={`${columnKey}.${rowKey}`}
+                                    value={values?.[columnKey]?.[rowKey]}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    onKeyDown={(e) => {
+                                      const key = e.key;
+                                      if (
+                                        !/^\d$/.test(key) &&
+                                        key !== "Backspace" &&
+                                        key !== "Delete"
+                                      ) {
+                                        e.preventDefault();
+                                      }
+                                    }}
+                                  />
+                                  {touched?.[columnKey]?.[rowKey] &&
+                                    errors?.[columnKey]?.[rowKey] && (
+                                      <div>{errors[columnKey][rowKey]}</div>
+                                    )}
+                                </td>
+                              )
+                            )}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+                {/* IntegrationFactors */}
+                <>
+                  <h3 className="form-sub-title">
+                    Level of Integrated Management System of The Company Systems
+                    (from Application form)
+                  </h3>
+
+                  <div className="input__container">
+                    <table className="table-form">
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th className="column-head-xsmall"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.keys(IMSOfComSysInputs).map((rowKey) => (
+                          <tr key={rowKey} className="table-row">
+                            <th className="row-head-large">
+                              {IMSOfComSysInputs[rowKey]}
+                            </th>
+
+                            <td key={rowKey}>
+                              <label className="checkbox-label checkbox-width-small">
+                                <input
+                                  type="radio"
+                                  className="font-size-med"
+                                  name={`IMSOfComSys.${rowKey}`}
+                                  value="Yes"
+                                  checked={
+                                    values?.IMSOfComSys[rowKey] === "Yes"
+                                  }
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                />
+                                <p>Yes</p>
+                              </label>
+                              <label className="checkbox-label checkbox-width-small">
+                                <input
+                                  type="radio"
+                                  className="font-size-med"
+                                  name={`IMSOfComSys.${rowKey}`}
+                                  value="No"
+                                  checked={values?.IMSOfComSys[rowKey] === "No"}
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                />
+                                <p>No</p>
+                              </label>
+                              {touched?.IMSOfComSys?.rowKey &&
+                                errors?.IMSOfComSys?.rowKey && (
+                                  <div>{errors.IMSOfComSys.rowKey}</div>
+                                )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <h3 className="form-sub-title">
+                    Total No. of Factors (Integration)
+                  </h3>
+
+                  <div className="input__container">
+                    <table className="table-form">
+                      <thead>
+                        <tr>
+                          <th className="row-head--bold">
+                            Increase Factors (+)
+                          </th>
+                          <th className="column-head-small row-head--bold">
+                            Points
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.keys(IntegrationRedFactorsInputs).map(
+                          (rowKey) => (
+                            <tr key={rowKey} className="table-row">
+                              <th className="row-head-xlarge">
+                                {IntegrationRedFactorsInputs[rowKey]}
+                              </th>
+
+                              <td key={rowKey}>
                                 <input
                                   type="tel"
-                                  name={`${columnKey}.${rowKey}`}
-                                  value={values?.[columnKey]?.[rowKey]}
+                                  name={`IntegrationFactors.${rowKey}`}
+                                  value={values?.IntegrationFactors?.rowKey}
                                   onChange={handleChange}
                                   onBlur={handleBlur}
                                   onKeyDown={(e) => {
@@ -875,99 +959,38 @@ const ApplicationForm = () => {
                                     }
                                   }}
                                 />
-                                {touched?.[columnKey]?.[rowKey] &&
-                                  errors?.[columnKey]?.[rowKey] && (
-                                    <div>{errors[columnKey][rowKey]}</div>
+                                {touched?.IntegrationFactors?.rowKey &&
+                                  errors?.IntegrationFactors?.rowKey && (
+                                    <div>
+                                      {errors.IntegrationFactors.rowKey}
+                                    </div>
                                   )}
                               </td>
-                            )
-                          )}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </>
-              {/* IntegrationFactors */}
-              <>
-                <h3 className="form-sub-title">
-                  Level of Integrated Management System of The Company Systems
-                  (from Application form)
-                </h3>
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
 
-                <div className="input__container">
-                  <table className="table-form">
-                    <thead>
-                      <tr>
-                        <th></th>
-                        <th className="column-head-xsmall"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.keys(IMSOfComSysInputs).map((rowKey) => (
-                        <tr key={rowKey} className="table-row">
-                          <th className="row-head-large">
-                            {IMSOfComSysInputs[rowKey]}
+                  <div className="input__container">
+                    <table className="table-form">
+                      <thead>
+                        <tr>
+                          <th className="row-head--bold">
+                            Reduction Factors (-)
                           </th>
-
-                          <td key={rowKey}>
-                            <label className="checkbox-label checkbox-width-small">
-                              <input
-                                type="radio"
-                                className="font-size-med"
-                                name={`IMSOfComSys.${rowKey}`}
-                                value="Yes"
-                                checked={values?.IMSOfComSys[rowKey] === "Yes"}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                              />
-                              <p>Yes</p>
-                            </label>
-                            <label className="checkbox-label checkbox-width-small">
-                              <input
-                                type="radio"
-                                className="font-size-med"
-                                name={`IMSOfComSys.${rowKey}`}
-                                value="No"
-                                checked={values?.IMSOfComSys[rowKey] === "No"}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                              />
-                              <p>No</p>
-                            </label>
-                            {touched?.IMSOfComSys?.rowKey &&
-                              errors?.IMSOfComSys?.rowKey && (
-                                <div>{errors.IMSOfComSys.rowKey}</div>
-                              )}
-                          </td>
+                          <th className="column-head-small row-head--bold">
+                            Points
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <h3 className="form-sub-title">
-                  Total No. of Factors (Integration)
-                </h3>
-
-                <div className="input__container">
-                  <table className="table-form">
-                    <thead>
-                      <tr>
-                        <th className="row-head--bold">Increase Factors (+)</th>
-                        <th className="column-head-small row-head--bold">
-                          Points
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.keys(IntegrationRedFactorsInputs).map(
-                        (rowKey) => (
+                      </thead>
+                      <tbody>
+                        {Object.keys(IntegrationFactorsInputs).map((rowKey) => (
                           <tr key={rowKey} className="table-row">
-                            <th className="row-head-xlarge">
-                              {IntegrationRedFactorsInputs[rowKey]}
+                            <th className="row-head-large">
+                              {IntegrationFactorsInputs[rowKey]}
                             </th>
-
                             <td key={rowKey}>
                               <input
                                 type="tel"
@@ -992,336 +1015,306 @@ const ApplicationForm = () => {
                                 )}
                             </td>
                           </tr>
-                        )
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="input__container">
-                  <table className="table-form">
-                    <thead>
-                      <tr>
-                        <th className="row-head--bold">
-                          Reduction Factors (-)
-                        </th>
-                        <th className="column-head-small row-head--bold">
-                          Points
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.keys(IntegrationFactorsInputs).map((rowKey) => (
-                        <tr key={rowKey} className="table-row">
-                          <th className="row-head-large">
-                            {IntegrationFactorsInputs[rowKey]}
-                          </th>
-                          <td key={rowKey}>
-                            <input
-                              type="tel"
-                              name={`IntegrationFactors.${rowKey}`}
-                              value={values?.IntegrationFactors?.rowKey}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              onKeyDown={(e) => {
-                                const key = e.key;
-                                if (
-                                  !/^\d$/.test(key) &&
-                                  key !== "Backspace" &&
-                                  key !== "Delete"
-                                ) {
-                                  e.preventDefault();
-                                }
-                              }}
-                            />
-                            {touched?.IntegrationFactors?.rowKey &&
-                              errors?.IntegrationFactors?.rowKey && (
-                                <div>{errors.IntegrationFactors.rowKey}</div>
-                              )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </>
-              {/* QMSEMSOHSFactors */}
-              <>
-                <h3 className="form-sub-title">
-                  Total No. of Factors (Integration)
-                </h3>
-
-                <div className="input__container">
-                  <table className="table-form">
-                    <thead>
-                      <tr>
-                        <th className="row-head--bold">Increase Factors (+)</th>
-                        <th className="column-head-small row-head--bold">
-                          Points
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.keys(QMSEMSOHSIncrFactorsInputs).map((rowKey) => (
-                        <tr key={rowKey} className="table-row">
-                          <th className="row-head-large">
-                            {QMSEMSOHSIncrFactorsInputs[rowKey]}
-                          </th>
-
-                          <td key={rowKey}>
-                            <input
-                              type="tel"
-                              name={`QMSEMSOHSIncrFactors.${rowKey}`}
-                              value={values?.QMSEMSOHSIncrFactors?.rowKey}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              onKeyDown={(e) => {
-                                const key = e.key;
-                                if (
-                                  !/^\d$/.test(key) &&
-                                  key !== "Backspace" &&
-                                  key !== "Delete"
-                                ) {
-                                  e.preventDefault();
-                                }
-                              }}
-                            />
-                            {touched?.QMSEMSOHSIncrFactors?.rowKey &&
-                              errors?.QMSEMSOHSIncrFactors?.rowKey && (
-                                <div>{errors.QMSEMSOHSIncrFactors.rowKey}</div>
-                              )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="input__container">
-                  <table className="table-form">
-                    <thead>
-                      <tr>
-                        <th className="row-head--bold">
-                          Reduction Factors (-)
-                        </th>
-                        <th className="column-head-small row-head--bold">
-                          Points
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.keys(QMSEMSOHSRednFactorsInputs).map((rowKey) => (
-                        <tr key={rowKey} className="table-row">
-                          <th className="row-head-large">
-                            {QMSEMSOHSRednFactorsInputs[rowKey]}
-                          </th>
-
-                          <td key={rowKey}>
-                            <input
-                              type="tel"
-                              name={`QMSEMSOHSRednFactors.${rowKey}`}
-                              value={values?.QMSEMSOHSRednFactors?.rowKey}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              onKeyDown={(e) => {
-                                const key = e.key;
-                                if (
-                                  !/^\d$/.test(key) &&
-                                  key !== "Backspace" &&
-                                  key !== "Delete"
-                                ) {
-                                  e.preventDefault();
-                                }
-                              }}
-                            />
-                            {touched?.QMSEMSOHSRednFactors?.rowKey &&
-                              errors?.QMSEMSOHSRednFactors?.rowKey && (
-                                <div>{errors.QMSEMSOHSRednFactors.rowKey}</div>
-                              )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </>
-              {/* OtabuOffSignDate */}
-              <>
-                <div className="input__container">
-                  <label htmlFor="OtabuOffSignDate.review_conducted_AO_TM">
-                    Review Conducted by (AO/TM) :
-                  </label>
-                  <input
-                    type="text"
-                    name="OtabuOffSignDate.review_conducted_AO_TM"
-                    id="OtabuOffSignDate.review_conducted_AO_TM"
-                    value={values?.OtabuOffSignDate?.review_conducted_AO_TM}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                  <div className="input__error-container">
-                    {errors.OtabuOffSignDate?.review_conducted_AO_TM &&
-                    touched.OtabuOffSignDate?.review_conducted_AO_TM ? (
-                      <p className="input__error">
-                        {errors.OtabuOffSignDate.review_conducted_AO_TM}
-                      </p>
-                    ) : null}
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
-                </div>
-                <div className="input__container">
-                  <label htmlFor="OtabuOffSignDate.date_1">Date :</label>
-                  <input
-                    type="date"
-                    name="OtabuOffSignDate.date_1"
-                    id="OtabuOffSignDate.date_1"
-                    value={values?.OtabuOffSignDate?.date_1}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                  <div className="input__error-container">
-                    {errors.OtabuOffSignDate?.date_1 &&
-                    touched.OtabuOffSignDate?.date_1 ? (
-                      <p className="input__error">
-                        {errors.OtabuOffSignDate.date_1}
-                      </p>
-                    ) : null}
+                </>
+                {/* QMSEMSOHSFactors */}
+                <>
+                  <h3 className="form-sub-title">
+                    Total No. of Factors (Integration)
+                  </h3>
+
+                  <div className="input__container">
+                    <table className="table-form">
+                      <thead>
+                        <tr>
+                          <th className="row-head--bold">
+                            Increase Factors (+)
+                          </th>
+                          <th className="column-head-small row-head--bold">
+                            Points
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.keys(QMSEMSOHSIncrFactorsInputs).map(
+                          (rowKey) => (
+                            <tr key={rowKey} className="table-row">
+                              <th className="row-head-large">
+                                {QMSEMSOHSIncrFactorsInputs[rowKey]}
+                              </th>
+
+                              <td key={rowKey}>
+                                <input
+                                  type="tel"
+                                  name={`QMSEMSOHSIncrFactors.${rowKey}`}
+                                  value={values?.QMSEMSOHSIncrFactors?.rowKey}
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  onKeyDown={(e) => {
+                                    const key = e.key;
+                                    if (
+                                      !/^\d$/.test(key) &&
+                                      key !== "Backspace" &&
+                                      key !== "Delete"
+                                    ) {
+                                      e.preventDefault();
+                                    }
+                                  }}
+                                />
+                                {touched?.QMSEMSOHSIncrFactors?.rowKey &&
+                                  errors?.QMSEMSOHSIncrFactors?.rowKey && (
+                                    <div>
+                                      {errors.QMSEMSOHSIncrFactors.rowKey}
+                                    </div>
+                                  )}
+                              </td>
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+                    </table>
                   </div>
-                </div>
-                <div className="input__container">
-                  <label htmlFor="standard">
-                    Select Technical Support from Code Approved TE or LA :
-                  </label>
-                  <div className="custom-select" id="standard">
-                    <select
-                      name={`OtabuOffSignDate.tech_support_code_TE_LA`}
-                      id={`OtabuOffSignDate.tech_support_code_TE_LA`}
-                      value={values?.OtabuOffSignDate?.tech_support_code_TE_LA}
+
+                  <div className="input__container">
+                    <table className="table-form">
+                      <thead>
+                        <tr>
+                          <th className="row-head--bold">
+                            Reduction Factors (-)
+                          </th>
+                          <th className="column-head-small row-head--bold">
+                            Points
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.keys(QMSEMSOHSRednFactorsInputs).map(
+                          (rowKey) => (
+                            <tr key={rowKey} className="table-row">
+                              <th className="row-head-large">
+                                {QMSEMSOHSRednFactorsInputs[rowKey]}
+                              </th>
+
+                              <td key={rowKey}>
+                                <input
+                                  type="tel"
+                                  name={`QMSEMSOHSRednFactors.${rowKey}`}
+                                  value={values?.QMSEMSOHSRednFactors?.rowKey}
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  onKeyDown={(e) => {
+                                    const key = e.key;
+                                    if (
+                                      !/^\d$/.test(key) &&
+                                      key !== "Backspace" &&
+                                      key !== "Delete"
+                                    ) {
+                                      e.preventDefault();
+                                    }
+                                  }}
+                                />
+                                {touched?.QMSEMSOHSRednFactors?.rowKey &&
+                                  errors?.QMSEMSOHSRednFactors?.rowKey && (
+                                    <div>
+                                      {errors.QMSEMSOHSRednFactors.rowKey}
+                                    </div>
+                                  )}
+                              </td>
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+                {/* OtabuOffSignDate */}
+                <>
+                  <div className="input__container">
+                    <label htmlFor="OtabuOffSignDate.review_conducted_AO_TM">
+                      Review Conducted by (AO/TM) :
+                    </label>
+                    <input
+                      type="text"
+                      name="OtabuOffSignDate.review_conducted_AO_TM"
+                      id="OtabuOffSignDate.review_conducted_AO_TM"
+                      value={values?.OtabuOffSignDate?.review_conducted_AO_TM}
                       onChange={handleChange}
-                    >
-                      <option value="">Select an option</option>
-                      {filteredAuditors?.map((auditor) => {
-                        return (
-                          <option value={auditor.id} key={auditor.id}>
-                            {auditor.auditor_name}
+                      onBlur={handleBlur}
+                    />
+                    <div className="input__error-container">
+                      {errors.OtabuOffSignDate?.review_conducted_AO_TM &&
+                      touched.OtabuOffSignDate?.review_conducted_AO_TM ? (
+                        <p className="input__error">
+                          {errors.OtabuOffSignDate.review_conducted_AO_TM}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="input__container">
+                    <label htmlFor="OtabuOffSignDate.date_1">Date :</label>
+                    <input
+                      type="date"
+                      name="OtabuOffSignDate.date_1"
+                      id="OtabuOffSignDate.date_1"
+                      value={values?.OtabuOffSignDate?.date_1}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                    <div className="input__error-container">
+                      {errors.OtabuOffSignDate?.date_1 &&
+                      touched.OtabuOffSignDate?.date_1 ? (
+                        <p className="input__error">
+                          {errors.OtabuOffSignDate.date_1}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="input__container">
+                    <label htmlFor="standard">
+                      Select Technical Support from Code Approved TE or LA :
+                    </label>
+                    <div className="custom-select" id="standard">
+                      <select
+                        name={`OtabuOffSignDate.tech_support_code_TE_LA`}
+                        id={`OtabuOffSignDate.tech_support_code_TE_LA`}
+                        value={
+                          values?.OtabuOffSignDate?.tech_support_code_TE_LA
+                        }
+                        onChange={handleChange}
+                      >
+                        <option value="">Select an option</option>
+                        {filteredAuditors?.map((auditor) => {
+                          return (
+                            <option value={auditor.id} key={auditor.id}>
+                              {auditor.auditor_name}
+                            </option>
+                          );
+                        })}
+                        {values?.OtabuOffSignDate.tech_support_code_TE_LA !==
+                          "" && (
+                          <option
+                            value={
+                              data?.data?.find(
+                                (auditor) =>
+                                  String(auditor?.id) ==
+                                  values?.OtabuOffSignDate
+                                    .tech_support_code_TE_LA
+                              )?.id
+                            }
+                            key={
+                              data?.data?.find(
+                                (auditor) =>
+                                  String(auditor?.id) ==
+                                  values?.OtabuOffSignDate
+                                    .tech_support_code_TE_LA
+                              )?.id
+                            }
+                          >
+                            {
+                              data?.data?.find(
+                                (auditor) =>
+                                  String(auditor?.id) ==
+                                  values?.OtabuOffSignDate
+                                    .tech_support_code_TE_LA
+                              )?.auditor_name
+                            }
                           </option>
-                        );
-                      })}
-                      {values?.OtabuOffSignDate.tech_support_code_TE_LA !==
-                        "" && (
-                        <option
-                          value={
-                            data?.data?.find(
-                              (auditor) =>
-                                String(auditor?.id) ==
-                                values?.OtabuOffSignDate.tech_support_code_TE_LA
-                            )?.id
-                          }
-                          key={
-                            data?.data?.find(
-                              (auditor) =>
-                                String(auditor?.id) ==
-                                values?.OtabuOffSignDate.tech_support_code_TE_LA
-                            )?.id
-                          }
-                        >
-                          {
-                            data?.data?.find(
-                              (auditor) =>
-                                String(auditor?.id) ==
-                                values?.OtabuOffSignDate.tech_support_code_TE_LA
-                            )?.auditor_name
-                          }
-                        </option>
+                        )}
+                      </select>
+                    </div>
+                    <div className="input__error-container">
+                      {errors?.OtabuOffSignDate?.tech_support_code_TE_LA &&
+                      touched?.OtabuOffSignDate?.tech_support_code_TE_LA ? (
+                        <p className="input__error">
+                          {errors?.OtabuOffSignDate?.tech_support_code_TE_LA}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="input__container">
+                    <label htmlFor="OtabuOffSignDate.date_2">Date :</label>
+                    <input
+                      type="date"
+                      name="OtabuOffSignDate.date_2"
+                      id="OtabuOffSignDate.date_2"
+                      value={values?.OtabuOffSignDate?.date_2}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                    <div className="input__error-container">
+                      {errors.OtabuOffSignDate?.date_2 &&
+                      touched.OtabuOffSignDate?.date_2 ? (
+                        <p className="input__error">
+                          {errors.OtabuOffSignDate.date_2}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="input__container">
+                    <label htmlFor="OtabuOffSignDate.approved_by_DTO_MD">
+                      Approved by DTO/MD :
+                    </label>
+                    <input
+                      type="text"
+                      name="OtabuOffSignDate.approved_by_DTO_MD"
+                      id="OtabuOffSignDate.approved_by_DTO_MD"
+                      value={values?.OtabuOffSignDate?.approved_by_DTO_MD}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                    <div className="input__error-container">
+                      {errors.OtabuOffSignDate?.approved_by_DTO_MD &&
+                      touched.OtabuOffSignDate?.approved_by_DTO_MD ? (
+                        <p className="input__error">
+                          {errors.OtabuOffSignDate.approved_by_DTO_MD}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="input__container">
+                    <label htmlFor="OtabuOffSignDate.date_3">Date :</label>
+                    <input
+                      type="date"
+                      name="OtabuOffSignDate.date_3"
+                      id="OtabuOffSignDate.date_3"
+                      value={values?.OtabuOffSignDate?.date_3}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                    <div className="input__error-container">
+                      {errors.OtabuOffSignDate?.date_3 &&
+                      touched.OtabuOffSignDate?.date_3 ? (
+                        <p className="input__error">
+                          {errors.OtabuOffSignDate.date_3}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                </>
+                {/* Submit */}
+                {state.role === "Admin Auditor" && (
+                  <div className="input__container">
+                    <button
+                      className="registration__submit"
+                      type="submit"
+                      onClick={handleSubmit}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <Spinner size={25} color="white" />
+                      ) : values?.fill === "no" ? (
+                        "Update"
+                      ) : (
+                        "Submit"
                       )}
-                    </select>
+                    </button>
                   </div>
-                  <div className="input__error-container">
-                    {errors?.OtabuOffSignDate?.tech_support_code_TE_LA &&
-                    touched?.OtabuOffSignDate?.tech_support_code_TE_LA ? (
-                      <p className="input__error">
-                        {errors?.OtabuOffSignDate?.tech_support_code_TE_LA}
-                      </p>
-                    ) : null}
-                  </div>
-                </div>
-                <div className="input__container">
-                  <label htmlFor="OtabuOffSignDate.date_2">Date :</label>
-                  <input
-                    type="date"
-                    name="OtabuOffSignDate.date_2"
-                    id="OtabuOffSignDate.date_2"
-                    value={values?.OtabuOffSignDate?.date_2}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                  <div className="input__error-container">
-                    {errors.OtabuOffSignDate?.date_2 &&
-                    touched.OtabuOffSignDate?.date_2 ? (
-                      <p className="input__error">
-                        {errors.OtabuOffSignDate.date_2}
-                      </p>
-                    ) : null}
-                  </div>
-                </div>
-                <div className="input__container">
-                  <label htmlFor="OtabuOffSignDate.approved_by_DTO_MD">
-                    Approved by DTO/MD :
-                  </label>
-                  <input
-                    type="text"
-                    name="OtabuOffSignDate.approved_by_DTO_MD"
-                    id="OtabuOffSignDate.approved_by_DTO_MD"
-                    value={values?.OtabuOffSignDate?.approved_by_DTO_MD}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                  <div className="input__error-container">
-                    {errors.OtabuOffSignDate?.approved_by_DTO_MD &&
-                    touched.OtabuOffSignDate?.approved_by_DTO_MD ? (
-                      <p className="input__error">
-                        {errors.OtabuOffSignDate.approved_by_DTO_MD}
-                      </p>
-                    ) : null}
-                  </div>
-                </div>
-                <div className="input__container">
-                  <label htmlFor="OtabuOffSignDate.date_3">Date :</label>
-                  <input
-                    type="date"
-                    name="OtabuOffSignDate.date_3"
-                    id="OtabuOffSignDate.date_3"
-                    value={values?.OtabuOffSignDate?.date_3}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                  <div className="input__error-container">
-                    {errors.OtabuOffSignDate?.date_3 &&
-                    touched.OtabuOffSignDate?.date_3 ? (
-                      <p className="input__error">
-                        {errors.OtabuOffSignDate.date_3}
-                      </p>
-                    ) : null}
-                  </div>
-                </div>
-              </>
-              {/* Submit */}
-              <div className="input__container">
-                <button
-                  className="registration__submit"
-                  type="submit"
-                  onClick={handleSubmit}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <Spinner size={25} color="white" />
-                  ) : formDisabled ? (
-                    "Update"
-                  ) : (
-                    "Submit"
-                  )}
-                </button>
+                )}
               </div>
-            </div>
+            </fieldset>
           </form>
         </div>
       )}

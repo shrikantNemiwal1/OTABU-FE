@@ -1,5 +1,10 @@
 .sidebar {
   background-color: rgba(0, 0, 0, 0.9);
+  background-image: url("../../assets/images/sidebar-bg.svg"),
+    url("../../assets/images/sidebar-shape.png");
+  background-repeat: no-repeat, no-repeat;
+  background-size: contain, 85px;
+  background-position: left;
   width: 250px;
   height: 100vh;
   overflow-y: auto;

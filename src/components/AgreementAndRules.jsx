@@ -268,7 +268,6 @@ const initialValues = {
 const AgreementAndRules = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(true);
-  const [formDisabled, setFormDisabled] = useState(false);
   const [open, setOpen] = useState(false);
   const [alertType, setAlertType] = useState("success");
   const [alertMsg, setAlertMsg] = useState("");
@@ -287,9 +286,7 @@ const AgreementAndRules = () => {
         BASE_URL + `/api/client_agreement/get/${id}`,
         config
       );
-      console.log(res?.data);
       setInitialForm(res?.data);
-      if (state.role !== "Admin Auditor") setFormDisabled(true);
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
@@ -326,8 +323,12 @@ const AgreementAndRules = () => {
 
       try {
         const response = await axios({
-          method: "post",
-          url: BASE_URL + `/api/client_agreement/create/${id}`,
+          method: state.role === "Client" ? "post" : "put",
+          url:
+            BASE_URL +
+            `/api/client_agreement/${
+              state.role === "Client" ? "create" : "partial_update"
+            }/${id}`,
           data: formValues,
           headers: {
             Authorization: `Bearer ${state.token}`,
@@ -337,7 +338,7 @@ const AgreementAndRules = () => {
         setAlertMsg("Form Submitted Successfully");
         setOpen(true);
         setTimeout(() => {
-          navigate(-1)
+          navigate(-1);
         }, 2000);
       } catch (error) {
         setAlertType("error");
@@ -401,7 +402,7 @@ const AgreementAndRules = () => {
         & Rules without prior notification.
       </p>
       <form onSubmit={handleSubmit} className="agreement">
-        <fieldset disabled={formDisabled}>
+        <fieldset disabled={state.role === "Client" && values?.fill !== "yes"}>
           <div className="input__container">
             <label htmlFor="client_approval_date">
               Client Approval on Dated :{" "}
@@ -491,22 +492,24 @@ const AgreementAndRules = () => {
             </div>
           </div>
         </fieldset>
-        <div className="input__container">
-          <button
-            className="registration__submit"
-            type="submit"
-            onClick={handleSubmit}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <Spinner size={25} color="white" />
-            ) : formDisabled && state.role !== "Client" ? (
-              "Update"
-            ) : (
-              "Submit"
-            )}
-          </button>
-        </div>
+        {(state.role !== "Client" || values?.fill === "yes") && (
+          <div className="input__container">
+            <button
+              className="registration__submit"
+              type="submit"
+              onClick={handleSubmit}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Spinner size={25} color="white" />
+              ) : values?.fill === "no" && state.role !== "Client" ? (
+                "Update"
+              ) : (
+                "Submit"
+              )}
+            </button>
+          </div>
+        )}
       </form>
     </div>
   );

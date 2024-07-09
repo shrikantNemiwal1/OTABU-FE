@@ -52,7 +52,6 @@ const ApplicationForm = () => {
   const legalStatusKeys = Object.keys(initialValues.LegalStatus);
   const [isLoading, setIsLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(true);
-  const [formDisabled, setFormDisabled] = useState(false);
   const [open, setOpen] = useState(false);
   const [alertType, setAlertType] = useState("success");
   const [alertMsg, setAlertMsg] = useState("");
@@ -65,30 +64,6 @@ const ApplicationForm = () => {
 
   const [initialForm, setInitialForm] = useState(initialValues);
 
-  const getAutoFillData = async () => {
-    try {
-      const config = {
-        headers: { Authorization: `Bearer ${state.token}` },
-      };
-      const res = await axios.get(
-        BASE_URL + `/api/application_form/get_autofill_data/${id}`,
-        config
-      );
-      const autoFilledData = {
-        ...initialValues,
-        ApplicationForm: { ...initialValues.ApplicationForm, ...res?.data },
-      };
-      setInitialForm(autoFilledData);
-      // state.role === "Client" ? setFormDisabled(true) : null;
-      // initialForm.Status === "Application Rejected"
-      //   ? setFormDisabled(false)
-      //   : null;
-    } catch (error) {
-      console.log(error?.response?.data?.msg);
-    }
-    setFormLoading(false);
-  };
-
   const getFormDetails = async () => {
     try {
       const config = {
@@ -100,15 +75,7 @@ const ApplicationForm = () => {
       );
       console.log(res?.data);
       setInitialForm(res?.data);
-      state.role === "Client" ? setFormDisabled(true) : null;
-      initialForm.Status === "Application Rejected"
-        ? setFormDisabled(false)
-        : null;
     } catch (error) {
-      if (
-        error?.response?.data?.msg === "Complete Application Form not Submitted"
-      )
-        getAutoFillData();
       console.log(error?.response?.data?.msg);
     }
     setFormLoading(false);
@@ -141,25 +108,20 @@ const ApplicationForm = () => {
       setIsLoading(true);
 
       const formValues =
-        state.role !== "Client" ||
-        initialForm?.Status === "Application Rejected"
+        state.role !== "Client"
           ? changedDivisions(initialForm, values)
           : values;
 
       try {
         const response = await axios({
           method:
-            initialForm?.Status === "Application Rejected"
-              ? "patch"
-              : state.role === "Client"
+            state.role === "Client" && values?.fill === "yes"
               ? "post"
               : "patch",
           url:
             BASE_URL +
             `/api/application_form/${
-              initialForm?.Status === "Application Rejected"
-                ? "partial_update"
-                : state.role === "Client"
+              state.role === "Client" && values?.fill === "yes"
                 ? "create_application"
                 : "partial_update"
             }/${id}`,
@@ -171,7 +133,6 @@ const ApplicationForm = () => {
         setAlertType("success");
         setAlertMsg("Form Submitted Successfully");
         setOpen(true);
-        console.log(response);
         setTimeout(() => {
           navigate(-1);
         }, 2000);
@@ -179,20 +140,10 @@ const ApplicationForm = () => {
         setAlertType("error");
         setAlertMsg(error?.response?.data?.msg);
         setOpen(true);
-        console.log(error?.response?.data?.msg);
       }
       setIsLoading(false);
     },
   });
-
-  // useEffect(() => {
-  //   columnKeys.map((column) => {
-  //     setFieldValue(
-  //       values?.[column]?.tot_emp,
-  //       Object.values(values?.[column]).reduce((acc, curr) => Number(acc) + Number(curr), 0)
-  //     );
-  //   });
-  // }, [values]);
 
   return (
     <>
@@ -218,11 +169,7 @@ const ApplicationForm = () => {
           </Snackbar>
           <form onSubmit={handleSubmit}>
             <fieldset
-              disabled={
-                (initialForm?.Status === "Application Rejected"
-                  ? false
-                  : formDisabled) || state.role === "Auditor"
-              }
+              disabled={state.role !== "Admin Auditor" && values?.fill === "no"}
             >
               <div className="registration__form">
                 {/* ApplicationForm */}
@@ -1476,23 +1423,24 @@ const ApplicationForm = () => {
                 </Restricted>
                 {/* Submit */}
 
-                <div className="input__container">
-                  <button
-                    className="registration__submit"
-                    type="submit"
-                    onClick={handleSubmit}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <Spinner size={25} color="white" />
-                    ) : state.role === "Client" &&
-                      !(initialForm?.Status === "Application Rejected") ? (
-                      "Submit"
-                    ) : (
-                      "Update"
-                    )}
-                  </button>
-                </div>
+                {(values.fill === "yes" || state.role === "Admin Auditor") && (
+                  <div className="input__container">
+                    <button
+                      className="registration__submit"
+                      type="submit"
+                      onClick={handleSubmit}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <Spinner size={25} color="white" />
+                      ) : state.role === "Client" && values?.fill === "yes" ? (
+                        "Submit"
+                      ) : (
+                        "Update"
+                      )}
+                    </button>
+                  </div>
+                )}
               </div>
             </fieldset>
           </form>

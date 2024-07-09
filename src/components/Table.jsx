@@ -18,9 +18,7 @@ import {
   Alert,
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
-import addIcon from "../assets/icons/add-sign.svg";
 import AddAuditorForm from "./AddAuditorForm";
-import "./styles/table.scss";
 
 const style = {
   position: "absolute",

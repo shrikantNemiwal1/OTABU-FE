@@ -41,7 +41,7 @@ const DashboardAdmin = () => {
         accessorKey: "basic_app_id",
         header: "Application ID",
         enableColumnOrdering: false,
-        enableEditing: false, //disable editing on this column
+        enableEditing: false,
         enableSorting: false,
         size: 30,
       },
@@ -55,40 +55,11 @@ const DashboardAdmin = () => {
         header: "Client Email",
         size: 30,
       },
-      // {
-      //   accessorKey: "lastName",
-      //   header: "Last Name",
-      //   size: 50,
-      //   muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-      //     ...getCommonEditTextFieldProps(cell),
-      //   }),
-      // },
       {
         accessorKey: "acceptance_status",
         header: "Status",
         size: 10,
       },
-      // {
-      //   accessorKey: "age",
-      //   header: "Age",
-      //   size: 80,
-      //   muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-      //     ...getCommonEditTextFieldProps(cell),
-      //     type: "number",
-      //   }),
-      // },
-      // {
-      //   accessorKey: "state",
-      //   header: "State",
-      //   muiTableBodyCellEditTextFieldProps: {
-      //     select: true, //change to select for a dropdown
-      //     children: states.map((state) => (
-      //       <MenuItem key={state} value={state}>
-      //         {state}
-      //       </MenuItem>
-      //     )),
-      //   },
-      // },
     ],
     []
   );

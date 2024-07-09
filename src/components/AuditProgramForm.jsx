@@ -243,8 +243,7 @@ const initialValues = {
 
 const AuditProgramForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [formLoading, setFormLoading] = useState(false);
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formLoading, setFormLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [alertType, setAlertType] = useState("success");
   const [alertMsg, setAlertMsg] = useState("");
@@ -253,7 +252,6 @@ const AuditProgramForm = () => {
   const { state } = useContext(AuthContext);
   const id = pathname.split("/")[2];
   const certification_type = pathname.split("/")?.[4];
-  console.log(certification_type);
   const [initialForm, setInitialForm] = useState(initialValues);
   const [auditTable, setAuditTable] = useState(
     Array.from({ length: 20 }, () => ({ ...colInitialValues }))
@@ -268,7 +266,6 @@ const AuditProgramForm = () => {
         BASE_URL + `/api/audit_program/get/${id}`,
         config
       );
-      console.log(res?.data);
       const initialFormFormat = {
         AuditProgram: res?.data?.AuditProgram,
         ProcessStage1: res?.data?.Array[0],
@@ -276,10 +273,10 @@ const AuditProgramForm = () => {
         ProcessSurveillance1: res?.data?.Array[2],
         ProcessSurveillance2: res?.data?.Array[3],
         ProcessRenewal: res?.data?.Array[4],
+        fill: res?.data?.fill,
       };
       setInitialForm(initialFormFormat);
       setAuditTable(res?.data?.Array.slice(5));
-      setFormSubmitted(true);
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
@@ -305,7 +302,6 @@ const AuditProgramForm = () => {
     validationSchema: auditProgramFormSchema,
     enableReinitialize: true,
     onSubmit: async (values) => {
-      console.log(values);
       setIsLoading(true);
 
       const formValues = {
@@ -320,14 +316,14 @@ const AuditProgramForm = () => {
         ],
       };
 
-      console.log(formValues);
-
       try {
         const response = await axios({
-          method: formSubmitted ? "put" : "post",
+          method: values?.fill !== "yes" ? "put" : "post",
           url:
             BASE_URL +
-            `/api/audit_program/${formSubmitted ? "update" : "create"}/${id}`,
+            `/api/audit_program/${
+              values?.fill !== "yes" ? "update" : "create"
+            }/${id}`,
           data: formValues,
           headers: {
             Authorization: `Bearer ${state.token}`,
@@ -338,7 +334,7 @@ const AuditProgramForm = () => {
         setOpen(true);
         setTimeout(() => {
           navigate(-1);
-        }, 3000);
+        }, 2000);
       } catch (error) {
         setAlertType("error");
         setAlertMsg(error?.response?.data?.msg);
@@ -536,7 +532,7 @@ const AuditProgramForm = () => {
                   >
                     {isLoading ? (
                       <Spinner size={25} color="white" />
-                    ) : formSubmitted && state.role !== "Client" ? (
+                    ) : values?.fill !== "yes" ? (
                       "Update"
                     ) : (
                       "Submit"

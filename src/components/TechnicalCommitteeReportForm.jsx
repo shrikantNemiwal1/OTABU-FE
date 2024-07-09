@@ -231,8 +231,7 @@ const Inputs = {
 
 const TechnicalCommitteeReportForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [formLoading, setFormLoading] = useState(false);
-  const [formDisabled, setFormDisabled] = useState(false);
+  const [formLoading, setFormLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [alertType, setAlertType] = useState("success");
   const [alertMsg, setAlertMsg] = useState("");
@@ -249,12 +248,10 @@ const TechnicalCommitteeReportForm = () => {
         headers: { Authorization: `Bearer ${state.token}` },
       };
       const res = await axios.get(
-        BASE_URL + `/api/tech_committee_report/get/${id}`,
+        BASE_URL + `/api/technical_committee_report/get/${id}`,
         config
       );
-      console.log(res?.data);
       setInitialForm(res?.data);
-      setFormDisabled(true);
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
@@ -287,19 +284,16 @@ const TechnicalCommitteeReportForm = () => {
       }
       setIsLoading(true);
 
-      const formValues = formDisabled
-        ? changedDivisions(initialForm, values)
-        : values;
-
-      console.log(formValues);
+      const formValues =
+        values?.fill !== "yes" ? changedDivisions(initialForm, values) : values;
 
       try {
         const response = await axios({
-          method: formDisabled ? "patch" : "post",
+          method: values?.fill !== "yes" ? "patch" : "post",
           url:
             BASE_URL +
-            `/api/tech_committee_report/${
-              formDisabled ? "partial_update" : "create"
+            `/api/technical_committee_report/${
+              values?.fill !== "yes" ? "partial_update" : "create"
             }/${id}`,
           data: formValues,
           headers: {
@@ -311,7 +305,7 @@ const TechnicalCommitteeReportForm = () => {
         setOpen(true);
         setTimeout(() => {
           navigate(-1);
-        }, 3000);
+        }, 2000);
       } catch (error) {
         setAlertType("error");
         setAlertMsg(error?.response?.data?.msg);
@@ -420,7 +414,7 @@ const TechnicalCommitteeReportForm = () => {
                 >
                   {isLoading ? (
                     <Spinner size={25} color="white" />
-                  ) : formDisabled && state.role !== "Client" ? (
+                  ) : values?.fill !== "yes" && state.role !== "Client" ? (
                     "Update"
                   ) : (
                     "Submit"

@@ -66,8 +66,7 @@ const Inputs = {
 
 const CertificationIssueChecklistForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [formLoading, setFormLoading] = useState(false);
-  const [formDisabled, setFormDisabled] = useState(false);
+  const [formLoading, setFormLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [alertType, setAlertType] = useState("success");
   const [alertMsg, setAlertMsg] = useState("");
@@ -87,9 +86,7 @@ const CertificationIssueChecklistForm = () => {
         BASE_URL + `/api/certificate_issue_checklist/get/${id}`,
         config
       );
-      console.log(res?.data);
       setInitialForm(res?.data);
-      setFormDisabled(true);
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
@@ -122,17 +119,16 @@ const CertificationIssueChecklistForm = () => {
       }
       setIsLoading(true);
 
-      const formValues = formDisabled
-        ? changedDivisions(initialForm, values)
-        : values;
+      const formValues =
+        values?.fill !== "yes" ? changedDivisions(initialForm, values) : values;
 
       try {
         const response = await axios({
-          method: formDisabled ? "patch" : "post",
+          method: values?.fill !== "yes" ? "patch" : "post",
           url:
             BASE_URL +
             `/api/certificate_issue_checklist/${
-              formDisabled ? "partial_update" : "create"
+              values?.fill !== "yes" ? "partial_update" : "create"
             }/${id}`,
           data: formValues,
           headers: {
@@ -144,12 +140,11 @@ const CertificationIssueChecklistForm = () => {
         setOpen(true);
         setTimeout(() => {
           navigate(-1);
-        }, 3000);
+        }, 2000);
       } catch (error) {
         setAlertType("error");
         setAlertMsg(error?.response?.data?.msg);
         setOpen(true);
-        console.log(error?.response?.data?.msg);
       }
       setIsLoading(false);
     },
@@ -217,7 +212,7 @@ const CertificationIssueChecklistForm = () => {
                 >
                   {isLoading ? (
                     <Spinner size={25} color="white" />
-                  ) : formDisabled && state.role !== "Client" ? (
+                  ) : values?.fill !== "yes" && state.role !== "Client" ? (
                     "Update"
                   ) : (
                     "Submit"

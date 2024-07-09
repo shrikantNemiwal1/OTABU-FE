@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { quotationFormSchema } from "../validation/formSchema";
 import { changedDivisions } from "./ApplicationFormHelper";
 import { useFormik } from "formik";
@@ -11,7 +11,6 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import Restricted from "./Restricted";
 
 const initialValues = {
   QuotationPart1: {
@@ -77,7 +76,6 @@ const sitesApplicability = {
 const ApplicationForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(true);
-  const [formDisabled, setFormDisabled] = useState(false);
   const [open, setOpen] = useState(false);
   const [alertType, setAlertType] = useState("success");
   const [alertMsg, setAlertMsg] = useState("");
@@ -89,6 +87,7 @@ const ApplicationForm = () => {
   const [initialForm, setInitialForm] = useState(initialValues);
 
   const getFormDetails = async () => {
+    setFormLoading(true);
     try {
       const config = {
         headers: { Authorization: `Bearer ${state.token}` },
@@ -97,9 +96,7 @@ const ApplicationForm = () => {
         BASE_URL + `/api/quotation/get_quotation/${id}`,
         config
       );
-      console.log(res?.data);
       setInitialForm(res?.data);
-      setFormDisabled(true);
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
@@ -138,20 +135,24 @@ const ApplicationForm = () => {
               client_sign: values.QuotationPart1.client_sign,
               client_seal: values.QuotationPart1.client_seal,
             }
-          : formDisabled
+          : values?.fill !== "yes"
           ? changedDivisions(initialForm, values)
           : values;
 
       try {
         const response = await axios({
           method:
-            state.role === "Client" ? "post" : formDisabled ? "patch" : "post",
+            state.role === "Client"
+              ? "post"
+              : values?.fill !== "yes"
+              ? "patch"
+              : "post",
           url:
             BASE_URL +
             `/api/quotation/${
               state.role === "Client"
                 ? "create_quotation_client"
-                : formDisabled
+                : values?.fill === "no"
                 ? "partial_update_quotation"
                 : "create_quotation_admin"
             }/${id}`,
@@ -203,10 +204,7 @@ const ApplicationForm = () => {
               <h2 className="form-sub-title">Quotation Form</h2>
 
               <fieldset
-                disabled={
-                  state.role === "Client" ||
-                  initialForm?.Status === "Quotation Accepted by Client"
-                }
+                disabled={state.role === "Client" && values?.fill !== "yes"}
               >
                 <div className="input__container">
                   <label htmlFor="date">Date of application :</label>
@@ -583,6 +581,7 @@ const ApplicationForm = () => {
                 <>
                   <fieldset
                     disabled={
+                      state.role === "Client" &&
                       initialForm?.Status === "Quotation Accepted by Client"
                     }
                   >
@@ -640,7 +639,7 @@ const ApplicationForm = () => {
                 >
                   {isLoading ? (
                     <Spinner size={25} color="white" />
-                  ) : formDisabled && state.role !== "Client" ? (
+                  ) : values?.fill !== "yes" && state.role !== "Client" ? (
                     "Update"
                   ) : (
                     "Submit"
