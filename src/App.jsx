@@ -37,6 +37,7 @@ import CertificationIssueChecklistForm from "./components/CertificationIssueChec
 import CorrectiveActionReport2 from "./components/CorrectiveActionReport2.jsx";
 import NewApplicationForm from "./components/NewApplicationForm.jsx";
 import ClientPendingApplications from "./components/ClientPendingApplications.jsx";
+import ClientFeedbackForm from "./components/ClientFeedbackForm.jsx";
 
 function App() {
   const { state, dispatch } = useContext(AuthContext);
@@ -117,6 +118,7 @@ function App() {
               path="certificate-issue-checklist"
               element={<CertificationIssueChecklistForm />}
             />
+            <Route path="client-feedback" element={<ClientFeedbackForm />} />
           </Route>
 
           <Route exact path="forgot-password" element={<ForgotPassword />} />

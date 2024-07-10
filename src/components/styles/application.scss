@@ -101,6 +101,7 @@ fieldset {
   border-radius: 0.5rem;
   margin-top: 0.8rem;
   max-width: 50%;
+  margin-bottom: 2rem;
 }
 
 .remarks-head {
@@ -115,6 +116,7 @@ fieldset {
   gap: 0.4rem;
   margin: 0.3rem;
   margin-top: 0.5rem;
+  margin-bottom: 2rem;
 }
 
 .remarks-remark {
@@ -147,4 +149,36 @@ fieldset {
   width: 6rem;
   cursor: pointer;
   box-shadow: 0px 2px 4px 2px rgba(101, 101, 117, 0.2);
+}
+
+.feedback-instructions {
+  & p {
+    font-weight: 500;
+  }
+  & li {
+    margin: 0.5rem;
+    font-weight: 500;
+  }
+}
+
+.client-feedback__sub-title {
+  font-weight: 500;
+  color: #177369;
+}
+
+.feedback-table__total {
+  text-align: center;
+  font-weight: 500;
+
+  & th {
+    font-weight: 500;
+  }
+
+  & td{
+    transform: translateX(8.5rem);
+  }
+}
+
+.mt-3{
+  margin-top: 2rem;
 }

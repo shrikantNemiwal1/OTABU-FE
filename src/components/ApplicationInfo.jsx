@@ -1652,6 +1652,34 @@ const ApplicationInfo = () => {
               </div>
             )}
 
+          {state.role === "Client" &&
+            (applicationStatus.includes("Fill Client Feedback") ||
+              applicationStatus.includes("Client Feedback")) && (
+              <div className="application_info-section">
+                <NavLink to="client-feedback" className="link-without-style">
+                  <button className="application__btn">
+                    <img
+                      src={
+                        applicationStatus.includes("Client Feedback")
+                          ? view
+                          : request
+                      }
+                      alt="view"
+                    />
+                    <p>{`${
+                      applicationStatus.includes("Client Feedback")
+                        ? "View"
+                        : "Fill"
+                    } Client Feedback Form`}</p>
+                  </button>
+                </NavLink>
+                <button className="application__btn application__btn--green">
+                  <img src={print} alt="print" />
+                  <p>Print Client Feedback Form</p>
+                </button>
+              </div>
+            )}
+
           {!remarks &&
             ((state.role === "Admin Auditor" &&
               ((applicationStatus.includes("Application Reviewer Remarks") &&
