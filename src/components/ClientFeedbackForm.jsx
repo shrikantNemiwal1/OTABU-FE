@@ -81,7 +81,28 @@ const ClientFeedbackForm = () => {
         BASE_URL + `/api/client_feedback/get/${id}`,
         config
       );
-      setInitialForm(res?.data);
+      const resData = {
+        question_1: String(res?.data.question_1),
+        question_2: String(res?.data.question_2),
+        question_3: String(res?.data.question_3),
+        question_4: String(res?.data.question_4),
+        question_5: String(res?.data.question_4),
+        question_6: String(res?.data.question_6),
+        question_7: String(res?.data.question_7),
+        question_8: String(res?.data.question_8),
+        question_9: String(res?.data.question_9),
+        question_10: String(res?.data.question_10),
+        question_11: String(res?.data.question_11),
+        question_12: String(res?.data.question_12),
+        question_13: String(res?.data.question_13),
+        total: String(res?.data.total),
+        comments: res?.data.comments,
+        company: res?.data.company,
+        comlpeted_by: res?.data.comlpeted_by,
+        date_of_audit: res?.data.date_of_audit,
+        stamp: res?.data.stamp,
+      };
+      setInitialForm(resData);
     } catch (error) {
       console.log(error?.response?.data?.msg);
     }
@@ -109,7 +130,29 @@ const ClientFeedbackForm = () => {
     onSubmit: async (values) => {
       setIsLoading(true);
 
-      const formValues = values;
+      const formValues = {
+        question_1: Number(values.question_1),
+        question_2: Number(values.question_2),
+        question_3: Number(values.question_3),
+        question_4: Number(values.question_4),
+        question_5: Number(values.question_4),
+        question_6: Number(values.question_6),
+        question_7: Number(values.question_7),
+        question_8: Number(values.question_8),
+        question_9: Number(values.question_9),
+        question_10: Number(values.question_10),
+        question_11: Number(values.question_11),
+        question_12: Number(values.question_12),
+        question_13: Number(values.question_13),
+        total: Number(values.total),
+        comments: values.comments,
+        company: values.company,
+        comlpeted_by: values.comlpeted_by,
+        date_of_audit: values.date_of_audit,
+        stamp: values.stamp,
+      };
+
+      console.log(formValues);
 
       try {
         const response = await axios({
@@ -135,8 +178,6 @@ const ClientFeedbackForm = () => {
       setIsLoading(false);
     },
   });
-
-  console.log(values);
 
   return (
     <>

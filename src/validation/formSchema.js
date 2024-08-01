@@ -130,6 +130,28 @@ export const forgotPasswordSchema = Yup.object({
     .required("Please enter confirm password"),
 });
 
+export const feedbackFormSchema = Yup.object({
+  question_1: Yup.string(),
+  question_2: Yup.string(),
+  question_3: Yup.string(),
+  question_4: Yup.string(),
+  question_5: Yup.string(),
+  question_6: Yup.string(),
+  question_7: Yup.string(),
+  question_8: Yup.string(),
+  question_9: Yup.string(),
+  question_10: Yup.string(),
+  question_11: Yup.string(),
+  question_12: Yup.string(),
+  question_13: Yup.string(),
+  total: Yup.string(),
+  comments: Yup.string(),
+  company: Yup.string(),
+  comlpeted_by: Yup.string(),
+  date_of_audit: Yup.string(),
+  stamp: Yup.string(),
+});
+
 export const certificationIssueChecklistFormSchema = Yup.object({
   application_review: Yup.string(),
   lead_auditor: Yup.string(),
