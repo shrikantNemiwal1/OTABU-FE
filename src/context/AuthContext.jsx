@@ -97,9 +97,15 @@ const AuthProvider = ({ children }) => {
     setIsLoading(true);
     console.log(refreshToken);
     try {
-      const res = await API("post", "/api/user/logout", {
-        refresh_token: state?.refreshToken,
-      });
+      const res = await axios.post(
+        BASE_URL + "/api/user/logout",
+        { refresh_token: state?.refreshToken },
+        {
+          headers: {
+            Authorization: `Bearer ${state?.token}`,
+          },
+        }
+      );
       dispatch({ type: LOGOUT_SUCCESS });
       return res;
     } catch (err) {

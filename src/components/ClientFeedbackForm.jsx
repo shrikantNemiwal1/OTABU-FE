@@ -100,7 +100,7 @@ const ClientFeedbackForm = () => {
         company: res?.data.company,
         comlpeted_by: res?.data.comlpeted_by,
         date_of_audit: res?.data.date_of_audit,
-        stamp: res?.data.stamp,
+        // stamp: res?.data.stamp,
       };
       setInitialForm(resData);
     } catch (error) {
